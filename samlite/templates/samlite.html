@@ -1,0 +1,64 @@
+<!Doctype html>
+<html lang="en">
+<head>
+    <title>Sam Lite</title>
+    <meta charset="UTF-8">
+    <script src="{{ STATIC_URL }}js/jquery.js"></script>
+    <script src="http://code.jquery.com/ui/1.9.1/jquery-ui.js"></script>
+    <script src="{{ STATIC_URL }}js/html5sortable.js"></script>
+    <script src="{{ STATIC_URL }}js/iphone-style-checkboxes.js"></script>
+    <script src="{{ STATIC_URL }}js/html5support.js"></script>
+    <script src="{{ STATIC_URL }}js/samlite.js"></script>
+    
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/samlite.css">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.0/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/iphone-style-checkboxes.css">
+    
+</head>
+<body class="unselectable">
+    <div id="main_container" class="float_container">
+        <div id="video_container" class="float">
+            <div id="playback_container"></div>
+            <video id="camera" class="main-video"></video>
+        </div>
+        <div id="controls_container" class="float">
+            <div>
+                Webcam:&nbsp;
+                <input type="checkbox" id="camera_onoff" checked>
+            </div>
+            <div>
+                <button id="shoot_button"></button>
+            </div>
+            <div id="play_control_buttons">
+                <span id="beginning_button" class="play_control_button"></span>
+                <span id="frame_back_button" class="play_control_button"></span>
+                <span id="play_button" class="play_control_button"></span>
+                <span id="pause_button" class="play_control_button"></span>
+                <span id="frame_forward_button" class="play_control_button"></span>
+                <span id="end_button" class="play_control_button"></span>
+            </div>
+            <div id="slider_container">
+                <div>
+                    Slow
+                    &nbsp;&nbsp;
+                    Medium
+                    &nbsp;&nbsp;
+                    Quick
+                    &nbsp;&nbsp;&nbsp;
+                    Fast
+                </div>
+                <div id="fps_slider"></div>
+                <input type="hidden" id="fps" value="10">
+            </div>
+            <div id="trash"></div>
+            <div style="display:none">
+                playback index:
+                <input type="text" id="playback_index">
+            </div>
+        </div>
+    </div>
+    <div id="output">
+    
+    </div>
+</body>
+</html>

@@ -7,15 +7,8 @@ from django.http import HttpResponseRedirect
 import pprint
 
 def index(request):
-    t = loader.get_template("samlite/index.html")
+    t = loader.get_template("samlite.html")
     c = RequestContext(request, {})
     return HttpResponse(t.render(c))
     
-def images(request, file):
-    return HttpResponseRedirect("/static/images/" + file)
-    
-def css(request, file):
-    return HttpResponseRedirect("/static/css/" + file)
 
-def js(request, file):
-    return HttpResponseRedirect("/static/js/" + file)
