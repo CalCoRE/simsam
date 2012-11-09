@@ -1,0 +1,163 @@
+.float_container:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+
+.float {
+    position: relative;
+    float: left;
+}
+*.unselectable {
+   -moz-user-select: -moz-none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+
+   /*
+     Introduced in IE 10.
+     See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
+   */
+   -ms-user-select: none;
+   user-select: none;
+}
+#main_container {
+    width: 1000px;
+    overflow:hidden;
+}
+#video_container {
+    position: relative;
+    padding: 8px;
+    border: 1px solid green;
+    width: 640px;
+    height: 484px;
+}
+.overlay-frame {
+    opacity: 0.25;
+}
+#playback_container {
+    position: absolute;
+}
+.frametext {
+    color: gray;
+    font-family: "Verdana", "Sans";
+    font-size: 3em;
+    line-height: 10em;
+    margin-left: 240px;
+    position: relative;
+}
+#controls_container {
+    width: 300px;
+    font-family: "Verdana", "Sans";
+    margin: 10px;
+    text-align: center;
+}
+.iPhoneCheckContainer {
+    display: inline-block;
+    top: 7px;
+}
+#shoot_button {
+    background-image: url('../images/camera.png');
+    background-repeat: no-repeat;
+    border-radius: 10px;
+    height: 150px;
+    margin: 20px;
+    width: 230px;
+    border-width: 2px;
+}
+#output {
+    top: 4px;
+    position:relative;
+    border: 1px solid #ccc;
+    margin: 0px;
+    width: 1000px;
+    height: 150px;
+    overflow-x: scroll;
+    white-space: nowrap;
+}
+#output * {
+    margin: 4px;
+    margin-left: 10px;
+    padding: 0px;
+    height: 120px;
+    width: 160px;
+    display: inline-block;
+}
+
+.sortable-placeholder {
+    border: 2px dashed gray;
+}
+
+#trash .sortable-placeholder {
+    border: 2px solid gray;
+    border-radius: 8px;
+    height: 95%;
+    position: relative;
+}
+
+/* play control buttons */
+#play_control_buttons {
+    margin-top: 10px;
+    width: 100%;
+}
+#play_control_buttons > span {
+    width: 41px;
+    height: 40px;
+    display: inline-block;
+    background-image: url('../images/play_control_buttons.png');
+}
+#beginning_button {
+    background-position: 0px 0px;
+}
+#beginning_button:active {
+    background-position: 0px 40px;
+}
+#frame_back_button {
+    background-position: 203px 0px;
+}
+#frame_back_button:active {
+    background-position: 203px 40px;
+}
+#play_button {
+    background-position: 162px 0px;
+}
+#play_button:active {
+    background-position: 162px 40px;
+}
+#pause_button {
+    background-position: 122px 0px;
+}
+#pause_button:active {
+    background-position: 122px 40px;
+}
+#frame_forward_button {
+   background-position: 81px 0px;
+}
+#frame_forward_button:active {
+    background-position: 81px 40px;
+}
+#end_button {
+    background-position: 41px 0px;
+}
+#end_button:active {
+    background-position: 41px 40px;
+}
+
+#slider_container {
+    margin-top: 20px;
+}
+
+#fps_slider { 
+    left: 12px;
+    width: 278px;
+}
+
+#trash {
+    background: url('../images/trash.png') no-repeat center;
+    width: 230px;
+    height: 80px;
+    border-radius: 10px;
+    border: 2px solid #DDDDDD;
+    margin: 35px auto auto;
+}
