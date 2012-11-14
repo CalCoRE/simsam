@@ -140,8 +140,10 @@ window.shoot = ->
     frameId = frameIndex = frameOrdinal - 1
         
     # store ids that link the frame and the thumbnail
-    $(thumbnail).data "id", frameId
-    $(frame).data "id", frameId
+    # these ids will later be replaced by permanent ids, based on a hash,
+    # from the server
+    $(thumbnail).attr "data-frame-id", frameId
+    $(frame).attr "data-frame-id", frameId
     
     # store the frame in the registry so the playback frames can be reordered
     # by id when the thumbnails are reordered
@@ -156,11 +158,40 @@ window.shoot = ->
     
     # overlay the new frame
     placeFrame frameIndex, overlayClass
+
+    saveCanvas(frame, frameId)
     
+
+saveCanvas = (canvas, tempId) ->
+    imageStringRaw = canvas.toDataURL "image/jpeg"
+    imageString = imageStringRaw.replace "data:image/jpeg;base64,", ""
+    
+    ajaxOptions =
+        url: "save_frame"
+        type: "POST"
+        data:
+            image_string: imageString
+        dataType: "json"
+
+    done = (response) ->
+        console.log "save canvas ajax response", response
+        if response.success
+            # re-index the frame according to it's new, server-issued id
+            frame = frameRegistry[tempId]
+            delete frameRegistry[tempId]
+            frameRegistry[response.id] = frame
+            # write the id to the frame and thumbnail nodes so that
+            # building the playbackFrames will work correctly
+            $(frame).attr "data-frame-id", response.id
+            $("#output canvas[data-frame-id='#{tempId}']").attr "data-frame-id",
+                response.id
+
+    $.ajax(ajaxOptions).done(done)
+
 # remove the css class that makes the frame transparent (if it's there) and
 # remove the frame from the DOM
 
-clearPlayback = -> 
+clearPlayback = ->
     if window.debug then console.log "clearPlayback"
     # .removeClass() with no arguments removes all class names
     $("#playback_container *").removeClass().remove()
@@ -191,7 +222,8 @@ rescanThumbnails = ->
     # build the new playback list and also rebuild the thumbnail click events
     # so they match the correct indices
     $("#output *").each (index, thumbnail) ->
-        playbackFrames.push frameRegistry[$(thumbnail).data "id"]
+        frameId = $(thumbnail).attr "data-frame-id"
+        playbackFrames.push frameRegistry[frameId]
         $(thumbnail).unbind("click").click ->
             pause()
             clearPlayback()
