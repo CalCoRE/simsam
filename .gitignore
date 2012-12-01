@@ -2,3 +2,8 @@
 *.pot
 *.pyc
 local_settings.py
+simsam/.DS_Store
+
+samlite/.DS_Store
+
+.DS_Store
