@@ -176,8 +176,8 @@ window.onload = function(){
   
 	var img = new Image();
 	var img2 = new Image();
-	img.src = "./image.jpg";
-	img2.src = "./clip.png";
+	img.src = "http://" + window.location.host + "/static/images/image.jpg";
+	img2.src = "http://" + window.location.host + "/static/images/clip.png";
 	shapes = new Array(img, img2); // eventually this will be constructed dynamically
 	sprites = new Array();
 	

@@ -10,6 +10,7 @@ urlpatterns = patterns('',
     # url(r'^$', 'simsam.views.home', name='home'),
     # url(r'^simsam/', include('simsam.foo.urls')),
     url(r"^samlite/", include("samlite.urls")),
+    url(r"^simlite/", "simlite.views.index"),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

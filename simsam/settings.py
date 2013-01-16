@@ -81,7 +81,9 @@ STATICFILES_DIRS = (
     ("images", os.path.join(SITE_ROOT, 'images')), 
     ("js", os.path.join(SITE_ROOT, '../samlite/js')),
     ("css", os.path.join(SITE_ROOT, '../samlite/css')),
-    ("images", os.path.join(SITE_ROOT, '../samlite/images')), 
+    ("images", os.path.join(SITE_ROOT, '../samlite/images')),
+    ("js", os.path.join(SITE_ROOT, '../simlite/js')),
+    ("images", os.path.join(SITE_ROOT, '../simlite/images')), 
 
     os.path.join(SITE_ROOT, 'static'), 
     os.path.join(SITE_ROOT, '../samlite/static'),
@@ -126,6 +128,7 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(SITE_ROOT, 'simsam/templates'),
     os.path.join(SITE_ROOT, 'samlite/templates'),
+    os.path.join(SITE_ROOT, 'simlite/templates'),
 )
 
 INSTALLED_APPS = (
@@ -140,6 +143,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'samlite',
+    'simlite',
 )
 
 # A sample logging configuration. The only tangible logging
