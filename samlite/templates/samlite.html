@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
     <title>Sam Lite</title>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <script src="{{ STATIC_URL }}js/jquery.js"></script>
     <script src="http://code.jquery.com/ui/1.9.1/jquery-ui.js"></script>
     <script src="{{ STATIC_URL }}js/html5sortable.js"></script>
     <script src="{{ STATIC_URL }}js/iphone-style-checkboxes.js"></script>
     <script src="{{ STATIC_URL }}js/html5support.js"></script>
     <script src="{{ STATIC_URL }}js/samlite.js"></script>
-    
+
     <link rel="stylesheet" href="{{ STATIC_URL }}css/samlite.css">
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.0/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="{{ STATIC_URL }}css/iphone-style-checkboxes.css">
@@ -51,6 +51,14 @@
                 <input type="hidden" id="fps" value="10">
             </div>
             <div id="trash"></div>
+	    <div class="contr">
+	      <button onclick="cropCanvas()">Start Cropping</button>
+	      <button onclick="getResults()">View Crop</button>
+	      <button onclick="deleteRect()">Cancel Crop</button>
+            </div>
+	    	<div id="results">
+	    <img id="crop_result" />
+	</div>
             <div style="display:none">
                 playback index:
                 <input type="text" id="playback_index">
@@ -58,6 +66,8 @@
         </div>
         <div id="sprite_container">
         </div>
+    </div>
+    <div id="crop_output">
     </div>
     <div id="output">
     
