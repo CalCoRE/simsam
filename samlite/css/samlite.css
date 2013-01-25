@@ -84,6 +84,24 @@
     width: 160px;
     display: inline-block;
 }
+#crop_output {
+    top: 4px;
+    position:relative;
+    border: 1px solid #ccc;
+    margin: 0px;
+    width: 1000px;
+    height: 150px;
+    overflow-x: scroll;
+    white-space: nowrap;
+}
+#crop_output * {
+    margin: 4px;
+    margin-left: 10px;
+    padding: 0px;
+    height: 120px;
+    width: 160px;
+    display: inline-block;
+}
 
 .sortable-placeholder {
     border: 2px dashed gray;
