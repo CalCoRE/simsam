@@ -66,7 +66,7 @@
     width: 230px;
     border-width: 2px;
 }
-#output {
+#video_output {
     top: 4px;
     position:relative;
     border: 1px solid #ccc;
@@ -76,7 +76,7 @@
     overflow-x: scroll;
     white-space: nowrap;
 }
-#output * {
+#video_output * {
     margin: 4px;
     margin-left: 10px;
     padding: 0px;
@@ -98,8 +98,8 @@
     margin: 4px;
     margin-left: 10px;
     padding: 0px;
-    height: 120px;
-    width: 160px;
+    /*height: 640px;
+    width: 484px;*/
     display: inline-block;
 }
 
@@ -179,3 +179,4 @@
     border: 2px solid #DDDDDD;
     margin: 35px auto auto;
 }
+

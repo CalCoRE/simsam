@@ -8,11 +8,41 @@
     <script src="{{ STATIC_URL }}js/html5sortable.js"></script>
     <script src="{{ STATIC_URL }}js/iphone-style-checkboxes.js"></script>
     <script src="{{ STATIC_URL }}js/html5support.js"></script>
+    <script src="http://kineticjs.com/download/v4.0.5/kinetic-v4.0.5.js"></script>
+    <script src="http://html5demos.com/h5utils.js"></script>
+    <script src="{{ STATIC_URL }}js/simlite.js"></script>
     <script src="{{ STATIC_URL }}js/samlite.js"></script>
 
     <link rel="stylesheet" href="{{ STATIC_URL }}css/samlite.css">
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.0/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="{{ STATIC_URL }}css/iphone-style-checkboxes.css">
+
+    <style>
+	#drop {
+	  min-height: 100px;
+	  width: 200px;
+	  border: 3px dashed #ccc;
+	  margin: 10px;
+	  padding: 10px;
+	  clear: left;
+	}
+	p {
+	  margin: 3px 0;
+	}
+	#remy {
+	  background: url(http://twitter.com/api/users/profile_image/rem) no-repeat;
+	}
+	#brucel {
+	  background: url(http://twitter.com/api/users/profile_image/brucel) no-repeat;
+	}
+   	.drag {
+	  height: 48px;
+	  width: 48px;
+	  float: left;
+	  -khtml-user-drag: element;
+	  margin: 10px;
+	}
+    </style>
     
 </head>
 <body class="unselectable">
@@ -53,12 +83,17 @@
             <div id="trash"></div>
 	    <div class="contr">
 	      <button onclick="cropCanvas()">Start Cropping</button>
-	      <button onclick="getResults()">View Crop</button>
+	      <button onclick="getResults()">Save Crop</button>
 	      <button onclick="deleteRect()">Cancel Crop</button>
             </div>
 	    	<div id="results">
-	    <img id="crop_result" />
-	</div>
+	    		<img id="crop_result" />
+		</div>
+
+	    <div id="simbutton" class="contr">
+		<button onclick="startSimlite()">Go To SiMLite</button>
+	    </div>
+
             <div style="display:none">
                 playback index:
                 <input type="text" id="playback_index">
@@ -67,12 +102,20 @@
         <div id="sprite_container">
         </div>
     </div>
+
+    <div id="container"></div>
+    <div id="output"></div>
+	
     <h3>Cropped Images</h3>
     <div id="crop_output">
     </div>
     <h3>Webcam Images</h3>
-    <div id="output">
+    <div id="video_output"></div>
     
+    
+    <div id="sambutton">
+	<button onclick="startSamlite()">Go To SAMLite</button>
     </div>
+
 </body>
 </html>

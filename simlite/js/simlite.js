@@ -31,14 +31,16 @@ function clearInitials(shape){
 	shape.i_s = undefined;
 }
 
+var stage;
 
-window.onload = function(){
+
+window.onload = function(){	
 
 // =====================================================
 // ===================== STAGE =========================
 // =====================================================
 
-	var stage = new Kinetic.Stage({
+	stage = new Kinetic.Stage({
 	          container: "container",
 	          width: 800,
 	          height: 400
