@@ -4,9 +4,22 @@ import random
 
 # Create your models here.
 
-class Sam_frame(models.Model):
+class Animation(models.Model):
+    """The SAM in SiMSAM."""
+    name = models.CharField(max_length=40)
+    project = models.ForeignKey('Project', related_name='animations')
+    parent_animation = models.ForeignKey('Animation',
+        related_name='child_animations')
+    frame_sequence = models.TextField()     # comma-separated list of hashes
+    sprite_collection = models.TextField()  # comma-separated list of hashes
+
+    # implicit properties
+    # * child_animations (many child animations to one parent animation)
+
+class AnimationFrame(models.Model):
+    """An single frame of an animation; really just a jpg image."""
     # db fields
-    id = models.CharField(max_length=20, primary_key=True)
+    image_hash = models.CharField(max_length=40, primary_key=True)
     created_date = models.DateTimeField('date created',
         default=datetime.datetime.now)
 
@@ -16,13 +29,14 @@ class Sam_frame(models.Model):
     # vars
     string_data = None
 
+    # methods
     def set_image_string(self, string_data):
+        """Store image data (as a base64 string) and its hash."""
         self.string_data = string_data
-        self.id = str(abs(string_data.__hash__()))
+        self.image_hash = str(abs(string_data.__hash__()))
 
-    # this overrides the default save method inherited from Model
-    # so we can save the image file as the same time as the object
     def save(self, *args, **kwargs):
+        """Overrides the default django save method so allow image saving."""
         # part of saving should be writing the image file
         # if this is a first-time instantiation
         if self.string_data:
@@ -34,9 +48,3 @@ class Sam_frame(models.Model):
 
         # do the default django save magic
         super(Sam_frame, self).save(*args, **kwargs)
-
-
-class Sam_project(models.Model):
-    id = models.CharField(max_length=50, primary_key=True)
-    creator_id = models.CharField(max_length=50)
-    name = models.CharField(max_length=100)
