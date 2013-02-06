@@ -138,13 +138,66 @@ function getResults() {
     //when double-clicking on crop in drawer, add cropped image to sim stage
     temp_canvas.addEventListener('dblclick', function(){
         var obj = new Kinetic.Image({
+	        x: 100,
+                y: 100,
 		image: imageObj,
-		draggable: true,
-		startScale: 1
+		//draggable: true,
+		startScale: 1,
+		offset: [imageObj.width / 2, imageObj.height / 2]
 	});
-	var objLayer = new Kinetic.Layer();
+        // from simlite.js
+        obj.on("dbltap", function(){
+  
+	    	this.moveToTop(); 
+	    	if( this.getLayer() === simLayer ) {
+	    		this.moveTo(rulesLayer);
+	    		updateInitials(this);
+			rulesLayer.draw();
+	    	} else {
+		    	if (rulesMoved == true) {
+		  		rulesMoved = false;
+				this.r_x = this.getX() - this.i_x;
+				this.r_y = this.getY() - this.i_y;
+				this.r_s = this.getScale().x / this.i_s;
+				this.r_r = this.getRotation() - this.i_r;
+					
+		    		output.innerHTML = this.r_x + ", " 
+		    				 + this.r_y + ", " 
+		    				 + this.r_s + ", "
+		    				 + this.r_r + "<br>"
+		    				 + output.innerHTML;
+					
+				this.setPosition(this.i_x, this.i_y);
+				this.setScale(this.i_s);
+				this.setRotation(this.i_r);
+					
+				clearInitials(this);
+					
+			}
+	    		this.moveTo(simLayer);
+			rulesLayer.draw();
+	    		simLayer.draw();
+	    	}
+	});
+	  
+	obj.on("touchstart", function(){
+		// reset manip info
+   	    	this.lastX = undefined;
+	    	this.lastY = undefined;
+	    	this.lastSlope = undefined;
+	    	this.startDistance = undefined;
+	    	this.startScale = this.getScale().x;
+	
+	    	targetShape = this;
+	    	this.moveToTop();
+	});
+	  
+	simLayer.add(obj);
+	simLayer.draw();
+        sprites.push(obj);
+	/*var objLayer = new Kinetic.Layer();
 	objLayer.add(obj);
-	stage.add(objLayer);
+	stage.add(objLayer);*/
     });
 
     cropFrameRegistry[frameId] = temp_canvas; //add to cropped elements by id

@@ -31,8 +31,8 @@ function clearInitials(shape){
 	shape.i_s = undefined;
 }
 
-var stage;
-
+// globals used in cropTool.js
+var stage, shapes, simLayer, rulesLayer, sprites, rulesMoved, output;
 
 window.onload = function(){	
 
@@ -45,8 +45,8 @@ window.onload = function(){
 	          width: 800,
 	          height: 400
 	        });
-	var output = document.getElementById("output");
-	var rulesMoved = false; 
+	output = document.getElementById("output");
+	rulesMoved = false; 
 	        
 //=============== RULES LAYER ===========================
 //=== This layer just exists to record manipulations ====
@@ -57,7 +57,7 @@ window.onload = function(){
 //=== and stores them in the node that has been called ==
 //=======================================================
     
-  var rulesLayer = new Kinetic.Layer({opacity: .5});
+  rulesLayer = new Kinetic.Layer({opacity: .5});
   var targetShape = undefined;
 
   rulesLayer.on("touchmove", function(evt){
@@ -117,7 +117,7 @@ window.onload = function(){
 //=== This layer shows current properties of obects  ====
 //=== and executes rules, if they have any. =============
 //=======================================================
-  var simLayer = new Kinetic.Layer();
+  simLayer = new Kinetic.Layer();
   
   simLayer.on("touchmove", function(evt){
     var touch1 = evt.touches[0];
@@ -203,6 +203,7 @@ window.onload = function(){
 	    } else {
 		    if (rulesMoved == true) {
 		  		rulesMoved = false;
+					
 					this.r_x = this.getX() - this.i_x;
 					this.r_y = this.getY() - this.i_y;
 					this.r_s = this.getScale().x / this.i_s;
@@ -227,7 +228,7 @@ window.onload = function(){
 	    }
 	  });
 	  
-	  obj.on("touchstart", function(){
+	  obj.on("tap", function(){
 	  
 			// reset manip info
 	    this.lastX = undefined;
