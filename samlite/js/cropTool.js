@@ -82,11 +82,11 @@ function saveCropCanvas(canvas, tempId) {
     imageStringRaw = canvas.toDataURL("image/jpeg");
     imageString = imageStringRaw.replace("data:image/jpeg;base64,", "");
     ajaxOptions = {
-      url: "save_frame",
+      url: "save_image",
       type: "POST",
       data: {
         image_string: imageString,
-	image_directory: "sitestatic/media/cropped_frames/"
+	image_type: "Sprite"
       },
       dataType: "json"
     };

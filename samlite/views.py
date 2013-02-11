@@ -27,7 +27,7 @@ def save_image(request):
     image_type = request.POST[u"image_type"]
     if image_type == 'AnimationFrame':
         image_class = AnimationFrame
-    elif image_type != 'Sprite':
+    elif image_type == 'Sprite':
         image_class = Sprite
     else:
         return HttpResponse('''{
