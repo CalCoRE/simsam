@@ -24,7 +24,7 @@ class AnimationFrame(models.Model):
         default=datetime.datetime.now)
 
     # constants
-    image_directory = "sitestatic/media/sam_frames/"
+    #image_directory = "sitestatic/media/sam_frames/"
 
     # vars
     string_data = None
@@ -35,13 +35,15 @@ class AnimationFrame(models.Model):
         self.string_data = string_data
         self.image_hash = str(abs(string_data.__hash__()))
 
-    def save(self, *args, **kwargs):
-        """Overrides the default django save method so allow image saving."""
+    # this overrides the default save method inherited from Model
+    # so we can save the image file as the same time as the object
+    def save(self, image_directory, *args, **kwargs):
         # part of saving should be writing the image file
         # if this is a first-time instantiation
         if self.string_data:
             image_data = self.string_data.decode("base64")
-            output = open(self.image_directory + self.id + ".jpg", "wb")
+            output = open(image_directory + self.id + ".jpg", "wb")
+	    #output = open(self.image_directory + self.id + ".jpg", "wb")
             output.write(image_data)
             output.close()
             self.string_data = None

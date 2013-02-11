@@ -13,6 +13,12 @@ window.playbackIndex = 0
 window.debug = false            # turns on console logging
 
 $(document).ready ->
+
+    # hide elements of sim
+    $('#sambutton').hide()
+    $('#container').hide()
+    $('#output').hide()
+
     # get some handy references to DOM nodes
     window.camera = $("#camera").get 0
     window.buttons =
@@ -46,12 +52,13 @@ $(document).ready ->
     $(buttons.frameForward).click frameForward
     $(buttons.beginning).click frameBeginning
     $(buttons.end).click frameEnd
-    
     $(buttons.shoot).button()
+    $("#simbutton").click startSimlite
+    $("#sambutton").click startSamlite
     
     #http://farhadi.ir/projects/html5sortable/
-    $("#output").sortable().bind 'sortupdate', rescanThumbnails
-    $("#trash").sortable({connectWith:"#output"}).bind 'receive', trash
+    $("#video_output").sortable().bind 'sortupdate', rescanThumbnails
+    $("#trash").sortable({connectWith:"#video_output"}).bind 'receive', trash
     
     # fps slider
     $("#fps_slider").slider
@@ -131,7 +138,7 @@ window.shoot = ->
 
     # we're in the global scope, so need to make some of our references
     video  = $("#camera").get 0
-    output = $("#output").get 0
+    output = $("#video_output").get 0
 
     # store a new frame
     frame = capture video, 1
@@ -151,7 +158,7 @@ window.shoot = ->
     
     # display the thumbnail
     output.appendChild thumbnail
-    $("#output").sortable "refresh"
+    $("#video_output").sortable "refresh"
     
     # make the thumbnail clickable
     rescanThumbnails()
@@ -171,6 +178,7 @@ saveCanvas = (canvas, tempId) ->
         type: "POST"
         data:
             image_string: imageString
+            image_directory: "sitestatic/media/sam_frames/"
         dataType: "json"
 
     done = (response) ->
@@ -183,7 +191,7 @@ saveCanvas = (canvas, tempId) ->
             # write the id to the frame and thumbnail nodes so that
             # building the playbackFrames will work correctly
             $(frame).attr "data-frame-id", response.id
-            $("#output canvas[data-frame-id='#{tempId}']").attr "data-frame-id",
+            $("#video_output canvas[data-frame-id='#{tempId}']").attr "data-frame-id",
                 response.id
 
     $.ajax(ajaxOptions).done(done)
@@ -208,6 +216,7 @@ placeFrame = (frameIndex, className = "") ->
     frame = playbackFrames[frameIndex]
     # allow special overlay styling of frames
     $(frame).addClass className
+    frame.id = "canvas"
     $("#playback_container").append frame
     
 # run through the canvas elements in the thumbnail list and update
@@ -221,7 +230,7 @@ rescanThumbnails = ->
     
     # build the new playback list and also rebuild the thumbnail click events
     # so they match the correct indices
-    $("#output *").each (index, thumbnail) ->
+    $("#video_output *").each (index, thumbnail) ->
         frameId = $(thumbnail).attr "data-frame-id"
         playbackFrames.push frameRegistry[frameId]
         $(thumbnail).unbind("click").click ->
@@ -329,3 +338,28 @@ frameEnd = ->
 # just for window.debugging
 
 updateIndexView = -> $("#playback_index").get(0).value = window.playbackIndex
+
+# functions to switch between sam and sim
+startSimlite = ->
+    # hide samlite containers
+    $('#controls_container').hide()
+    $('#playback_container').hide()
+    $('#video_container').hide()
+    $('#simbutton').hide()
+    cameraOff()
+    # show simlite containers
+    $('#container').show()
+    $('#output').show()
+    $('#sambutton').show()
+
+startSamlite = ->
+    # show SAM containers
+    $('#controls_container').show()
+    $('#playback_container').show()
+    $('#video_container').show()
+    $('#simbutton').show()
+    # hide SiM containers
+    $('#container').hide()
+    $('#output').hide()
+    $('#sambutton').hide()
+    

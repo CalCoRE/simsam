@@ -17,7 +17,8 @@ def index(request):
     
 def save_frame(request):
     image_string = request.POST[u"image_string"]
+    image_directory = request.POST["image_directory"]
     sam_frame = Sam_frame();
     sam_frame.set_image_string(image_string)
-    sam_frame.save()
+    sam_frame.save(image_directory)
     return HttpResponse('{"success": true, "id": %s}' % (sam_frame.id))
