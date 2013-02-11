@@ -2,13 +2,15 @@ from django.db import models
 import datetime
 import random
 
+from home.models import Project
+
 # Create your models here.
 
 class Animation(models.Model):
     """The SAM in SiMSAM."""
     name = models.CharField(max_length=40)
-    project = models.ForeignKey('Project', related_name='animations')
-    parent_animation = models.ForeignKey('Animation',
+    project = models.ForeignKey(Project, related_name='animations')
+    parent_animation = models.ForeignKey('self',
         related_name='child_animations')
     frame_sequence = models.TextField()     # comma-separated list of hashes
     sprite_collection = models.TextField()  # comma-separated list of hashes
