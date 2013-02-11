@@ -8,7 +8,7 @@ class Simulation(models.Model):
     name = models.CharField(max_length=40)
     project = models.ForeignKey(Project, related_name='simulations')
     parent_simulation = models.ForeignKey('self',
-        related_name='child_simulations')
+        related_name='child_simulations', blank=True)
 
     # implicit properties
     # * objects (many-to-many)
@@ -25,5 +25,6 @@ class SimulationState(models.Model):
 class SimulationObject(models.Model):
     """An entity/object/thing in a simulation."""
     sprite_filename = models.CharField(max_length=40)
-    serialized_rules = models.TextField()
-    simluations = models.ManyToManyField(Simulation, related_name='objects')
+    serialized_rules = models.TextField(blank=True)
+    simluations = models.ManyToManyField(Simulation, related_name='objects',
+        blank=True)

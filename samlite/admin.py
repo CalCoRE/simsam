@@ -1,6 +1,13 @@
 from django.contrib import admin
-from samlite.models import Sam_frame
-from samlite.models import Sam_project
 
-admin.site.register(Sam_frame)
-admin.site.register(Sam_project)
+from home.models import *
+from samlite.models import *
+from simlite.models import *
+
+admin.site.register(Project)
+admin.site.register(SimsamUser)
+admin.site.register(Animation)
+admin.site.register(AnimationFrame)
+admin.site.register(Simulation)
+admin.site.register(SimulationState)
+admin.site.register(SimulationObject)

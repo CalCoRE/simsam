@@ -7,7 +7,7 @@ class Project(models.Model):
     name = models.CharField(max_length=100)
     owner = models.ForeignKey('SimsamUser', related_name="projects")
     parent_project = models.ForeignKey('Project',
-        related_name='child_projects')
+        related_name='child_projects', blank=True)
 
     # implicit properties
     # * animations (many animations to one project)
@@ -19,7 +19,7 @@ class SimsamUser(models.Model):
     user = models.OneToOneField(User, primary_key=True)
     first_name = models.CharField(max_length=40)
     last_name = models.CharField(max_length=40)
-    sprite_collection = models.TextField()
+    sprite_collection = models.TextField(blank=True)
 
     # implicit properties
     # * projects (many projects to one owner)

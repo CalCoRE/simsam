@@ -11,9 +11,11 @@ class Animation(models.Model):
     name = models.CharField(max_length=40)
     project = models.ForeignKey(Project, related_name='animations')
     parent_animation = models.ForeignKey('self',
-        related_name='child_animations')
-    frame_sequence = models.TextField()     # comma-separated list of hashes
-    sprite_collection = models.TextField()  # comma-separated list of hashes
+        related_name='child_animations', blank=True)
+    # comma-separated list of hashes
+    frame_sequence = models.TextField(blank=True)
+    # comma-separated list of hashes
+    sprite_collection = models.TextField(blank=True)
 
     # implicit properties
     # * child_animations (many child animations to one parent animation)
