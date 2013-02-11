@@ -20,6 +20,15 @@
     
 </head>
 <body class="unselectable">
+    <!-- only display this if the user is logged in -->
+    {% if user.is_authenticated %}
+    <div id="logout">
+    	<form action="logout/" method="post">
+    		<input type="submit" value="Logout" />
+    	</form>
+    </div>
+
+
     <div id="main_container" class="float_container">
         <div id="video_container" class="float">
             <div id="playback_container"></div>
@@ -90,6 +99,22 @@
     <div class="contr">
 	<input type="button" value="Go To SAMLite" id="sambutton"></input>
     </div>
+
+    <!-- login form, displayed when user is not logged in -->
+    {% else %}
+     <div id="login">
+	{{ state }}
+        <h3>Login</h3>
+	<form action="login/" method="post">
+		usename:
+		<input type="text" name="username" value="{{ username }}" /><br />
+		password:
+		<input type="password" name="password" value="" /><br />
+
+		<input type="submit" value="Log In" />
+	</form>
+    </div>
+    {% endif %}
 
 </body>
 </html>
