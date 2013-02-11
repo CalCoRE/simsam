@@ -174,11 +174,11 @@ saveCanvas = (canvas, tempId) ->
     imageString = imageStringRaw.replace "data:image/jpeg;base64,", ""
     
     ajaxOptions =
-        url: "save_frame"
+        url: "save_image"
         type: "POST"
         data:
             image_string: imageString
-            image_directory: "sitestatic/media/sam_frames/"
+            image_type: "AnimationFrame"
         dataType: "json"
 
     done = (response) ->

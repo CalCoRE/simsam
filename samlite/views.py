@@ -6,6 +6,7 @@ import random
 
 from samlite.models import Animation
 from samlite.models import AnimationFrame
+from home.models import Sprite
 
 #debugging
 
@@ -16,10 +17,20 @@ def index(request):
     c = RequestContext(request, {})
     return HttpResponse(t.render(c))
     
-def save_frame(request):
+def save_image(request):
     image_string = request.POST[u"image_string"]
-    image_directory = request.POST["image_directory"]
-    frame = AnimationFrame();
-    frame.set_image_string(image_string)
-    frame.save(image_directory)
-    return HttpResponse('{"success": true, "id": %s}' % (frame.id))
+    image_type = request.POST[u"image_type"]
+    if image_type == 'AnimationFrame':
+        image_class = AnimationFrame
+    elif image_type != 'Sprite':
+        image_class = Sprite
+    else:
+        return HttpResponse('''{
+            "success": false, 
+            "message": "invalid image type: %s"
+        }''' % image_type)
+
+    image_obj = image_class();
+    image_obj.set_image_string(image_string)
+    image_obj.save()
+    return HttpResponse('{"success": true, "id": %s}' % (image_obj.image_hash))
