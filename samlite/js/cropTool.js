@@ -5,6 +5,7 @@ var iMouseX, iMouseY = 1;
 var cropFrames = []; //cropped elements in order
 var cropFrameRegistry = {}; //cropped elements by id
 
+
 // define Selection constructor
 function Selection(x, y, w, h) {
     // code from http://www.script-tutorials.com/html5-image-crop-tool/
@@ -86,7 +87,8 @@ function saveCropCanvas(canvas, tempId) {
       type: "POST",
       data: {
         image_string: imageString,
-	image_type: "Sprite"
+	image_type: "Sprite",
+	//frame_registry: cropFrameRegistry
       },
       dataType: "json"
     };
@@ -98,6 +100,10 @@ function saveCropCanvas(canvas, tempId) {
         delete cropFrameRegistry[tempId];
         cropFrameRegistry[response.id] = frame;
         $(frame).attr("data-frame-id", response.id);
+	var xhr = new XMLHttpRequest();
+	xhr.open("POST", "addframes", true);
+	alert("hello");
+	xhr.send("frame_registry=" + cropFrameRegistry);
         return $("#crop_output canvas[data-frame-id='" + tempId + "']").attr("data-frame-id", response.id);
       }
     };

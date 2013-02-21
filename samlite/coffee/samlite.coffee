@@ -346,6 +346,7 @@ startSimlite = ->
     $('#playback_container').hide()
     $('#video_container').hide()
     $('#simbutton').hide()
+    $('#crop_buttons').hide()
     cameraOff()
     # show simlite containers
     $('#container').show()
@@ -358,6 +359,7 @@ startSamlite = ->
     $('#playback_container').show()
     $('#video_container').show()
     $('#simbutton').show()
+    $('#crop_buttons').show()
     # hide SiM containers
     $('#container').hide()
     $('#output').hide()

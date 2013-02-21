@@ -11,8 +11,9 @@
     <script src="http://kineticjs.com/download/v4.0.5/kinetic-v4.0.5.js"></script>
     <script src="http://html5demos.com/h5utils.js"></script>
     <script src="{{ STATIC_URL }}js/simlite.js"></script>
-    <script src="{{ STATIC_URL }}js/samlite.js"></script>
     <script src="{{ STATIC_URL }}js/cropTool.js"></script>
+    <script src="{{ STATIC_URL }}js/samlite.js"></script>
+    
 
     <link rel="stylesheet" href="{{ STATIC_URL }}css/samlite.css">
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.0/themes/base/jquery-ui.css">
@@ -20,16 +21,71 @@
     
 </head>
 <body class="unselectable">
-    <!-- only display this if the user is logged in -->
-    {% if user.is_authenticated %}
-    <div id="logout">
-    	<form action="logout/" method="post">
-    		<input type="submit" value="Logout" />
+<!-- only display this if the user is logged in -->
+{% if user.is_authenticated %}
+    <h1>{{ frame_registry }}</h1>
+    <div class="header"> 
+	<h1 class="greeting">hello {{ user.username }}</h1>
+	<div id="logout"> 
+	<form action="logout/" method="post">
+    		<input id="logoutbutton" type="submit" value="Logout" />
+   		<input type="button" value="Switch To SAM" class="switchbutton" id="sambutton"></input>
+		<input type="button" value="Switch to SiM" class="switchbutton" id="simbutton"></input>
     	</form>
+        
+        </div>
+        
     </div>
+	<!-- Would you like to open a project or create a new one?
+	<button onclick="openproject(user)">Open Project</button>
+	<button onclick="newproject()">New Project</button> -->
+	<!-- <script>
+		setproj = false;
+		var newproj = true;
+		function openproject() { newproj = false; setproj = false; }
+		function newproject() { newproj = true; setproj = false; }
+		Response.redirect("/samlite")
+	</script>
+	{% if newproj %}
+		<h3>Hello! Let's create a new project!</h3>
+	{% endif %} -->
+	
+    <!-- list projects
+    <h3>Projects:</h3>
+    {% for project in projectList %}
+       <p>{{ project.name }}</p>
+       {% for anim in animations %}
+           {% if anim.project == project %}
+               <p>{{ anim }}</p>
+           {% endif %}
+       {% endfor %}
+     
+    {% endfor %} -->
 
-
+    
+    <!-- may want to add Save As button or Save button later -->
+    <!-- <div id="save">
+	<form action="save_project/" method="post">
+		Save Project As:
+		<input type="text" name="project_name" value="{{ project_name }}" />
+		<input type="submit" value="Save Project" />
+        </form>
+    </div>
+    <div id="save animation">
+	{{ frame_registry }}
+	<form action="save_anim/" method="post">
+		Save Animation As:
+		<input type="text" name="anim_name" value="{{ anim_name }}" />
+		Project Name:
+		<input type="text" name="project_name" value="{{ project_name }}" />
+		<input type="submit" value="Save Animation" />
+	</form>
+    </div> -->
+    <br />
+   
     <div id="main_container" class="float_container">
+ 	
+
         <div id="video_container" class="float">
             <div id="playback_container"></div>
             <video id="camera" class="main-video"></video>
@@ -64,18 +120,10 @@
                 <input type="hidden" id="fps" value="10">
             </div>
             <div id="trash"></div>
-	    <div class="contr">
-	      <button onclick="cropCanvas()">Start Cropping</button>
-	      <button onclick="getResults()">Save Crop</button>
-	      <button onclick="deleteRect()">Cancel Crop</button>
-            </div>
-	    	<div id="results">
+	    
+	    	<!-- <div id="results">
 	    		<img id="crop_result" />
-		</div>
-
-	    <div class="contr">
-		<input type="button" value="Go To SiMLite" id="simbutton"></input>
-	    </div>
+		</div> -->
 
             <div style="display:none">
                 playback index:
@@ -88,33 +136,40 @@
 
     <div id="container"></div>
     <div id="output"></div>
-	
-    <h3>Cropped Images</h3>
-    <div id="crop_output">
+
+    <div id="crop_buttons">
+        <button id="startcropping" onclick="cropCanvas()">Start Cropping</button>
+	<button id="savecrop" onclick="getResults()">Save Crop</button>
+	<button id="cancelcrop" onclick="deleteRect()">Cancel Crop</button>
     </div>
-    <h3>Webcam Images</h3>
+	
+   
+
+    <h3>Cropped Images - Sprites</h3>
+    <div id="crop_output"></div>
+    <h3>Webcam Images - Animation Timeline</h3>
     <div id="video_output"></div>
     
     
-    <div class="contr">
-	<input type="button" value="Go To SAMLite" id="sambutton"></input>
-    </div>
+    
+
 
     <!-- login form, displayed when user is not logged in -->
-    {% else %}
-     <div id="login">
-	{{ state }}
-        <h3>Login</h3>
-	<form action="login/" method="post">
-		usename:
+{% else %}
+    <div class="header">
+        {{ state }}
+       <!--  <h1 class="greeting">Login</h1> -->
+    </div>
+	<form id="login" action="login/" method="post">
+                <!-- <h2>Login</h2> -->
+		username:
 		<input type="text" name="username" value="{{ username }}" /><br />
 		password:
 		<input type="password" name="password" value="" /><br />
 
-		<input type="submit" value="Log In" />
+		<input id="loginbutton" type="submit" value="Log In" />
 	</form>
-    </div>
-    {% endif %}
+{% endif %}
 
 </body>
 </html>
