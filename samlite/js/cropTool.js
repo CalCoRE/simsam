@@ -102,7 +102,6 @@ function saveCropCanvas(canvas, tempId) {
         $(frame).attr("data-frame-id", response.id);
 	var xhr = new XMLHttpRequest();
 	xhr.open("POST", "addframes", true);
-	alert("hello");
 	xhr.send("frame_registry=" + cropFrameRegistry);
         return $("#crop_output canvas[data-frame-id='" + tempId + "']").attr("data-frame-id", response.id);
       }
