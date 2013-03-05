@@ -1,8 +1,11 @@
+from __future__ import unicode_literals
 from django.db import models
 import random
 
 from home.models import Project
 from home.models import ImageWrapper
+
+
 
 # Create your models here.
 

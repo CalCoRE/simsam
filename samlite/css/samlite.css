@@ -201,7 +201,7 @@ body {
 }
 .header {
     background: url('../images/paint.png') no-repeat left;
-    background-position: 10px 2px;
+    background-position: 35px 2px;
     #width: 475px;
     height: 131px;
     #border-radius: 10px;
@@ -218,7 +218,7 @@ body {
 }
 #logoutbutton {
     margin: auto;
-    margin-left: 400px;
+    margin-left: 415px;
     margin-top: 80px;
 
     height: 30px;
@@ -276,31 +276,17 @@ body {
     margin-left: 160px;
     margin-top: 8px;
 }
-#startcropping {
+.crop_button {
     background-color: #CC6600;
     color: white;
     border: 1px solid;
     border-radius: 25px;
     -moz-border-radius: 25px;
-    height: 30px;
+    height: 30px; 
 }
 #savecrop {
-    background-color: #CC6600;
-    color: white;
-    border: 1px solid;
-    border-radius: 25px;
-    -moz-border-radius: 25px;
-    height: 30px;
     margin-left: 8px;
     margin-right: 8px;
-}
-#cancelcrop {
-    background-color: #CC6600;
-    color: white;
-    border: 1px solid;
-    border-radius: 25px;
-    -moz-border-radius: 25px;
-    height: 30px;
 }
 
 #container {

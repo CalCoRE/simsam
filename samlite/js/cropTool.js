@@ -99,13 +99,18 @@ function saveCropCanvas(canvas, tempId) {
         frame = cropFrameRegistry[tempId];
         delete cropFrameRegistry[tempId];
         cropFrameRegistry[response.id] = frame;
-        $(frame).attr("data-frame-id", response.id);
-	var xhr = new XMLHttpRequest();
-	xhr.open("POST", "addframes", true);
-	xhr.send("frame_registry=" + cropFrameRegistry);
+	//cropFrameRegistry is cyclic, so I can't stringify it
+        //frame_registry = JSON.stringify(JSON.decycle(cropFrameRegistry));
+	console.log("length", cropFrames.length);
+        console.log("contents:");
+	for(var x = 0; x < cropFrames.length; x++) {
+		console.log(x, cropFrames[x]);
+        }
+	alert("hello");
         return $("#crop_output canvas[data-frame-id='" + tempId + "']").attr("data-frame-id", response.id);
       }
     };
+    
     return $.ajax(ajaxOptions).done(done);
 }
 

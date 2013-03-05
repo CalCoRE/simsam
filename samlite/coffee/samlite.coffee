@@ -227,12 +227,14 @@ rescanThumbnails = ->
     if window.debug then console.log "rescanThumbnails"
     # reset the playbackFrames list so it can be rebuilt in the right order
     playbackFrames = []
+    idsToSave = []
     
     # build the new playback list and also rebuild the thumbnail click events
     # so they match the correct indices
     $("#video_output *").each (index, thumbnail) ->
         frameId = $(thumbnail).attr "data-frame-id"
         playbackFrames.push frameRegistry[frameId]
+        idsToSave.push frameId
         $(thumbnail).unbind("click").click ->
             pause()
             clearPlayback()
@@ -240,6 +242,16 @@ rescanThumbnails = ->
             placeFrame index, overlayClass
             window.playbackIndex = index
             updateIndexView()
+    ajaxOptions =
+        url: "updateFrameSequence"
+        type: "POST"
+        data:
+            frameSequence: idsToSave
+        dataType: "json"
+    done = (response) ->
+        if response.success then console.log(response.message)
+    $.ajax(ajaxOptions).done(done)
+	
     updateIndexView()
     
 # Called by the "trash" (really a sortable list linked with the thumbnail

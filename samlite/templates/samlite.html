@@ -1,8 +1,11 @@
 <!Doctype html>
 <html lang="en">
 <head>
-    <title>Sam Lite</title>
+    <title>SAM</title>
     <meta charset="UTF-8" />
+
+    <script src="{{ STATIC_URL }}js/cycle.js"></script>
+
     <script src="{{ STATIC_URL }}js/jquery.js"></script>
     <script src="{{ STATIC_URL }}js/jquery-ui.js"></script>
     <script src="{{ STATIC_URL }}js/html5sortable.js"></script>
@@ -10,6 +13,7 @@
     <script src="{{ STATIC_URL }}js/html5support.js"></script>
     <script src="http://kineticjs.com/download/v4.0.5/kinetic-v4.0.5.js"></script>
     <script src="http://html5demos.com/h5utils.js"></script>
+
     <script src="{{ STATIC_URL }}js/simlite.js"></script>
     <script src="{{ STATIC_URL }}js/cropTool.js"></script>
     <script src="{{ STATIC_URL }}js/samlite.js"></script>
@@ -24,6 +28,7 @@
 <!-- only display this if the user is logged in -->
 {% if user.is_authenticated %}
     <h1>{{ frame_registry }}</h1>
+    <h1>{{ hello }}</h1>
     <div class="header"> 
 	<h1 class="greeting">hello {{ user.username }}</h1>
 	<div id="logout"> 
@@ -36,52 +41,31 @@
         </div>
         
     </div>
-	<!-- Would you like to open a project or create a new one?
-	<button onclick="openproject(user)">Open Project</button>
-	<button onclick="newproject()">New Project</button> -->
-	<!-- <script>
-		setproj = false;
-		var newproj = true;
-		function openproject() { newproj = false; setproj = false; }
-		function newproject() { newproj = true; setproj = false; }
-		Response.redirect("/samlite")
-	</script>
-	{% if newproj %}
-		<h3>Hello! Let's create a new project!</h3>
-	{% endif %} -->
-	
-    <!-- list projects
-    <h3>Projects:</h3>
-    {% for project in projectList %}
-       <p>{{ project.name }}</p>
-       {% for anim in animations %}
-           {% if anim.project == project %}
-               <p>{{ anim }}</p>
-           {% endif %}
-       {% endfor %}
-     
-    {% endfor %} -->
-
-    
-    <!-- may want to add Save As button or Save button later -->
-    <!-- <div id="save">
-	<form action="save_project/" method="post">
-		Save Project As:
-		<input type="text" name="project_name" value="{{ project_name }}" />
-		<input type="submit" value="Save Project" />
-        </form>
-    </div>
-    <div id="save animation">
-	{{ frame_registry }}
-	<form action="save_anim/" method="post">
-		Save Animation As:
-		<input type="text" name="anim_name" value="{{ anim_name }}" />
-		Project Name:
-		<input type="text" name="project_name" value="{{ project_name }}" />
-		<input type="submit" value="Save Animation" />
+    {% if chooseProject %}
+        <!-- display list of user's projects to open -->
+	<h3>Projects</h3>
+	<form action="chooseproject/" method="post">
+		{% for proj in projectList %}
+		  <input type="radio" name="projectName" value="{{ proj.name }}" />{{ proj.name }}<br>
+		{% endfor %}
+		<input type="submit" value="Open Project" />
 	</form>
-    </div> -->
+    {% endif %}
+
+    {% if projectOpen %}
+    <!-- if a project is open or starting a new project, show the simsam applications -->
+    <!-- <p>{{ frame_sequence }}</p> -->
+    <script>
+	framesequence = "{{ frame_sequence }}".replace(/&#39;/g, "'");
+	framesequence = framesequence.replace(/'/g, "");
+	framesequence = framesequence.replace("[", "");
+	framesequence = framesequence.replace("]", "");
+	framesequence = framesequence.split(", ");
+        spritecollection = {{ sprite_collection }};
+    </script>
+
     <br />
+    <h2>Project: {{ project.name }}</h2>
    
     <div id="main_container" class="float_container">
  	
@@ -120,10 +104,6 @@
                 <input type="hidden" id="fps" value="10">
             </div>
             <div id="trash"></div>
-	    
-	    	<!-- <div id="results">
-	    		<img id="crop_result" />
-		</div> -->
 
             <div style="display:none">
                 playback index:
@@ -138,9 +118,9 @@
     <div id="output"></div>
 
     <div id="crop_buttons">
-        <button id="startcropping" onclick="cropCanvas()">Start Cropping</button>
-	<button id="savecrop" onclick="getResults()">Save Crop</button>
-	<button id="cancelcrop" onclick="deleteRect()">Cancel Crop</button>
+        <button class="crop_button" id="startcropping" onclick="cropCanvas()">Start Cropping</button>
+	<button class="crop_button" id="savecrop" onclick="getResults()">Save Crop</button>
+	<button class="crop_button" id="cancelcrop" onclick="deleteRect()">Cancel Crop</button>
     </div>
 	
    
@@ -149,9 +129,19 @@
     <div id="crop_output"></div>
     <h3>Webcam Images - Animation Timeline</h3>
     <div id="video_output"></div>
-    
-    
-    
+    {% else %}
+    {% endif %}
+
+    {% if chooseProject %}
+    {% else %}
+      <form class="chooseproject" action="openproject" method="post">
+	  <input type="submit" value="Open Project" />
+      </form>
+    {% endif %}
+    <form class="chooseproject" action="make_project" method="post">
+        New Project Name: <input type="text" name="projectName" />
+	<input type="submit" value="Make New Project" />
+    </form>
 
 
     <!-- login form, displayed when user is not logged in -->
@@ -161,7 +151,6 @@
        <!--  <h1 class="greeting">Login</h1> -->
     </div>
 	<form id="login" action="login/" method="post">
-                <!-- <h2>Login</h2> -->
 		username:
 		<input type="text" name="username" value="{{ username }}" /><br />
 		password:
