@@ -183,8 +183,6 @@
         delete frameRegistry[tempId];
         frameRegistry[response.id] = frame;
         $(frame).attr("data-frame-id", response.id);
-	alert(frame);
-	alert(frame.src);
         return $("#video_output canvas[data-frame-id='" + tempId + "']").attr("data-frame-id", response.id);
       }
     };

@@ -54,7 +54,8 @@
 
     {% if projectOpen %}
     <!-- if a project is open or starting a new project, show the simsam applications -->
-    <!-- <p>{{ frame_sequence }}</p> -->
+    <p>{{ frame_sequence }}</p>
+    <p>{{ sprite_collection }}</p>
     <script>
 	framesequence = "{{ frame_sequence }}".replace(/&#39;/g, "'");
 	framesequence = framesequence.replace(/'/g, "");
@@ -104,6 +105,10 @@
                 <input type="hidden" id="fps" value="10">
             </div>
             <div id="trash"></div>
+
+	    <form action="newanim" method="post">
+		<input type="submit" value="Start a New Animation" />
+    	    </form>
 
             <div style="display:none">
                 playback index:

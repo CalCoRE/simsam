@@ -10,5 +10,6 @@ urlpatterns = patterns("",
     url(r"^openproject$", views.openproject, name="openproject"),
     url(r"^chooseproject/$", views.chooseproject, name="chooseproject"),
     url(r"^make_project$", views.make_project, name="make_project"),
+    url(r"^newanim", views.newanim, name="newanim"),
     #url(r"^(?P<frame_registry>\d+)/$", views.save_project, name="save_project")
 )

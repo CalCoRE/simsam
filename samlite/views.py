@@ -17,20 +17,22 @@ from home.models import SimsamUser, Project
 import pprint
 
 from django.contrib.auth.decorators import login_required
-
 from django.contrib.auth import authenticate, login
 
 #globals
 projects = []
 simsamuser = None
 animation = None
+simulation = None
 project = None
-projectOpen = False
-image_hash = ""
-chooseProject = False
 framesequence = []
 spritecollection = []
-openingProject = False
+image_hash = ""
+
+#used to control display of elements in samlite.html
+projectOpen = False
+chooseProject = False 
+openingProject = False 
 
 #@login_required
 def index(request):
@@ -48,7 +50,7 @@ def index(request):
         projects = Project.objects.filter(owner=simsamuser)
     animations = Animation.objects.all()
     t = loader.get_template("samlite.html")
-    c = RequestContext(request, {"project": project, "animation": animation, "projectOpen": projectOpen, "image_hash": image_hash, "projectList": projects, "chooseProject": chooseProject, "frame_sequence": framesequence, "sprite_collection": spritecollection, "openingProject": openingProject})
+    c = RequestContext(request, {"project": project, "animation": animation, "projectOpen": projectOpen, "image_hash": image_hash, "projectList": projects, "chooseProject": chooseProject, "frame_sequence": framesequence, "sprite_collection": spritecollection, "openingProject": openingProject, "simulation": simulation})
     return HttpResponse(t.render(c))
     
 def save_image(request):
@@ -118,6 +120,8 @@ def logout_user(request):
     project = None
     global animation
     animation = None
+    global simulation
+    simulation = None
     global projects
     projects = []
     global projectOpen
@@ -145,20 +149,35 @@ def make_project(request):
                 global simsamuser
                 if len(simsamuser.projects.filter(name=projectName)) > 0:
 			# if the project name already exists, open it
-			openproject(request)
+			chooseproject(request)
                 else:
+			# set up the new project			
 			global project
 			project = Project.objects.create(name=projectName, owner=simsamuser)
-			numAnims = len(project.animations.all())
 			global animation
-			animation = project.animations.create(name=projectName + str(numAnims))               
+			animation = project.animations.create(name=projectName + "-anim" + str(0))
+			global simulation
+			simulation = project.simulations.create(name=projectName + "-sim" + str(0))               
 			global projectOpen
 			projectOpen = True
-        global framesequence
-  	framesequence = []
-        global spritecollection
+        		global framesequence
+  			framesequence = []
+        		global spritecollection
+			spritecollection = []
+	return HttpResponseRedirect('/samlite')
+
+def newanim(request):
+	# add a new animation to the current project
+	numAnims = len(project.animations.all())
+        projectName = str(project.name)
+        global animation
+	animation = project.animations.create(name=projectName + "-anim" + str(numAnims))
+	global framesequence
+	framesequence = []
+	global spritecollection
 	spritecollection = []
 	return HttpResponseRedirect('/samlite')
+	
     	
 def openproject(request):
         # display the page listing current projects
@@ -178,6 +197,7 @@ def chooseproject(request):
 		project = Project.objects.get(name=projectname, owner=simsamuser)
 		animations = project.animations.all()
         	if len(animations) > 0:
+			# if there is an associated animation, open it
 			global animation
 			animation = animations[0]
 			fs = str(animation.frame_sequence)
@@ -191,6 +211,7 @@ def chooseproject(request):
 		else:
 			global animation
 			animation = None
+		# variables used to tell samlite.html what to display
                 global projectOpen
 		projectOpen = True
 		global chooseProject 
