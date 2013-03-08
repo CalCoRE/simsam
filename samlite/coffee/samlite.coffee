@@ -10,7 +10,7 @@ overlayClass = "overlay-frame"
 playbackClass = "playback-frame"
 window.isPlaying = false
 window.playbackIndex = 0
-window.debug = false            # turns on console logging
+window.debug = true             # turns on console logging
 
 $(document).ready ->
 
@@ -58,6 +58,7 @@ $(document).ready ->
     
     #http://farhadi.ir/projects/html5sortable/
     $("#video_output").sortable().bind 'sortupdate', rescanThumbnails
+    $("#video_output").sortable().bind 'sortupdate', saveFrameSequence
     $("#trash").sortable({connectWith:"#video_output"}).bind 'receive', trash
     
     # fps slider
@@ -182,7 +183,7 @@ saveCanvas = (canvas, tempId) ->
         dataType: "json"
 
     done = (response) ->
-        console.log "save canvas ajax response", response
+        if window.debug then console.log "save canvas ajax, sent:", ajaxOptions, "response:", response
         if response.success
             # re-index the frame according to it's new, server-issued id
             frame = frameRegistry[tempId]
@@ -193,6 +194,28 @@ saveCanvas = (canvas, tempId) ->
             $(frame).attr "data-frame-id", response.id
             $("#video_output canvas[data-frame-id='#{tempId}']").attr "data-frame-id",
                 response.id
+
+    $.ajax(ajaxOptions).done(done)
+
+# called by the sortable container of thumbnails, sends ordered list of
+# frame ids to the server for saving
+saveFrameSequence = ->
+    frameSequence = ($(frame).attr("data-frame-id") for frame in playbackFrames)
+
+    ajaxOptions =
+        url: "save_frame_sequence"
+        type: "POST"
+        data:
+            animation_id: window.animationId
+            frame_sequence: frameSequence
+        dataType: "json"
+
+    done = (response) ->
+        if window.debug then console.log "save frame sequence ajax, sent:", ajaxOptions, "response:", response
+        if response.success
+            1 # do nothing, I think
+        else
+            console.error response.message
 
     $.ajax(ajaxOptions).done(done)
 
@@ -242,15 +265,6 @@ rescanThumbnails = ->
             placeFrame index, overlayClass
             window.playbackIndex = index
             updateIndexView()
-    ajaxOptions =
-        url: "updateFrameSequence"
-        type: "POST"
-        data:
-            frameSequence: idsToSave
-        dataType: "json"
-    done = (response) ->
-        if response.success then console.log(response.message)
-    $.ajax(ajaxOptions).done(done)
 	
     updateIndexView()
     

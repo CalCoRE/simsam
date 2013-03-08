@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.contrib.auth import authenticate, login, logout
-from django.utils import simplejson
+from django.utils import simplejson as json
 
 import random
 
@@ -63,10 +63,10 @@ def save_image(request):
     elif image_type == 'Sprite':
         image_class = Sprite
     else:
-        return HttpResponse('''{
-            "success": false, 
-            "message": "invalid image type: %s"
-        }''' % image_type)
+        return HttpResponse(json.dumps({
+            'success': False, 
+            'message': "Invalid image type: %s." % image_type
+        }))
 
     image_obj = image_class();
     image_obj.set_image_string(image_string)
@@ -89,7 +89,26 @@ def save_image(request):
     animation.save()
     global image_hash
     image_hash = image_obj.image_hash
-    return HttpResponse('{"success": true, "id": %s}' % (image_obj.image_hash))
+    return HttpResponse(json.dumps({
+        'success': True,
+        'id': image_obj.image_hash
+    }))
+
+def save_frame_sequence(request):
+    animation_id = request.POST.get(u'animation_id', default=None)
+    frame_sequence = [int(x) for x in request.POST.getlist(u'frame_sequence[]')]
+    try:
+        animation = Animation.objects.get(id=animation_id)
+    except Animation.DoesNotExist:
+        success = False
+        message = "Invalid animation_id: %s." % animation_id
+    else:
+        success = True
+        message = ''
+        animation.frame_sequence = frame_sequence
+        animation.save()
+
+    return HttpResponse(json.dumps({'success': success, 'message': message}))
 
 #process user login
 def login_user(request):
