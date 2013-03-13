@@ -180,6 +180,7 @@ saveCanvas = (canvas, tempId) ->
         data:
             image_string: imageString
             image_type: "AnimationFrame"
+            animation_id: window.animationId
         dataType: "json"
 
     done = (response) ->

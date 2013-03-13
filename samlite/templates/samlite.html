@@ -25,11 +25,16 @@
 
     <script type="text/javascript">
         window.animationId = {{ animation.id }};
+        //window.simsamuser = {{ simsamuser }};
+	window.framesequence = "{{ frame_sequence }}".replace(/&#39;/g, "'");
+	window.framesequence = window.framesequence.replace(/'',/, "");
     </script>
     
 </head>
 <body class="unselectable">
 <!-- only display this if the user is logged in -->
+<p>animationId = {{ animation.id }}</p>
+
 {% if user.is_authenticated %}
     <h1>{{ frame_registry }}</h1>
     <h1>{{ hello }}</h1>
@@ -60,14 +65,6 @@
     <!-- if a project is open or starting a new project, show the simsam applications -->
     <p>{{ frame_sequence }}</p>
     <p>{{ sprite_collection }}</p>
-    <script>
-	framesequence = "{{ frame_sequence }}".replace(/&#39;/g, "'");
-	framesequence = framesequence.replace(/'/g, "");
-	framesequence = framesequence.replace("[", "");
-	framesequence = framesequence.replace("]", "");
-	framesequence = framesequence.split(", ");
-        spritecollection = {{ sprite_collection }};
-    </script>
 
     <br />
     <h2>Project: {{ project.name }}</h2>
@@ -110,9 +107,35 @@
             </div>
             <div id="trash"></div>
 
-	    <form action="newanim" method="post">
+	    <button onclick="newanim()">Start a New Animation</button>
+	    <script type="text/javascript">
+		function newanim() {
+			ajaxOptions = {
+				url: "newanim",
+				type: "POST",
+				data: {
+				  projectId: {{ project.id }}
+				},
+				dataType: "json"
+			};
+			done = function(response) {
+				if (window.debug) {
+				  console.log("new animation ajax, sent:", ajaxOptions, "response:", response);
+				}
+				if (response.success){
+				  return 1;
+				} else {
+				  return console.error(response.message);
+				}
+			};
+			return $.ajax(ajaxOptions).done(done);
+		    }
+	    </script>
+
+	    <!-- <form action="newanim" method="post">
 		<input type="submit" value="Start a New Animation" />
-    	    </form>
+    	    </form> -->
+		
 
             <div style="display:none">
                 playback index:
