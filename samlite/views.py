@@ -32,8 +32,6 @@ def index(request):
     spritecollection = []
     image_hash = ""
     projectOpen = False
-    chooseProject = False
-    openingProject = False
     if request.user.is_authenticated():
 	user = request.user
         if hasattr(user, '_wrapped') and hasattr(user, '_setup'):
@@ -44,7 +42,7 @@ def index(request):
         projects = Project.objects.filter(owner=simsamuser)
     animations = Animation.objects.all()
     t = loader.get_template("samlite.html")
-    c = RequestContext(request, {"project": project, "animation": animation, "projectOpen": projectOpen, "image_hash": image_hash, "projectList": projects, "chooseProject": chooseProject, "frame_sequence": framesequence, "sprite_collection": spritecollection, "openingProject": openingProject, "simulation": simulation, "simsamuser": simsamuser})
+    c = RequestContext(request, {"project": project, "animation": animation, "projectOpen": projectOpen, "image_hash": image_hash, "projectList": projects, "frame_sequence": framesequence, "sprite_collection": spritecollection, "simulation": simulation, "simsamuser": simsamuser})
     return HttpResponse(t.render(c))
     
 def save_image(request, digit):
@@ -88,45 +86,25 @@ def save_image(request, digit):
         'id': image_obj.image_hash
     }))
 
-def save_frame_sequence(request):
-    animation_id = request.POST.get(u'animation_id', default=None)
-    frame_sequence = [int(x) for x in request.POST.getlist(u'frame_sequence[]')]
-    try:
-        animation = Animation.objects.get(id=animation_id)
-    except Animation.DoesNotExist:
-        success = False
-        message = "Invalid animation_id: %s." % animation_id
-    else:
-        success = True
-        message = ''
-        animation.frame_sequence = frame_sequence
+#save a new frame sequence after images have been moved around in the timeline
+def save_frame_sequence(request, digit):
+    if request.POST:
+    	animation_id = request.POST.get(u'animation_id', default=None)
+    	frame_sequence = [int(x) for x in request.POST.getlist(u'frame_sequence[]')]
+	animation = Animation.objects.get(id=animation_id)
+        animation.frame_sequence = ""
+        for frameId in frame_sequence:
+	    animation.frame_sequence = animation.frame_sequence + ", " + str(frameId)
         animation.save()
 
-    return HttpResponse(json.dumps({'success': success, 'message': message}))
-
-#process user login
-def login_user(request):
-    state = "Please log in below..."
-    username = password = ''
-    if request.POST:
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-                state = "You're successfully logged in!"
-                return HttpResponseRedirect('/samlite')
-            else:
-                state = "Your account is not active, please contact the site admin."
-    return HttpResponseRedirect('/samlite')
-
-    #return render_to_response('samlite.html', {'state':state, 'username': username})
+    return HttpResponse(json.dumps({
+	'success': True,
+        'message': "hello"
+    }))
 
 def logout_user(request, digit):
     logout(request)
-    return HttpResponseRedirect("/samlite")
+    return HttpResponseRedirect("/")
 
 #start a new project
 def make_project(request, digit):
@@ -156,20 +134,23 @@ def make_project(request, digit):
 	c = RequestContext(request, {"project": project, "animation": animation, "projectOpen": projectOpen, "frame_sequence": framesequence, "sprite_collection": spritecollection, "openingProject": openingProject, "simulation": simulation, "simsamuser": simsamuser})
     	return HttpResponse(t.render(c))
 
-def newanim(request):
-	# add a new animation to the current project
-	project = None
-	framesequence = []
-	spritecollection = []
-        if request.POST:
-		project = request.POST.get('project')
-		numAnims = len(project.animations.all())
-        	projectName = str(project.name)
-		animation = project.animations.create(name=projectName + "-anim" + str(numAnims))
-	t = loader.get_template("samlite.html")
-	c = RequestContext(request, {"project": project, "animation": animation, "frame_sequence": framesequence, "sprite_collection": spritecollection})
-    	return HttpResponse(t.render(c))
-	#return HttpResponseRedirect('/samlite')
+def newanim(request, digit):
+    projectOpen = False
+    framesequence = spritecollection = []
+    simsamuser = project = animation = None
+    if request.POST:
+	project_id = request.POST.get(u'projectId')
+        simsamuser = request.POST.get(u'simsamuser')
+	project = Project.objects.get(id=project_id)
+	numAnims = len(project.animations.all())
+	projectName = str(project.name)
+	animation = project.animations.create(name=projectName + "-anim" + str(numAnims))
+	animation.save()
+        projectOpen = True
+	
+    t = loader.get_template("samlite.html")
+    c = RequestContext(request, {"project": project, "animation": animation, "projectOpen": projectOpen, "frame_sequence": framesequence, "sprite_collection": spritecollection, "simsamuser": simsamuser})
+    return HttpResponse(t.render(c))    
     	
 def openproject(request, digit):
         # display the page listing current projects

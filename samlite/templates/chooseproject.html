@@ -7,6 +7,10 @@
 	<link rel="stylesheet" href="{{ STATIC_URL }}css/samlite.css">
 	<link rel="stylesheet" href="http://code.jquery.com/ui/1.9.0/themes/base/jquery-ui.css">
 
+	<script src="{{ STATIC_URL }}js/jquery.js"></script>
+    	<script src="{{ STATIC_URL }}js/jquery-ui.js"></script>
+	<script src="{{ STATIC_URL }}js/samlite.js"></script>
+
 
 </head>
 
@@ -21,12 +25,13 @@
 	</div>
 
 	<h3>Projects</h3>
-	<form action="chooseproject/" method="post">
+	<form method="post" name="myForm" action="chooseproject/">
 		{% for project in projectList %}
-		  <input type="radio" name="projectName" value="{{ project.name }}" />{{ project.name }}<br>
+		  <input type="radio" name="projectName" value="{{ project.name }}" onClick=0 />{{ project.name }}<br>
 		{% endfor %}
-		<input type="submit" value="Open Project" />
+		<input type="submit" value="Open Project" /> 
 	</form>
+	
 
 
 </body>

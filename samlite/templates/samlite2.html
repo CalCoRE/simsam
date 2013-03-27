@@ -23,6 +23,7 @@
 
     <script type="text/javascript">
         window.animationId = {{ animation.id }};
+        //window.simsamuser = {{ simsamuser }};
 	window.framesequence = "{{ frame_sequence }}".replace(/&#39;/g, "'");
 	window.framesequence = window.framesequence.replace(/'',/, "");
 	window.projectId = {{ project.id }};
@@ -48,6 +49,16 @@
         </div>
         
     </div>
+    {% if chooseProject %}
+        <!-- display list of user's projects to open -->
+	<h3>Projects</h3>
+	<form action="chooseproject/" method="post">
+		{% for proj in projectList %}
+		  <input type="radio" name="projectName" value="{{ proj.name }}" />{{ proj.name }}<br>
+		{% endfor %}
+		<input type="submit" value="Open Project" />
+	</form>
+    {% endif %}
 
     {% if projectOpen %}
     <!-- if a project is open or starting a new project, show the simsam applications -->
@@ -56,8 +67,6 @@
 
     <br />
     <h2>Project: {{ project.name }}</h2>
-    
-    <input type="button" value="Open Animation" class="switchbutton" id="openanim"></input>
    
     <div id="main_container" class="float_container">
  	
@@ -97,11 +106,7 @@
             </div>
             <div id="trash"></div>
 
-	    <form action="newanim" method="post">
-        	<input type="hidden" name="projectId" id="projectId" value={{ project.id }} />
-		<input type="hidden" name="simsamuser" id="simsamuser" value="{{ simsamuser }}" />
-		<input type="submit" value="Start a New Animation" />
-	    </form>
+	    <input type="button" value="Start a New Animation" class="switchbutton" id="newanim"></input>
 
 	    <!-- <form action="newanim" method="post">
 		<input type="submit" value="Start a New Animation" />
@@ -135,18 +140,32 @@
     {% else %}
     {% endif %}
 
-
-    <form class="chooseproject" action="openproject" method="post">
-	<input type="submit" value="Open Project" />
-    </form>
-
+    {% if chooseProject %}
+    {% else %}
+      <form class="chooseproject" action="openproject" method="post">
+	  <input type="submit" value="Open Project" />
+      </form>
+    {% endif %}
     <form class="chooseproject" action="make_project" method="post">
         New Project Name: <input type="text" name="projectName" />
 	<input type="submit" value="Make New Project" />
     </form>
-{% else %}
-    <p>Error: you are not logged in!</p>
 
+
+    <!-- login form, displayed when user is not logged in -->
+{% else %}
+    <div class="header">
+        {{ state }}
+       <!--  <h1 class="greeting">Login</h1> -->
+    </div>
+	<form id="login" action="login/" method="post">
+		username:
+		<input type="text" name="username" value="{{ username }}" /><br />
+		password:
+		<input type="password" name="password" value="" /><br />
+
+		<input id="loginbutton" type="submit" value="Log In" />
+	</form>
 {% endif %} 
 
 </body>

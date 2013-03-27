@@ -12,6 +12,8 @@ window.isPlaying = false
 window.playbackIndex = 0
 window.debug = true             # turns on console logging
 
+window.animationId = 1
+
 $(document).ready ->
 
     # hide elements of sim
@@ -201,6 +203,7 @@ saveCanvas = (canvas, tempId) ->
 # called by the sortable container of thumbnails, sends ordered list of
 # frame ids to the server for saving
 saveFrameSequence = ->
+    if window.debug then console.log "saveFrameSequence"
     frameSequence = ($(frame).attr("data-frame-id") for frame in playbackFrames)
 
     ajaxOptions =
@@ -214,10 +217,11 @@ saveFrameSequence = ->
     done = (response) ->
         if window.debug then console.log "save frame sequence ajax, sent:", ajaxOptions, "response:", response
         if response.success
-            1 # do nothing, I think
-        else
-            console.error response.message
-
+            console.log response.message
+            # do nothing, I think
+        #else
+        #    console.error response.message
+    
     $.ajax(ajaxOptions).done(done)
 
 # remove the css class that makes the frame transparent (if it's there) and
@@ -266,7 +270,7 @@ rescanThumbnails = ->
             placeFrame index, overlayClass
             window.playbackIndex = index
             updateIndexView()
-	
+
     updateIndexView()
     
 # Called by the "trash" (really a sortable list linked with the thumbnail
@@ -391,4 +395,7 @@ startSamlite = ->
     $('#container').hide()
     $('#output').hide()
     $('#sambutton').hide()
+
+openProject = ->
+    alert("open project")
     

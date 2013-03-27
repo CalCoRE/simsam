@@ -1,8 +1,38 @@
 <!Doctype html>
 <head>
     <title>SiMSAM</title>
+
+    <script src="{{ STATIC_URL }}js/jquery.js"></script>
+    <script src="{{ STATIC_URL }}js/jquery-ui.js"></script>
+    <script src="{{ STATIC_URL }}js/html5sortable.js"></script>
+    <script src="{{ STATIC_URL }}js/iphone-style-checkboxes.js"></script>
+    <script src="{{ STATIC_URL }}js/html5support.js"></script>
+    <script src="http://kineticjs.com/download/v4.0.5/kinetic-v4.0.5.js"></script>
+    <script src="http://html5demos.com/h5utils.js"></script>
+
+    <script src="{{ STATIC_URL }}js/simlite.js"></script>
+    <script src="{{ STATIC_URL }}js/cropTool.js"></script>
+    <script src="{{ STATIC_URL }}js/samlite.js"></script>
+    
+
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/samlite.css">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.0/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/iphone-style-checkboxes.css">
 </head>
+
+
 <body>
-    SiMSAM home page
+
+<div class="header">
+    </div>
+	<form id="login" action="login/" method="post">
+		username:
+		<input type="text" name="username" value="{{ username }}" /><br />
+		password:
+		<input type="password" name="password" value="" /><br />
+
+		<input id="loginbutton" type="submit" value="Log In" />
+	</form>
+
 </body>
 </html>

@@ -13,6 +13,7 @@ urlpatterns = patterns('',
     url(r"^sandbox$", "home.views.sandbox"),
     url(r"^samlite/", include("samlite.urls")),
     url(r"^simlite/", "simlite.views.index"),
+    url(r"^login/$", "home.views.login_user"),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
