@@ -31,7 +31,7 @@
 </head>
 <body class="unselectable">
 <!-- only display this if the user is logged in -->
-<p>animationId = {{ animation.id }}</p>
+<!-- <p>animationId = {{ animation.id }}</p> -->
 
 {% if user.is_authenticated %}
     <h1>{{ frame_registry }}</h1>
@@ -51,14 +51,13 @@
 
     {% if projectOpen %}
     <!-- if a project is open or starting a new project, show the simsam applications -->
-    <p>{{ frame_sequence }}</p>
+    <!-- <p>{{ frame_sequence }}</p>
     <p>{{ sprite_collection }}</p>
 
-    <br />
-    <h2>Project: {{ project.name }}</h2>
+    <br /> -->
+    <h2>Project: {{ project.name }}</h2>Animation: {{ animation.name }} &nbsp; Simulation: {{ simulation.name }} 
+    <p></p>
     
-    <input type="button" value="Open Animation" class="switchbutton" id="openanim"></input>
-   
     <div id="main_container" class="float_container">
  	
 
@@ -103,10 +102,7 @@
 		<input type="submit" value="Start a New Animation" />
 	    </form>
 
-	    <!-- <form action="newanim" method="post">
-		<input type="submit" value="Start a New Animation" />
-    	    </form> -->
-		
+	    <input type="button" value="Open Animation" class="switchbutton" id="openanim" />
 
             <div style="display:none">
                 playback index:
@@ -116,6 +112,7 @@
         <div id="sprite_container">
         </div>
     </div>
+
 
     <div id="container"></div>
     <div id="output"></div>

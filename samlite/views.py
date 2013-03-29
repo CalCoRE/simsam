@@ -31,7 +31,8 @@ def index(request):
     framesequence = []
     spritecollection = []
     image_hash = ""
-    projectOpen = False
+    projectOpen = True
+    #projectOpen = False
     if request.user.is_authenticated():
 	user = request.user
         if hasattr(user, '_wrapped') and hasattr(user, '_setup'):
@@ -135,7 +136,7 @@ def make_project(request, digit):
     	return HttpResponse(t.render(c))
 
 def newanim(request, digit):
-    projectOpen = False
+    projectOpen = True
     framesequence = spritecollection = []
     simsamuser = project = animation = None
     if request.POST:
@@ -150,18 +151,20 @@ def newanim(request, digit):
 	
     t = loader.get_template("samlite.html")
     c = RequestContext(request, {"project": project, "animation": animation, "projectOpen": projectOpen, "frame_sequence": framesequence, "sprite_collection": spritecollection, "simsamuser": simsamuser})
-    return HttpResponse(t.render(c))    
+    return HttpResponse(t.render(c))   
     	
 def openproject(request, digit):
         # display the page listing current projects
+	user = ""
+	projects = []
  	if request.user.is_authenticated():
 		user = request.user
-        if hasattr(user, '_wrapped') and hasattr(user, '_setup'):
-		if user._wrapped.__class__ == object:
-			user._setup()
-		user = user._wrapped
-        simsamuser = SimsamUser.objects.filter(user=user)[0]
-	projects = Project.objects.filter(owner=simsamuser)
+        	if hasattr(user, '_wrapped') and hasattr(user, '_setup'):
+			if user._wrapped.__class__ == object:
+				user._setup()
+			user = user._wrapped
+        	simsamuser = SimsamUser.objects.get(user=user)
+		projects = Project.objects.filter(owner=simsamuser)
     	t = loader.get_template("chooseproject.html")
     	c = RequestContext(request, {"projectList": projects})
 	return HttpResponse(t.render(c))

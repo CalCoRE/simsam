@@ -57,6 +57,8 @@ $(document).ready ->
     $(buttons.shoot).button()
     $("#simbutton").click startSimlite
     $("#sambutton").click startSamlite
+
+    $(".projectName").click openProject
     
     #http://farhadi.ir/projects/html5sortable/
     $("#video_output").sortable().bind 'sortupdate', rescanThumbnails

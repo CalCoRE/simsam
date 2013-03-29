@@ -14,6 +14,12 @@ urlpatterns = patterns('',
     url(r"^samlite/", include("samlite.urls")),
     url(r"^simlite/", "simlite.views.index"),
     url(r"^login/$", "home.views.login_user"),
+    url(r"^(.*)openproject$", "samlite.views.openproject"),
+    url(r"^(.*)make_project$", "samlite.views.make_project"),
+    url(r"^(.*)chooseproject/$", "samlite.views.chooseproject"),
+    url(r"^(.*)newanim", "samlite.views.newanim"),
+    url(r"^(.*)logout/", "samlite.views.logout_user"),
+    #url(r"^(.*)", include("samlite.urls")),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

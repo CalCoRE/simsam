@@ -65,6 +65,7 @@
     $(buttons.shoot).button();
     $("#simbutton").click(startSimlite);
     $("#sambutton").click(startSamlite);
+    $(".projectName").click(openProject);
     $("#video_output").sortable().bind('sortupdate', rescanThumbnails);
     $("#video_output").sortable().bind('sortupdate', saveFrameSequence);
     $("#trash").sortable({
