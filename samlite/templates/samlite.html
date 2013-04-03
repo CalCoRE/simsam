@@ -25,13 +25,21 @@
         window.animationId = {{ animation.id }};
 	window.framesequence = "{{ frame_sequence }}".replace(/&#39;/g, "'");
 	window.framesequence = window.framesequence.replace(/'',/, "");
+	window.framesequence = window.framesequence.replace("[ '", "");
+	window.framesequence = window.framesequence.replace("']", "");
+	window.framesequence = window.framesequence.split("', '");
 	window.projectId = {{ project.id }};
+        window.spritecollection = "{{ sprite_collection }}".replace(/&#39;/g, "'");
+	window.spritecollection = window.spritecollection.replace(/'',/, "");
+	window.spritecollection = window.spritecollection.replace("[ '", "");
+	window.spritecollection = window.spritecollection.replace("']", "");
+	window.spritecollection = window.spritecollection.split("', '");
     </script>
     
 </head>
 <body class="unselectable">
 <!-- only display this if the user is logged in -->
-<!-- <p>animationId = {{ animation.id }}</p> -->
+<p>animationId = {{ animation.id }}</p>
 
 {% if user.is_authenticated %}
     <h1>{{ frame_registry }}</h1>
@@ -51,10 +59,10 @@
 
     {% if projectOpen %}
     <!-- if a project is open or starting a new project, show the simsam applications -->
-    <!-- <p>{{ frame_sequence }}</p>
+    <p>{{ frame_sequence }}</p>
     <p>{{ sprite_collection }}</p>
 
-    <br /> -->
+    <br />
     <h2>Project: {{ project.name }}</h2>Animation: {{ animation.name }} &nbsp; Simulation: {{ simulation.name }} 
     <p></p>
     
@@ -122,7 +130,7 @@
 	<button class="crop_button" id="savecrop" onclick="getResults()">Save Crop</button>
 	<button class="crop_button" id="cancelcrop" onclick="deleteRect()">Cancel Crop</button>
     </div>
-	
+
    
 
     <h3>Cropped Images - Sprites</h3>

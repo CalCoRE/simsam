@@ -12,17 +12,11 @@ window.isPlaying = false
 window.playbackIndex = 0
 window.debug = true             # turns on console logging
 
-window.animationId = 1
-
 $(document).ready ->
 
-    #console.log(playbackFrames)
-    #console.log(frameRegistry)
-
-	#load sprite image from file
-        #playbackFrames[i] = window.spritecollection[i]
-    
-	# frameRegistry[i] =  i<window.spritecollection.length; window.spritecollection.forEach(displayCanvas)
+    alert(window.animationId)
+    console.log(window.framesequence)
+    console.log(window.spritecollection)
 
     # hide elements of sim
     $('#sambutton').hide()
@@ -66,6 +60,7 @@ $(document).ready ->
     $("#simbutton").click startSimlite
     $("#sambutton").click startSamlite
 
+    # $('.projectName').click openProject
     
     #http://farhadi.ir/projects/html5sortable/
     $("#video_output").sortable().bind 'sortupdate', rescanThumbnails
@@ -91,56 +86,6 @@ $(document).ready ->
     # other browsers SHOULD be handled through the .unselectable class
     # on the body tag
     # see http://stackoverflow.com/questions/2326004/prevent-selection-in-html
-    for element in window.spritecollection
-        loadSprites(element)
-
-    for element in window.framesequence
-        loadFrames(element)
-
-loadSprites = (sprite) ->
-    output = $("#crop_output").get(0) 
-    canvas = document.createElement('canvas')
-    ctx = canvas.getContext('2d')
-    img = new Image()
-    img.onload = ->
-        canvas.width = img.width
-        canvas.height = img.height
-        ctx.drawImage(img, 0, 0, img.width, img.height)
-    img.src = 'http://' + window.location.host + '/static/sprites/' + sprite + '.jpg'
-    $(canvas).attr("data-frame-id", sprite)
-    output.appendChild canvas   
-
-loadFrames = (frame) ->
-    output = $("#video_output").get(0)
-    canvas = document.createElement('canvas')
-    ctx = canvas.getContext('2d')
-    img = new Image()
-    img.onload = ->
-        canvas.width = img.width
-        canvas.height = img.height
-        ctx.drawImage(img, 0, 0, img.width, img.height)
-    img.src = 'http://' + window.location.host + '/static/sam_frames/' + frame + '.jpg'
-    frameOrdinal = playbackFrames.push canvas
-    frameId = frameIndex = frameOrdinal - 1
-    $(canvas).attr("data-frame-id", frame)
-    #canvas.setAttribute "unselectable", "off"
-    output.appendChild canvas  
-    frameRegistry[frame] = canvas
-    $("#video_output").sortable "refresh"
-    rescanThumbnails()
-    $(canvas).attr("id", "canvas")
-    #placeFrame frame, overlayClass
-    console.log(frameRegistry)
-    console.log(playbackFrames)
-
-        
-        #frame = temp_canvas
-        #frameOrdinal = playbackFrames.push frame
-        #thumbnail = capture frame, thumbnailScaleFactor
-        #frameId = frameIndex = frameOrdinal - 1
-        #$(thumbnail).attr "data-frame-id", frameId
-        
-        
         
 makeUnselectable = (node) ->
     if node.nodeType is 1
@@ -153,7 +98,7 @@ makeUnselectable = (node) ->
 # These don't actually turn the camera on and off; it's really always on
 # they just show and hide the canvas displaying what the camera sees
 
-toggleCamera = ->
+toggleCamera = -> 
     clearPlayback()
     if cameraSwitch.is ':checked'
         if window.debug then console.log "toggle camera off"
@@ -205,10 +150,7 @@ window.shoot = ->
     # store a new frame
     frame = capture video, 1
     frameOrdinal = playbackFrames.push frame
-    console.log("first")
-    console.log(playbackFrames)
     thumbnail = capture video, thumbnailScaleFactor
-    console.log(video)
     frameId = frameIndex = frameOrdinal - 1
         
     # store ids that link the frame and the thumbnail
@@ -220,8 +162,6 @@ window.shoot = ->
     # store the frame in the registry so the playback frames can be reordered
     # by id when the thumbnails are reordered
     frameRegistry[frameId] = frame
-    console.log(frameRegistry)
-    console.log(playbackFrames)
     
     # display the thumbnail
     output.appendChild thumbnail
@@ -237,6 +177,7 @@ window.shoot = ->
     
 
 saveCanvas = (canvas, tempId) ->
+    alert("saveCanvas")
     imageStringRaw = canvas.toDataURL "image/jpeg"
     imageString = imageStringRaw.replace "data:image/jpeg;base64,", ""
     
@@ -306,12 +247,9 @@ placeFrame = (frameIndex, className = "") ->
     if window.debug then console.log "placeFrame"
     clearPlayback()
     frame = playbackFrames[frameIndex]
-    console.log("frame")
-    console.log(frame)
     # allow special overlay styling of frames
     $(frame).addClass className
     frame.id = "canvas"
-    # this step is causing a problem - removes the thumbnail image for some reason
     $("#playback_container").append frame
     
 # run through the canvas elements in the thumbnail list and update
@@ -462,5 +400,8 @@ startSamlite = ->
     $('#container').hide()
     $('#output').hide()
     $('#sambutton').hide()
-    
+
+openProject = ->
+    alert("open project")
+    console.log("openProject")
     

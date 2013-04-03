@@ -81,7 +81,7 @@ def save_image(request, digit):
 	   	animation.sprite_collection = animation.sprite_collection + ", " + image_obj.image_hash
 		animation.save()
 	animation.save()
-		
+
     return HttpResponse(json.dumps({
         'success': True,
         'id': image_obj.image_hash
@@ -148,7 +148,7 @@ def newanim(request, digit):
 	animation = project.animations.create(name=projectName + "-anim" + str(numAnims))
 	animation.save()
         projectOpen = True
-	
+
     t = loader.get_template("samlite.html")
     c = RequestContext(request, {"project": project, "animation": animation, "projectOpen": projectOpen, "frame_sequence": framesequence, "sprite_collection": spritecollection, "simsamuser": simsamuser})
     return HttpResponse(t.render(c))   
@@ -206,6 +206,6 @@ def chooseproject(request, digit):
     	c = RequestContext(request, {"project": project, "projectOpen": projectOpen, "chooseProject": chooseProject, "frame_sequence": framesequence, "sprite_collection": spritecollection, "openingProject": openingProject, "simsamuser": simsamuser, "animation": animation})
 	#t.render(c)
    	return HttpResponse(t.render(c))		
-		
+
 
 	

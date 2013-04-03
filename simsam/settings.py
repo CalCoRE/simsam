@@ -86,6 +86,7 @@ STATICFILES_DIRS = (
     ("css", os.path.join(SITE_ROOT, '../simlite/css')),
     ("images", os.path.join(SITE_ROOT, '../simlite/images')), 
     ("sam_frames", os.path.join(SITE_ROOT, '../sitestatic/media/sam_frames')),
+    ("sprites", os.path.join(SITE_ROOT, '../sitestatic/media/sprites')),
 
     os.path.join(SITE_ROOT, '../home/static'), 
     os.path.join(SITE_ROOT, '../samlite/static'),
