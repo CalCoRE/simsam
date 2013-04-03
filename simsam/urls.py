@@ -21,6 +21,7 @@ urlpatterns = patterns('',
     url(r"^(.*)openAnim", "samlite.views.openAnim"),
     url(r"^(.*)logout/", "samlite.views.logout_user"),
     url(r"^(.*)save_image$", "samlite.views.save_image"),
+    url(r"^(.*)chooseanim$", "samlite.views.chooseanim"),
     #url(r"^(.*)", include("samlite.urls")),
 
     # Uncomment the admin/doc line below to enable admin documentation:

@@ -14,5 +14,6 @@ urlpatterns = patterns("",
     url(r"^(.*)newanim", views.newanim, name="newanim"),
     url(r"^(.*)openAnim", views.openAnim, name="openAnim"),
     url(r"^(.*)logout/", views.logout_user, name="logout_user"),
+    url(r"^(.*)chooseanim$", views.chooseanim, name="chooseanim"),
     #url(r"^(?P<frame_registry>\d+)/$", views.save_project, name="save_project")
 )

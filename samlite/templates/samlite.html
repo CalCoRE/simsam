@@ -137,13 +137,13 @@
 	<form action="openAnim" method="post">
 		<input type="hidden" name="projectId" id="projectId" value={{ project.id }} />
 		<input type="submit" value="Open Different Animation" />
-	    </form>
-	    <form action="newanim" method="post">
+	</form>
+	<form action="newanim" method="post">
 		<input type="hidden" name="projectId" id="projectId" value={{ project.id }} />
 		<input type="hidden" name="simsamuser" id="simsamuser" value="{{ simsamuser }}" />
 		New Animation Name: <input type="text" name="animName" />
 		<input type="submit" value="Make New Animation" />
-	    </form>
+	</form>
 
     <h3>Cropped Images - Sprites</h3>
     <div id="crop_output"></div>

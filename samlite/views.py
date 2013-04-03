@@ -215,7 +215,38 @@ def chooseproject(request, digit):
    	return HttpResponse(t.render(c))
 
 def openAnim(request, digit):
-    return True	
+    	user = ""
+	animations = []
+	project = None
+ 	if request.POST:
+		projectId = request.POST.get(u'projectId')
+		project = Project.objects.get(id=projectId)
+		animations = project.animations.all()
+    	t = loader.get_template("chooseanim.html")
+    	c = RequestContext(request, {"animList": animations, "project": project})
+	return HttpResponse(t.render(c))
+
+def chooseanim(request, digit):
+	animations = []
+	simsamuser = None
+	project = None
+	framesequence = []
+	spritecollection = []
+	animation = None
+	if request.POST:
+		projectId = request.POST.get(u'projectId')
+		animId = request.POST.get(u'animId')
+		project = Project.objects.get(id=projectId)
+		animation = Animation.objects.get(id=animId)
+		fs = str(animation.frame_sequence)
+		if len(fs) > 0:
+			framesequence = fs.split(', ')
+		sc = str(animation.sprite_collection)
+		if len(sc) > 0:
+			spritecollection = sc.split(', ')
+	t = loader.get_template("samlite.html")
+	c = RequestContext(request, {"project": project, "projectOpen": True, "frame_sequence": framesequence, 	"sprite_collection": spritecollection, "animation": animation})
+   	return HttpResponse(t.render(c))
 
 
 	
