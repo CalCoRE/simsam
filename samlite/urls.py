@@ -12,6 +12,7 @@ urlpatterns = patterns("",
     url(r"^(.*)chooseproject/$", views.chooseproject, name="chooseproject"),
     url(r"^(.*)make_project$", views.make_project, name="make_project"),
     url(r"^(.*)newanim", views.newanim, name="newanim"),
+    url(r"^(.*)openAnim", views.openAnim, name="openAnim"),
     url(r"^(.*)logout/", views.logout_user, name="logout_user"),
     #url(r"^(?P<frame_registry>\d+)/$", views.save_project, name="save_project")
 )

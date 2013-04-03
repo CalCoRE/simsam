@@ -114,7 +114,7 @@
   };
 
   loadFrames = function(frame) {
-    var canvas, ctx, frameId, frameIndex, frameOrdinal, img, output;
+    var canvas, context, ctx, frameId, frameIndex, frameOrdinal, img, output, thumb, thumbnail;
     output = $("#video_output").get(0);
     canvas = document.createElement('canvas');
     ctx = canvas.getContext('2d');
@@ -126,15 +126,23 @@
     };
     img.src = 'http://' + window.location.host + '/static/sam_frames/' + frame + '.jpg';
     frameOrdinal = playbackFrames.push(canvas);
+    thumbnail = document.createElement('canvas');
+    context = thumbnail.getContext('2d');
+    thumb = new Image();
+    thumb.onload = function() {
+      thumbnail.width = thumb.width * thumbnailScaleFactor;
+      thumbnail.height = thumb.height * thumbnailScaleFactor;
+      return context.drawImage(thumb, 0, 0, thumbnail.width, thumbnail.height);
+    };
+    thumb.src = 'http://' + window.location.host + '/static/sam_frames/' + frame + '.jpg';
     frameId = frameIndex = frameOrdinal - 1;
-    $(canvas).attr("data-frame-id", frame);
-    output.appendChild(canvas);
-    frameRegistry[frame] = canvas;
+    $(thumbnail).attr("data-frame-id", frameId);
+    $(canvas).attr("data-frame-id", frameId);
+    frameRegistry[frameId] = canvas;
+    output.appendChild(thumbnail);
     $("#video_output").sortable("refresh");
     rescanThumbnails();
-    $(canvas).attr("id", "canvas");
-    console.log(frameRegistry);
-    return console.log(playbackFrames);
+    return placeFrame(frameIndex, overlayClass);
   };
 
   makeUnselectable = function(node) {
@@ -201,13 +209,13 @@
     clearPlayback();
     cameraOn();
     video = $("#camera").get(0);
+    console.log(video);
     output = $("#video_output").get(0);
     frame = capture(video, 1);
+    console.log("frame");
+    console.log(frame);
     frameOrdinal = playbackFrames.push(frame);
-    console.log("first");
-    console.log(playbackFrames);
     thumbnail = capture(video, thumbnailScaleFactor);
-    console.log(video);
     frameId = frameIndex = frameOrdinal - 1;
     $(thumbnail).attr("data-frame-id", frameId);
     $(frame).attr("data-frame-id", frameId);
@@ -302,8 +310,6 @@
     }
     clearPlayback();
     frame = playbackFrames[frameIndex];
-    console.log("frame");
-    console.log(frame);
     $(frame).addClass(className);
     frame.id = "canvas";
     return $("#playback_container").append(frame);

@@ -27,13 +27,22 @@
 	window.framesequence = window.framesequence.replace(/'',/, "");
 	window.framesequence = window.framesequence.replace("[ '", "");
 	window.framesequence = window.framesequence.replace("']", "");
-	window.framesequence = window.framesequence.split("', '");
+	if (window.framesequence == "[]") {
+		window.framesequence = [];
+	}
+        else {
+		window.framesequence = window.framesequence.split("', '");
+	}
 	window.projectId = {{ project.id }};
         window.spritecollection = "{{ sprite_collection }}".replace(/&#39;/g, "'");
 	window.spritecollection = window.spritecollection.replace(/'',/, "");
 	window.spritecollection = window.spritecollection.replace("[ '", "");
 	window.spritecollection = window.spritecollection.replace("']", "");
-	window.spritecollection = window.spritecollection.split("', '");
+	if (window.spritecollection == "[]") {
+		window.spritecollection = [];
+	} else {
+		window.spritecollection = window.spritecollection.split("', '");
+	}
     </script>
     
 </head>
@@ -103,14 +112,7 @@
                 <input type="hidden" id="fps" value="10">
             </div>
             <div id="trash"></div>
-
-	    <form action="newanim" method="post">
-        	<input type="hidden" name="projectId" id="projectId" value={{ project.id }} />
-		<input type="hidden" name="simsamuser" id="simsamuser" value="{{ simsamuser }}" />
-		<input type="submit" value="Start a New Animation" />
-	    </form>
-
-	    <input type="button" value="Open Animation" class="switchbutton" id="openanim" />
+	    
 
             <div style="display:none">
                 playback index:
@@ -132,6 +134,16 @@
     </div>
 
    
+	<form action="openAnim" method="post">
+		<input type="hidden" name="projectId" id="projectId" value={{ project.id }} />
+		<input type="submit" value="Open Different Animation" />
+	    </form>
+	    <form action="newanim" method="post">
+		<input type="hidden" name="projectId" id="projectId" value={{ project.id }} />
+		<input type="hidden" name="simsamuser" id="simsamuser" value="{{ simsamuser }}" />
+		New Animation Name: <input type="text" name="animName" />
+		<input type="submit" value="Make New Animation" />
+	    </form>
 
     <h3>Cropped Images - Sprites</h3>
     <div id="crop_output"></div>

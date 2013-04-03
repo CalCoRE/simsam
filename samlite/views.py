@@ -142,12 +142,19 @@ def newanim(request, digit):
     if request.POST:
 	project_id = request.POST.get(u'projectId')
         simsamuser = request.POST.get(u'simsamuser')
+	animName = request.POST.get('animName')
 	project = Project.objects.get(id=project_id)
-	numAnims = len(project.animations.all())
-	projectName = str(project.name)
-	animation = project.animations.create(name=projectName + "-anim" + str(numAnims))
-	animation.save()
-        projectOpen = True
+	if len(project.animations.filter(name=animName)) > 0:
+		# open the animation
+		openAnim(request, digit)
+	else:
+		animation = project.animations.create(name=animName)
+		project.save()
+		animation.save()
+	#numAnims = len(project.animations.all())
+	#projectName = str(project.name)
+	#animation = project.animations.create(name=projectName + "-anim" + str(numAnims))
+	#animation.save()
 
     t = loader.get_template("samlite.html")
     c = RequestContext(request, {"project": project, "animation": animation, "projectOpen": projectOpen, "frame_sequence": framesequence, "sprite_collection": spritecollection, "simsamuser": simsamuser})
@@ -205,7 +212,10 @@ def chooseproject(request, digit):
 	t = loader.get_template("samlite.html")
     	c = RequestContext(request, {"project": project, "projectOpen": projectOpen, "chooseProject": chooseProject, "frame_sequence": framesequence, "sprite_collection": spritecollection, "openingProject": openingProject, "simsamuser": simsamuser, "animation": animation})
 	#t.render(c)
-   	return HttpResponse(t.render(c))		
+   	return HttpResponse(t.render(c))
+
+def openAnim(request, digit):
+    return True	
 
 
 	

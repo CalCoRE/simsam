@@ -93,7 +93,6 @@ $(document).ready ->
     # see http://stackoverflow.com/questions/2326004/prevent-selection-in-html
     for element in window.spritecollection
         loadSprites(element)
-
     for element in window.framesequence
         loadFrames(element)
 
@@ -109,6 +108,7 @@ loadSprites = (sprite) ->
     img.src = 'http://' + window.location.host + '/static/sprites/' + sprite + '.jpg'
     $(canvas).attr("data-frame-id", sprite)
     output.appendChild canvas   
+    
 
 loadFrames = (frame) ->
     output = $("#video_output").get(0)
@@ -120,18 +120,43 @@ loadFrames = (frame) ->
         canvas.height = img.height
         ctx.drawImage(img, 0, 0, img.width, img.height)
     img.src = 'http://' + window.location.host + '/static/sam_frames/' + frame + '.jpg'
+
     frameOrdinal = playbackFrames.push canvas
+    thumbnail = document.createElement('canvas')
+    context = thumbnail.getContext('2d')
+    thumb = new Image()
+    thumb.onload = ->
+        thumbnail.width = thumb.width * thumbnailScaleFactor
+        thumbnail.height = thumb.height * thumbnailScaleFactor
+        context.drawImage(thumb, 0, 0, thumbnail.width, thumbnail.height)
+    thumb.src = 'http://' + window.location.host + '/static/sam_frames/' + frame + '.jpg'
     frameId = frameIndex = frameOrdinal - 1
-    $(canvas).attr("data-frame-id", frame)
-    #canvas.setAttribute "unselectable", "off"
-    output.appendChild canvas  
-    frameRegistry[frame] = canvas
+    $(thumbnail).attr "data-frame-id", frameId
+    $(canvas).attr "data-frame-id", frameId
+    frameRegistry[frameId] = canvas
+    
+    output.appendChild thumbnail
     $("#video_output").sortable "refresh"
+
     rescanThumbnails()
-    $(canvas).attr("id", "canvas")
+ 
+    placeFrame frameIndex, overlayClass
+    
+   
+    #camera = $("#camera").get(0)
+    #camera.appendChild canvas
+    #alert(camera)
+    #frameOrdinal = playbackFrames.push canvas
+    #frameId = frameIndex = frameOrdinal - 1
+    #$(canvas).attr("data-frame-id", frame)
+    #output.appendChild canvas  
+    #frameRegistry[frame] = canvas
+    #$("#video_output").sortable "refresh"
+    #rescanThumbnails()
+    #$(canvas).attr("id", "canvas")
     #placeFrame frame, overlayClass
-    console.log(frameRegistry)
-    console.log(playbackFrames)
+    #console.log(frameRegistry)
+    #console.log(playbackFrames)
 
         
         #frame = temp_canvas
@@ -200,15 +225,15 @@ window.shoot = ->
 
     # we're in the global scope, so need to make some of our references
     video  = $("#camera").get 0
+    console.log(video)
     output = $("#video_output").get 0
 
     # store a new frame
     frame = capture video, 1
+    console.log("frame")
+    console.log(frame)
     frameOrdinal = playbackFrames.push frame
-    console.log("first")
-    console.log(playbackFrames)
     thumbnail = capture video, thumbnailScaleFactor
-    console.log(video)
     frameId = frameIndex = frameOrdinal - 1
         
     # store ids that link the frame and the thumbnail
@@ -306,8 +331,6 @@ placeFrame = (frameIndex, className = "") ->
     if window.debug then console.log "placeFrame"
     clearPlayback()
     frame = playbackFrames[frameIndex]
-    console.log("frame")
-    console.log(frame)
     # allow special overlay styling of frames
     $(frame).addClass className
     frame.id = "canvas"
