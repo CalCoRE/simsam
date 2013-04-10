@@ -23,7 +23,7 @@
 
     <script type="text/javascript">
         window.animationId = {{ animation.id }};
-	window.framesequence = "{{ frame_sequence }}".replace(/&#39;/g, "'");
+	/*window.framesequence = "{{ frame_sequence }}".replace(/&#39;/g, "'");
 	window.framesequence = window.framesequence.replace(/'',/, "");
 	window.framesequence = window.framesequence.replace("[ '", "");
 	window.framesequence = window.framesequence.replace("']", "");
@@ -32,9 +32,10 @@
 	}
         else {
 		window.framesequence = window.framesequence.split("', '");
-	}
+	}*/
+	window.framesequence = {{ frame_sequence|safe }}; //added this
 	window.projectId = {{ project.id }};
-        window.spritecollection = "{{ sprite_collection }}".replace(/&#39;/g, "'");
+        /*window.spritecollection = "{{ sprite_collection }}".replace(/&#39;/g, "'");
 	window.spritecollection = window.spritecollection.replace(/'',/, "");
 	window.spritecollection = window.spritecollection.replace("[ '", "");
 	window.spritecollection = window.spritecollection.replace("']", "");
@@ -42,7 +43,8 @@
 		window.spritecollection = [];
 	} else {
 		window.spritecollection = window.spritecollection.split("', '");
-	}
+	}*/
+	window.spritecollection = {{ sprite_collection|safe }}; //added this
     </script>
     
 </head>
@@ -70,8 +72,8 @@
     <!-- if a project is open or starting a new project, show the simsam applications -->
     <p>{{ frame_sequence }}</p>
     <p>{{ sprite_collection }}</p>
-
     <br />
+
     <h2>Project: {{ project.name }}</h2>Animation: {{ animation.name }} &nbsp; Simulation: {{ simulation.name }} 
     <p></p>
     

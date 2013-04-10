@@ -36,11 +36,11 @@ def login_user(request):
             if user.is_active:
                 login(request, user)
                 state = "You're successfully logged in!"
-		if len(SimsamUser.objects.filter(user=user)) < 1:
-			SimsamUser.objects.create(user=user)
-		#return HttpResponseRedirect("/samlite")
-		t = loader.get_template("createOrOpenProject.html")
-    		c = RequestContext(request, {})
+                if len(SimsamUser.objects.filter(user=user)) < 1:
+                        SimsamUser.objects.create(user=user, first_name=user.username)
+                #return HttpResponseRedirect("/samlite")
+                t = loader.get_template("createOrOpenProject.html")
+                c = RequestContext(request, {})
                 return HttpResponse(t.render(c))
             else:
                 state = "Your account is not active, please contact the site admin."

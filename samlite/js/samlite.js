@@ -22,8 +22,6 @@
 
   window.debug = true;
 
-  window.animationId = 1;
-
   $(document).ready(function() {
     var constraints, element, failure, success, _i, _j, _len, _len1, _ref, _ref1, _results;
     $('#sambutton').hide();
@@ -273,6 +271,8 @@
       }
       return _results;
     })();
+    alert(playbackFrames);
+    alert(frameSequence);
     ajaxOptions = {
       url: "save_frame_sequence",
       type: "POST",
@@ -290,7 +290,8 @@
         return console.log(response.message);
       }
     };
-    return $.ajax(ajaxOptions).done(done);
+    $.ajax(ajaxOptions).done(done);
+    return alert(frameSequence);
   };
 
   clearPlayback = function() {

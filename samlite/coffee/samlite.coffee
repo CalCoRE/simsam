@@ -12,8 +12,6 @@ window.isPlaying = false
 window.playbackIndex = 0
 window.debug = true             # turns on console logging
 
-window.animationId = 1
-
 $(document).ready ->
 
     #console.log(playbackFrames)
@@ -156,16 +154,7 @@ loadFrames = (frame) ->
     #$(canvas).attr("id", "canvas")
     #placeFrame frame, overlayClass
     #console.log(frameRegistry)
-    #console.log(playbackFrames)
-
-        
-        #frame = temp_canvas
-        #frameOrdinal = playbackFrames.push frame
-        #thumbnail = capture frame, thumbnailScaleFactor
-        #frameId = frameIndex = frameOrdinal - 1
-        #$(thumbnail).attr "data-frame-id", frameId
-        
-        
+    #console.log(playbackFrames)    
         
 makeUnselectable = (node) ->
     if node.nodeType is 1
@@ -334,7 +323,6 @@ placeFrame = (frameIndex, className = "") ->
     # allow special overlay styling of frames
     $(frame).addClass className
     frame.id = "canvas"
-    # this step is causing a problem - removes the thumbnail image for some reason
     $("#playback_container").append frame
     
 # run through the canvas elements in the thumbnail list and update
