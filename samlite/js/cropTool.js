@@ -5,6 +5,12 @@ var iMouseX, iMouseY = 1;
 var cropFrames = []; //cropped elements in order
 var cropFrameRegistry = {}; //cropped elements by id
 
+/// MHWJ -- this looks for touchstart events on mobile, and mouseclick events on non
+// then it binds the appropriate event. i think this will go away with move to hammer
+var mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
+var start = mobile ? "touchstart" : "mousedown";
+var drag = mobile ? "touchmove" : "mousemove";
+var end = mobile ? "touchend" : "mouseup";
 
 // define Selection constructor
 function Selection(x, y, w, h) {
@@ -54,7 +60,7 @@ function deleteRect() {
     ctx.drawImage(image, 0, 0, ctx.canvas.width, ctx.canvas.height);
 
     //unbind mousemove event
-    $('#canvas').unbind('mousemove');
+    $('#canvas').unbind(drag);
 }
 
 
@@ -67,7 +73,7 @@ function rescanCropThumbnails() {
 	  var frameId;
 	  frameId = $(thumbnail).attr("data-frame-id");
 	  cropFrames.push(cropFrameRegistry[frameId]);
-	  return $(thumbnail).unbind("click").click(function() {
+	  return $(thumbnail).unbind(clk).bind(clk, function() {
 	      pause();
 	      clearPlayback();
 	      cameraOn();
@@ -138,8 +144,10 @@ function getResults() {
     var imageObj = new Image();
     imageObj.src = vData;
 
-    //when double-clicking on crop in drawer, add cropped image to sim stage
-    temp_canvas.addEventListener('dblclick', function(){
+    //when double-clicking on crop in drawer, add cropped image to sim stage ///MHWJ 
+    Hammer(temp_canvas).on('doubletap', function(e){
+    		e.preventDefault();
+    
         var obj = new Kinetic.Image({
 	        x: 100,
                 y: 100,
@@ -183,9 +191,9 @@ function getResults() {
 	    	}
 	});
 	  
-	obj.on("touchstart", function(){
+	obj.on(start, function(){
 		// reset manip info
-   	    	this.lastX = undefined;
+   	    this.lastX = undefined;
 	    	this.lastY = undefined;
 	    	this.lastSlope = undefined;
 	    	this.startDistance = undefined;
@@ -235,6 +243,7 @@ Selection.prototype.draw = function() {
 
 function cropCanvas() { 
       // code from http://www.script-tutorials.com/html5-image-crop-tool/
+      /// mhwj heavily edited to work on touch devices, lots of comments below
       canvas = document.getElementById('canvas');
       ctx = canvas.getContext('2d');
       image = new Image();
@@ -243,81 +252,100 @@ function cropCanvas() {
       image.src = canvas.toDataURL();
       theSelection = new Selection(200, 200, 200, 200);
             
-      $('#canvas').bind('mousemove', function(e) { // binding mouse move event
-	  var canvasOffset = $(canvas).offset();
-	  iMouseX = Math.floor(e.pageX - canvasOffset.left);
-	  iMouseY = Math.floor(e.pageY - canvasOffset.top);
-
-	  // in case of drag of whole selector
-	  if (theSelection.bDragAll) {
-	      theSelection.x = iMouseX - theSelection.px;
-	      theSelection.y = iMouseY - theSelection.py;
-	  }
-	  for (i = 0; i < 4; i++) {
-	      theSelection.bHow[i] = false;
-	      theSelection.iCSize[i] = theSelection.csize;
-          }
+      //$('#canvas').bind(drag, function(e) { // binding mouse move event. Using 'smart' drag var to determine mobile or not
+      Hammer(canvas).on("drag", function(e) {
+      //alert("ba");
+	      e.preventDefault(); // this prevents the mobile browsers from treating 
+	      										// this touch event like they would otherwise and scrolling the screen around
+	      
+	      // iPad: e.originalEvent.touches
+	      var intxn = e.gesture.touches[0];
+	      // android… ?
+	      
+	      										
+			  var canvasOffset = $(canvas).offset();
+			  
+			  //alert(touch.pageX);
+			  
+			  // mouse events store info in pageX and pageY, but touch events store info in an array
+			  iMouseX = Math.floor(intxn.pageX - canvasOffset.left);
+			  iMouseY = Math.floor(intxn.pageY - canvasOffset.top);
 		
-	  // hovering over resize cubes
-	  if (iMouseX > theSelection.x - theSelection.csizeh && iMouseX < theSelection.x + theSelection.csizeh && iMouseY > theSelection.y - theSelection.csizeh && iMouseY < theSelection.y + theSelection.csizeh) {
-	      theSelection.bHow[0] = true;
-	      theSelection.iCSize[0] = theSelection.csizeh;
-	  }
-	  if (iMouseX > theSelection.x + theSelection.w - theSelection.csizeh && iMouseX < theSelection.x + theSelection.w + theSelection.csizeh && iMouseY > theSelection.y - theSelection.csizeh && iMouseY < theSelection.y + theSelection.csizeh) {
-	      theSelection.bHow[1] = true;
-	      theSelection.iCSize[1] = theSelection.csizeh;
-	  }
-	  if (iMouseX > theSelection.x + theSelection.w-theSelection.csizeh && iMouseX < theSelection.x + theSelection.w + theSelection.csizeh && iMouseY > theSelection.y + theSelection.h-theSelection.csizeh && iMouseY < theSelection.y + theSelection.h + theSelection.csizeh) {
-	      theSelection.bHow[2] = true;
-	      theSelection.iCSize[2] = theSelection.csizeh;
-       	  }
-	  if (iMouseX > theSelection.x - theSelection.csizeh && iMouseX < theSelection.x + theSelection.csizeh && iMouseY > theSelection.y + theSelection.h-theSelection.csizeh && iMouseY < theSelection.y + theSelection.h + theSelection.csizeh) {
-	      theSelection.bHow[3] = true;
-	      theSelection.iCSize[3] = theSelection.csizeh;
-	  }
-
-	  // in case of dragging resize cubes
-	  var iFW, iFH;
-	  if (theSelection.bDrag[0]) {
-	      var iFX = iMouseX - theSelection.px;
-	      var iFY = iMouseY - theSelection.py;
-	      iFW = theSelection.w + theSelection.x - iFX;
-	      iFH = theSelection.h + theSelection.y - iFY;
-	  }
-	  if (theSelection.bDrag[1]) {
-	      var iFX = theSelection.x;
-	      var iFY = iMouseY - theSelection.py;
-	      iFW = iMouseX - theSelection.px - iFX;
-	      iFH = theSelection.h + theSelection.y - iFY;
-	  }
-	  if (theSelection.bDrag[2]) {
-	      var iFX = theSelection.x;
-	      var iFY = theSelection.y;
-	      iFW = iMouseX - theSelection.px - iFX;
-	      iFH = iMouseY - theSelection.py - iFY;
-	  }
-	  if (theSelection.bDrag[3]) {
-	      var iFX = iMouseX - theSelection.px;
-	      var iFY = theSelection.y;
-   	      iFW = theSelection.w + theSelection.x - iFX;
-	      iFH = iMouseY - theSelection.py - iFY;
-	  }
-
-	  if (iFW > theSelection.csizeh * 2 && iFH > theSelection.csizeh * 2) {
-	      theSelection.w = iFW;
-	      theSelection.h = iFH;
-		    
-	      theSelection.x = iFX;
-	      theSelection.y = iFY;
-	  }
+			  // in case of drag of whole selector
+			  if (theSelection.bDragAll) {
+			      theSelection.x = iMouseX - theSelection.px;
+			      theSelection.y = iMouseY - theSelection.py;
+			  }
+			  for (i = 0; i < 4; i++) {
+			      theSelection.bHow[i] = false;
+			      theSelection.iCSize[i] = theSelection.csize;
+	      }
+			
+			  // hovering over resize cubes
+			  if (iMouseX > theSelection.x - theSelection.csizeh && iMouseX < theSelection.x + theSelection.csizeh && iMouseY > theSelection.y - theSelection.csizeh && iMouseY < theSelection.y + theSelection.csizeh) {
+			      theSelection.bHow[0] = true;
+			      theSelection.iCSize[0] = theSelection.csizeh;
+			  }
+			  if (iMouseX > theSelection.x + theSelection.w - theSelection.csizeh && iMouseX < theSelection.x + theSelection.w + theSelection.csizeh && iMouseY > theSelection.y - theSelection.csizeh && iMouseY < theSelection.y + theSelection.csizeh) {
+			      theSelection.bHow[1] = true;
+			      theSelection.iCSize[1] = theSelection.csizeh;
+			  }
+			  if (iMouseX > theSelection.x + theSelection.w-theSelection.csizeh && iMouseX < theSelection.x + theSelection.w + theSelection.csizeh && iMouseY > theSelection.y + theSelection.h-theSelection.csizeh && iMouseY < theSelection.y + theSelection.h + theSelection.csizeh) {
+			      theSelection.bHow[2] = true;
+			      theSelection.iCSize[2] = theSelection.csizeh;
+		       	  }
+			  if (iMouseX > theSelection.x - theSelection.csizeh && iMouseX < theSelection.x + theSelection.csizeh && iMouseY > theSelection.y + theSelection.h-theSelection.csizeh && iMouseY < theSelection.y + theSelection.h + theSelection.csizeh) {
+			      theSelection.bHow[3] = true;
+			      theSelection.iCSize[3] = theSelection.csizeh;
+			  }
 		
-	  drawScene();
+			  // in case of dragging resize cubes
+			  var iFW, iFH;
+			  if (theSelection.bDrag[0]) {
+			      var iFX = iMouseX - theSelection.px;
+			      var iFY = iMouseY - theSelection.py;
+			      iFW = theSelection.w + theSelection.x - iFX;
+			      iFH = theSelection.h + theSelection.y - iFY;
+			  }
+			  if (theSelection.bDrag[1]) {
+			      var iFX = theSelection.x;
+			      var iFY = iMouseY - theSelection.py;
+			      iFW = iMouseX - theSelection.px - iFX;
+			      iFH = theSelection.h + theSelection.y - iFY;
+			  }
+			  if (theSelection.bDrag[2]) {
+			      var iFX = theSelection.x;
+			      var iFY = theSelection.y;
+			      iFW = iMouseX - theSelection.px - iFX;
+			      iFH = iMouseY - theSelection.py - iFY;
+			  }
+			  if (theSelection.bDrag[3]) {
+			      var iFX = iMouseX - theSelection.px;
+			      var iFY = theSelection.y;
+		   	      iFW = theSelection.w + theSelection.x - iFX;
+			      iFH = iMouseY - theSelection.py - iFY;
+			  }
+		
+			  if (iFW > theSelection.csizeh * 2 && iFH > theSelection.csizeh * 2) {
+			      theSelection.w = iFW;
+			      theSelection.h = iFH;
+				    
+			      theSelection.x = iFX;
+			      theSelection.y = iFY;
+			  }
+				
+			  drawScene();
       });
 
-      $('#canvas').mousedown(function(e) { // binding mousedown event
+      $('#canvas').bind(start, function(e) { // binding mousedown event
+      
+      e.preventDefault(); // this prevents the mobile browsers from treating 
+      										// this touch event like they would otherwise and scrolling the screen around
+      var intxn = mobile ? e.originalEvent.touches[0] : e;
+      										
 	  var canvasOffset = $(canvas).offset();
-	  iMouseX = Math.floor(e.pageX - canvasOffset.left);
-	  iMouseY = Math.floor(e.pageY - canvasOffset.top);
+	  iMouseX = Math.floor(intxn.pageX - canvasOffset.left);
+	  iMouseY = Math.floor(intxn.pageY - canvasOffset.top);
 		
 	  theSelection.px = iMouseX - theSelection.x;
 	  theSelection.py = iMouseY - theSelection.y;
@@ -350,7 +378,8 @@ function cropCanvas() {
 	  }
       });
 	    
-      $('#canvas').mouseup(function(e) { // binding mouseup event
+      $('#canvas').bind(end, function(e) { // binding mouseup event
+      e.preventDefault();
   	  theSelection.bDragAll = false;
 		
 	  for (i = 0; i < 4; i++) {
