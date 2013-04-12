@@ -86,6 +86,7 @@
       element = _ref[_i];
       loadSprites(element);
     }
+    console.log(window.framesequence);
     _ref1 = window.framesequence;
     _results = [];
     for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
