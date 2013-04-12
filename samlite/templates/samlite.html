@@ -24,7 +24,6 @@
     <script type="text/javascript">
         window.animationId = {{ animation }};
 	window.framesequence = [{% for frame in frame_sequence %}"{{ frame|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}];
-        //window.framesequence = "{{ frame_sequence }}";
 	window.projectId = {{ project }};
 	window.spritecollection = [{% for sprite in sprite_collection %}"{{ sprite|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}];
     </script>

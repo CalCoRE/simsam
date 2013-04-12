@@ -38,7 +38,7 @@ body {
     border: 1px solid #009933;
     width: 640px;
     height: 484px;
-    float: center;
+    /*float: center;*/
     
 }
 .overlay-frame {
@@ -106,8 +106,6 @@ body {
     margin: 4px;
     margin-left: 10px;
     padding: 0px;
-    #height: 640px;
-    #width: 484px;
     display: inline-block;
 }
 
@@ -193,7 +191,6 @@ body {
     text-align: left;
     color: gray;
     padding-top: 30px;
-    #padding-left: 30%;
     width: 100px;
     margin: auto;
     position: relative;
@@ -202,19 +199,9 @@ body {
 .header {
     background: url('../images/paint.png') no-repeat left;
     background-position: 35px 2px;
-    #width: 475px;
     height: 131px;
-    #border-radius: 10px;
-    #border: 2px solid #DDDDDD;
     margin: auto;
-    #align: center;
     border-bottom: 2px solid #DDDDDD;
-}
-#logout {
-   # margin: auto;
-    #margin-left: 500px;
-    #padding-right: 58%;
-    #padding-top: 80px;
 }
 #logoutbutton {
     margin: auto;
@@ -269,7 +256,6 @@ body {
     font-weight: bold;
     margin: auto;
     margin-left: 8px;
-   # margin-top: 10px;
 }
 
 #crop_buttons {

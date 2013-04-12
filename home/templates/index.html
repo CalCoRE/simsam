@@ -2,12 +2,8 @@
 <head>
     <title>SiMSAM</title>
 
-    <script src="{{ STATIC_URL }}js/jquery.js"></script>
-    <script src="{{ STATIC_URL }}js/jquery-ui.js"></script>
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/homepage.css">
 
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/samlite.css">
-    <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.0/themes/base/jquery-ui.css">
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/iphone-style-checkboxes.css">
 </head>
 
 
@@ -15,6 +11,7 @@
 
 <div class="header">
     </div>
+    <h2>Welcome to SiMSAM</h2>
 	<form id="login" action="login/" method="post">
 		username:
 		<input type="text" name="username" value="{{ username }}" /><br />

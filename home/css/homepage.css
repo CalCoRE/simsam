@@ -1,0 +1,12 @@
+body {
+    margin-left: 10%;
+    margin-right: 10%;
+    font-family: "Verdana", "Sans";
+}
+.header {
+    background: url('../images/paint.png') no-repeat left;
+    background-position: 35px 2px;
+    height: 131px;
+    margin: auto;
+    border-bottom: 2px solid #DDDDDD;
+}

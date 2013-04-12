@@ -1474,7 +1474,7 @@ jQuery.support = (function() {
 				!parseFloat( ( window.getComputedStyle( marginDiv, null ) || {} ).marginRight );
 		}
 
-		if ( typeof div.style.zoom !== "undefined" ) {
+		/*if ( typeof div.style.zoom !== "undefined" ) {
 			// Check if natively block-level elements act like inline-block
 			// elements when setting their display to 'inline' and giving
 			// them layout
@@ -1492,7 +1492,7 @@ jQuery.support = (function() {
 			support.shrinkWrapBlocks = ( div.offsetWidth !== 3 );
 
 			container.style.zoom = 1;
-		}
+		}*/
 
 		// Null elements to avoid leaks in IE
 		body.removeChild( container );
@@ -6541,7 +6541,7 @@ jQuery.extend({
 		"orphans": true,
 		"widows": true,
 		"zIndex": true,
-		"zoom": true
+		/* "zoom": true */
 	},
 
 	// Add in properties whose names you wish to fix before
@@ -6924,7 +6924,7 @@ if ( !jQuery.support.opacity ) {
 
 			// IE has trouble with opacity if it does not have layout
 			// Force it by setting the zoom level
-			style.zoom = 1;
+			//style.zoom = 1;
 
 			// if setting opacity to 1, and no other filters exist - attempt to remove filter attribute #6652
 			if ( value >= 1 && jQuery.trim( filter.replace( ralpha, "" ) ) === "" &&
@@ -8686,9 +8686,9 @@ function defaultPrefilter( elem, props, opts ) {
 			if ( !jQuery.support.inlineBlockNeedsLayout || css_defaultDisplay( elem.nodeName ) === "inline" ) {
 				style.display = "inline-block";
 
-			} else {
+			} /*else {
 				style.zoom = 1;
-			}
+			}*/
 		}
 	}
 
