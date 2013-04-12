@@ -22,39 +22,19 @@
     <link rel="stylesheet" href="{{ STATIC_URL }}css/iphone-style-checkboxes.css">
 
     <script type="text/javascript">
-        window.animationId = {{ animation.id }};
-	/*window.framesequence = "{{ frame_sequence }}".replace(/&#39;/g, "'");
-	window.framesequence = window.framesequence.replace(/'',/, "");
-	window.framesequence = window.framesequence.replace("[ '", "");
-	window.framesequence = window.framesequence.replace("']", "");
-	if (window.framesequence == "[]") {
-		window.framesequence = [];
-	}
-        else {
-		window.framesequence = window.framesequence.split("', '");
-	}*/
-	window.framesequence = {{ frame_sequence|safe }}; //added this
-	window.projectId = {{ project.id }};
-        /*window.spritecollection = "{{ sprite_collection }}".replace(/&#39;/g, "'");
-	window.spritecollection = window.spritecollection.replace(/'',/, "");
-	window.spritecollection = window.spritecollection.replace("[ '", "");
-	window.spritecollection = window.spritecollection.replace("']", "");
-	if (window.spritecollection == "[]") {
-		window.spritecollection = [];
-	} else {
-		window.spritecollection = window.spritecollection.split("', '");
-	}*/
-	window.spritecollection = {{ sprite_collection|safe }}; //added this
+        window.animationId = {{ animation }};
+	window.framesequence = [{% for frame in frame_sequence %}"{{ frame|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}];
+        //window.framesequence = "{{ frame_sequence }}";
+	window.projectId = {{ project }};
+	window.spritecollection = [{% for sprite in sprite_collection %}"{{ sprite|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}];
     </script>
     
 </head>
 <body class="unselectable">
 <!-- only display this if the user is logged in -->
-<p>animationId = {{ animation.id }}</p>
+<p>animationId = {{ animation }}</p>
 
 {% if user.is_authenticated %}
-    <h1>{{ frame_registry }}</h1>
-    <h1>{{ hello }}</h1>
     <div class="header"> 
 	<h1 class="greeting">hello {{ user.username }}</h1>
 	<div id="logout"> 
@@ -68,13 +48,12 @@
         
     </div>
 
-    {% if projectOpen %}
     <!-- if a project is open or starting a new project, show the simsam applications -->
     <p>{{ frame_sequence }}</p>
     <p>{{ sprite_collection }}</p>
     <br />
 
-    <h2>Project: {{ project.name }}</h2>Animation: {{ animation.name }} &nbsp; Simulation: {{ simulation.name }} 
+    <h2>Project: {{ proj_name }}</h2>Animation: {{ anim_name }} &nbsp; Simulation: {{ sim_name }} 
     <p></p>
     
     <div id="main_container" class="float_container">
@@ -137,11 +116,11 @@
 
    
 	<form action="openAnim" method="post">
-		<input type="hidden" name="projectId" id="projectId" value={{ project.id }} />
+		<input type="hidden" name="projectId" id="projectId" value="{{ project }}" />
 		<input type="submit" value="Open Different Animation" />
 	</form>
 	<form action="newanim" method="post">
-		<input type="hidden" name="projectId" id="projectId" value={{ project.id }} />
+		<input type="hidden" name="projectId" id="projectId" value="{{ project }}" />
 		<input type="hidden" name="simsamuser" id="simsamuser" value="{{ simsamuser }}" />
 		New Animation Name: <input type="text" name="animName" />
 		<input type="submit" value="Make New Animation" />
@@ -151,8 +130,6 @@
     <div id="crop_output"></div>
     <h3>Webcam Images - Animation Timeline</h3>
     <div id="video_output"></div>
-    {% else %}
-    {% endif %}
 
 
     <form class="chooseproject" action="openproject" method="post">

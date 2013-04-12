@@ -129,9 +129,9 @@ loadFrames = (frame) ->
         context.drawImage(thumb, 0, 0, thumbnail.width, thumbnail.height)
     thumb.src = 'http://' + window.location.host + '/static/sam_frames/' + frame + '.jpg'
     frameId = frameIndex = frameOrdinal - 1
-    $(thumbnail).attr "data-frame-id", frameId
-    $(canvas).attr "data-frame-id", frameId
-    frameRegistry[frameId] = canvas
+    $(thumbnail).attr "data-frame-id", frame
+    $(canvas).attr "data-frame-id", frame
+    frameRegistry[frame] = canvas
     
     output.appendChild thumbnail
     $("#video_output").sortable "refresh"

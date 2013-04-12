@@ -134,9 +134,9 @@
     };
     thumb.src = 'http://' + window.location.host + '/static/sam_frames/' + frame + '.jpg';
     frameId = frameIndex = frameOrdinal - 1;
-    $(thumbnail).attr("data-frame-id", frameId);
-    $(canvas).attr("data-frame-id", frameId);
-    frameRegistry[frameId] = canvas;
+    $(thumbnail).attr("data-frame-id", frame);
+    $(canvas).attr("data-frame-id", frame);
+    frameRegistry[frame] = canvas;
     output.appendChild(thumbnail);
     $("#video_output").sortable("refresh");
     rescanThumbnails();
@@ -271,8 +271,6 @@
       }
       return _results;
     })();
-    alert(playbackFrames);
-    alert(frameSequence);
     ajaxOptions = {
       url: "save_frame_sequence",
       type: "POST",
@@ -290,8 +288,7 @@
         return console.log(response.message);
       }
     };
-    $.ajax(ajaxOptions).done(done);
-    return alert(frameSequence);
+    return $.ajax(ajaxOptions).done(done);
   };
 
   clearPlayback = function() {
