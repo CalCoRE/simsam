@@ -76,7 +76,7 @@ def save_image(request, digit):
             'message': "Invalid image type: %s." % image_type
         }))
 
-    image_obj = image_class();
+    image_obj = image_class()
     image_obj.set_image_string(image_string)
     image_obj.save()
 
