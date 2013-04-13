@@ -139,7 +139,7 @@ def make_project(request, digit):
     projectName = request.POST.get('projectName')
     if len(simsamuser.projects.filter(name=projectName)) > 0:
             # if the project name already exists, open it
-            chooseproject(request, digit)
+            return chooseproject(request, digit)
     else:
             # set up the new project			
             project = Project.objects.create(name=projectName, owner=simsamuser)

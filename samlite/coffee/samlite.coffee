@@ -12,6 +12,12 @@ window.isPlaying = false
 window.playbackIndex = 0
 window.debug = true             # turns on console logging
 
+# sprite collection wasn't initialized for a new animation and were
+# creating an error when they were first used
+# Amanda: is this the right way to do this?
+window.spritecollection = []
+
+
 $(document).ready ->
 
     #console.log(playbackFrames)
@@ -168,13 +174,19 @@ makeUnselectable = (node) ->
 # they just show and hide the canvas displaying what the camera sees
 
 toggleCamera = ->
-    clearPlayback()
     if cameraSwitch.is ':checked'
         if window.debug then console.log "toggle camera off"
+        # hide the playback frames which would otherwise hide
+        # the camera feed
+        clearPlayback()
+        # show the camera feed
         $(camera).css "display","block" 
     else
         if window.debug then console.log "toggle camera off"
+        # hide the camera feed
         $(camera).css "display","none"
+        # display the most recently displayed playback frame
+        placeFrame window.playbackIndex
 
 # simulates a user clicking the checkbox
 cameraOn = ->
@@ -246,6 +258,10 @@ window.shoot = ->
     
     # overlay the new frame
     placeFrame frameIndex, overlayClass
+
+    # set the playback index to the new frame, so if the user switches to
+    # playback mode, this frame will be up
+    window.playbackIndex = frameIndex
 
     saveCanvas(frame, frameId)
     
