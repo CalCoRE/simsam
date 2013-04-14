@@ -274,8 +274,10 @@ function cropCanvas() {
 
   Hammer(canvas).on("dragstart", function(e) { // binding mousedown event
       
-    e.preventDefault(); // this prevents the mobile browsers from treating 
+    //e.preventDefault(); // this prevents the mobile browsers from treating 
       										// this touch event like they would otherwise and scrolling the screen around
+    e.gesture.preventDefault();
+    
     var intxn = e.gesture.touches[0];
       										
 	  var canvasOffset = $(canvas).offset();
@@ -332,12 +334,11 @@ function cropCanvas() {
   //$('#canvas').bind(drag, function(e) { // binding mouse move event. Using 'smart' drag var to determine mobile or not
   Hammer(canvas).on("drag", function(e) {
   //alert("ba");
-    e.preventDefault(); // this prevents the mobile browsers from treating 
+    //e.preventDefault(); // this prevents the mobile browsers from treating 
     										// this touch event like they would otherwise and scrolling the screen around
+    e.gesture.preventDefault();
     
-    // iPad: e.originalEvent.touches
     var intxn = e.gesture.touches[0];
-    // android… ?
     
 	  var canvasOffset = $(canvas).offset();
 	  
@@ -396,7 +397,8 @@ function cropCanvas() {
 
 	    
   Hammer(canvas).on("dragend", function(e) { // binding mouseup event
-    e.preventDefault();
+    e.gesture.preventDefault();
+    
     theSelection.bDragAll = false;
 		
 	  for (i = 0; i < 4; i++) {
