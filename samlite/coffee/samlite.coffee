@@ -216,6 +216,16 @@ capture = (video, scaleFactor) ->
     ctx.drawImage video, 0, 0, w, h
     return canvas
 
+# Generates a random string to server as a temporary client-side id
+
+getRandomId = () ->
+    possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    text = ''
+    for x in [1..5]
+        text += possible.charAt(Math.floor(Math.random() * possible.length))
+    return 'tempFrameId_' + text
+
+
 # Invokes the <code>capture</code> function and attaches the canvas element 
 # to the DOM.
 
@@ -229,13 +239,17 @@ window.shoot = ->
     console.log(video)
     output = $("#video_output").get 0
 
-    # store a new frame
+    # capture a new frame
     frame = capture video, 1
+    thumbnail = capture video, thumbnailScaleFactor
     console.log("frame")
     console.log(frame)
-    frameOrdinal = playbackFrames.push frame
-    thumbnail = capture video, thumbnailScaleFactor
-    frameId = frameIndex = frameOrdinal - 1
+
+    # add it after the current play index
+    frameIndex = playbackIndex + 1
+    frameId = getRandomId()
+    playbackFrames.splice(frameIndex, 0, frame)
+
         
     # store ids that link the frame and the thumbnail
     # these ids will later be replaced by permanent ids, based on a hash,
@@ -249,11 +263,11 @@ window.shoot = ->
     console.log(frameRegistry)
     console.log(playbackFrames)
     
-    # display the thumbnail
-    output.appendChild thumbnail
+    # display the thumbnail at the correct position
+    $("#video_output canvas:eq(#{playbackIndex})").after(thumbnail)
     $("#video_output").sortable "refresh"
     
-    # make the thumbnail clickable
+    # make the thumbnail clickable and sort the playback frames to match
     rescanThumbnails()
     
     # overlay the new frame
