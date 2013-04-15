@@ -12,8 +12,6 @@
     <script src="{{ STATIC_URL }}js/html5support.js"></script>
     <script src="{{ STATIC_URL }}js/hammer.min.js"></script>
     <script src="http://kineticjs.com/download/v4.0.5/kinetic-v4.0.5.js"></script>
-    <script src="http://html5demos.com/h5utils.js"></script>
-    
 
     <script src="{{ STATIC_URL }}js/simlite.js"></script>
     <script src="{{ STATIC_URL }}js/cropTool.js"></script>
@@ -72,7 +70,7 @@
   	<div id="menu_options">
   		<div id="crop_buttons">
         <button class="crop_button" id="startcropping" onclick="cropCanvas()">Start Cropping</button>
-				<button class="crop_button" id="savecrop" onclick="saveCrop()">Save Crop</button>
+				<button class="crop_button" id="savecrop" onclick="getResults()">Save Crop</button>
 				<button class="crop_button" id="cancelcrop" onclick="deleteRect()">Cancel Crop</button>
     	</div>
   	</div>

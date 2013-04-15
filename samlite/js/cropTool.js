@@ -5,6 +5,22 @@ var iMouseX, iMouseY = 1;
 var cropFrames = []; //cropped elements in order
 var cropFrameRegistry = {}; //cropped elements by id
 
+
+function aspectAdjust(canvas, object) {
+	widthAdjust = canvas.clientWidth / canvas.width;
+	heightAdjust = canvas.clientHeight / canvas.height;
+	backwardRatioX = canvas.width / canvas.clientWidth;
+	backwardRatioY = canvas.height / canvas.clientHeight;
+  	console.log(widthAdjust, heightAdjust);
+	
+	return [	object.x * widthAdjust , 
+						object.y * heightAdjust , 
+						object.w * widthAdjust , 
+						object.h * heightAdjust , 
+						backwardRatioX,
+						backwardRatioY	]
+}
+
 // define Selection constructor
 function Selection(x, y, w, h) {
 	// code from http://www.script-tutorials.com/html5-image-crop-tool/
@@ -30,6 +46,8 @@ function Selection(x, y, w, h) {
 
 // main drawScene function
 function drawScene() {
+  
+ 	console.log("drawScene");
 	// code from http://www.script-tutorials.com/html5-image-crop-tool/ 
 	
 	ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); //clear canvas
@@ -40,6 +58,7 @@ function drawScene() {
 	//make source image darker for outside crop box
 	ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
 	ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+ 	console.log(ctx);
 	
 	//draw selection
 	theSelection.draw();
@@ -281,6 +300,8 @@ function cropCanvas() {
   $(".playback-frame").unbind('click');
   
   Hammer(canvas).on("dragstart", function(e) { // binding mousedown event
+  
+  	console.log("dragstart from cropCanvas");
       
     //e.preventDefault(); // this prevents the mobile browsers from treating 
       										// this touch event like they would otherwise and scrolling the screen around
@@ -293,48 +314,59 @@ function cropCanvas() {
 	  iMouseX = Math.floor(intxn.pageX - canvasOffset.left);
 	  iMouseY = Math.floor(intxn.pageY - canvasOffset.top);
 		
-	  theSelection.px = iMouseX - theSelection.x;
-	  theSelection.py = iMouseY - theSelection.y;
-
+		
+		adjustedSelection = aspectAdjust(canvas,theSelection)
+		adjustedX = adjustedSelection[0];
+		adjustedY = adjustedSelection[1];
+		adjustedW = adjustedSelection[2];
+		adjustedH = adjustedSelection[3];
+		
+	  theSelection.px = iMouseX - adjustedX;
+	  theSelection.py = iMouseY - adjustedY;
+		  
+  	console.log("mouse " , iMouseX , iMouseY );
+  	console.log("offset " , canvasOffset );
+  	console.log("selection ", theSelection );
+  	console.log("adjustedselection ", aspectAdjust(canvas,theSelection) );
 	
 		// hovering over resize cubes
-	  if (iMouseX > theSelection.x - theSelection.csizeh && 
-  	  	iMouseX < theSelection.x + theSelection.csizeh && 
-  	  	iMouseY > theSelection.y - theSelection.csizeh && 
-  	  	iMouseY < theSelection.y + theSelection.csizeh) {
+	  if (iMouseX > adjustedX - theSelection.csizeh && 
+  	  	iMouseX < adjustedX + theSelection.csizeh && 
+  	  	iMouseY > adjustedY - theSelection.csizeh && 
+  	  	iMouseY < adjustedY + theSelection.csizeh) {
       theSelection.bDrag[0] = true;
-      theSelection.px = iMouseX - theSelection.x;
-      theSelection.py = iMouseY - theSelection.y;
+      theSelection.px = iMouseX - adjustedX;
+      theSelection.py = iMouseY - adjustedY;
 	  }
-	  if (iMouseX > theSelection.x + theSelection.w - theSelection.csizeh && 
-      	iMouseX < theSelection.x + theSelection.w + theSelection.csizeh && 
-      	iMouseY > theSelection.y - theSelection.csizeh && 
-      	iMouseY < theSelection.y + theSelection.csizeh) {
+	  if (iMouseX > adjustedX + adjustedW - theSelection.csizeh && 
+      	iMouseX < adjustedX + adjustedW + theSelection.csizeh && 
+      	iMouseY > adjustedY - theSelection.csizeh && 
+      	iMouseY < adjustedY + theSelection.csizeh) {
       theSelection.bDrag[1] = true;
-      theSelection.px = iMouseX - theSelection.x - theSelection.w;
-      theSelection.py = iMouseY - theSelection.y;
+      theSelection.px = iMouseX - adjustedX - adjustedW;
+      theSelection.py = iMouseY - adjustedY;
 	  }
-	  if (iMouseX > theSelection.x + theSelection.w-theSelection.csizeh && 
-      	iMouseX < theSelection.x + theSelection.w + theSelection.csizeh && 
-      	iMouseY > theSelection.y + theSelection.h-theSelection.csizeh && 
-      	iMouseY < theSelection.y + theSelection.h + theSelection.csizeh) {
+	  if (iMouseX > adjustedX + adjustedW - theSelection.csizeh && 
+      	iMouseX < adjustedX + adjustedW + theSelection.csizeh && 
+      	iMouseY > adjustedY + adjustedH - theSelection.csizeh && 
+      	iMouseY < adjustedY + adjustedH + theSelection.csizeh) {
       theSelection.bDrag[2] = true;
-      theSelection.px = iMouseX - theSelection.x - theSelection.w;
-      theSelection.py = iMouseY - theSelection.y - theSelection.h;
+      theSelection.px = iMouseX - adjustedX - adjustedW;
+      theSelection.py = iMouseY - adjustedY - adjustedH;
     }
-	  if (iMouseX > theSelection.x - theSelection.csizeh && 
-      	iMouseX < theSelection.x + theSelection.csizeh && 
-      	iMouseY > theSelection.y + theSelection.h-theSelection.csizeh && 
-      	iMouseY < theSelection.y + theSelection.h + theSelection.csizeh) {
+	  if (iMouseX > adjustedX - theSelection.csizeh && 
+      	iMouseX < adjustedX + theSelection.csizeh && 
+      	iMouseY > adjustedY + adjustedH - theSelection.csizeh && 
+      	iMouseY < adjustedY + adjustedH + theSelection.csizeh) {
       theSelection.bDrag[3] = true;
-	    theSelection.px = iMouseX - theSelection.x;
-	    theSelection.py = iMouseY - theSelection.y - theSelection.h;
+	    theSelection.px = iMouseX - adjustedX;
+	    theSelection.py = iMouseY - adjustedY - adjustedH;
 		}
 
-  	if (iMouseX > theSelection.x + theSelection.csizeh && 
-	  		iMouseX < theSelection.x+theSelection.w - theSelection.csizeh && 
-	  		iMouseY > theSelection.y + theSelection.csizeh && 
-	  		iMouseY < theSelection.y+theSelection.h - theSelection.csizeh) 		  {
+  	if (iMouseX > adjustedX + theSelection.csizeh && 
+	  		iMouseX < adjustedX + adjustedW - theSelection.csizeh && 
+	  		iMouseY > adjustedY + theSelection.csizeh && 
+	  		iMouseY < adjustedY + adjustedH - theSelection.csizeh) 		  {
       theSelection.bDragAll = true;
 	  }
 		
@@ -342,10 +374,18 @@ function cropCanvas() {
         
   //$('#canvas').bind(drag, function(e) { // binding mouse move event. Using 'smart' drag var to determine mobile or not
   Hammer(canvas).on("drag", function(e) {
-  //alert("ba");
-    //e.preventDefault(); // this prevents the mobile browsers from treating 
-    										// this touch event like they would otherwise and scrolling the screen around
+  
+  	console.log("drag from cropCanvas");
+  	
     e.gesture.preventDefault();
+    
+		adjustedSelection = aspectAdjust(canvas,theSelection)
+		adjustedX = adjustedSelection[0];
+		adjustedY = adjustedSelection[1];
+		adjustedW = adjustedSelection[2];
+		adjustedH = adjustedSelection[3];
+		backwardX = adjustedSelection[4]; 
+		backwardY = adjustedSelection[5];
     
     var intxn = e.gesture.touches[0];
     
@@ -358,9 +398,11 @@ function cropCanvas() {
 	  iMouseY = Math.floor(intxn.pageY - canvasOffset.top);
 
 	  // in case of drag of whole selector
+  	console.log(theSelection.bDragAll);
 	  if (theSelection.bDragAll) {
-      theSelection.x = iMouseX - theSelection.px;
-      theSelection.y = iMouseY - theSelection.py;
+  		console.log("drag whole selector");
+      theSelection.x = iMouseX * backwardX - theSelection.px;
+      theSelection.y = iMouseY * backwardY - theSelection.py;
 	  }
 	  for (i = 0; i < 4; i++) {
       theSelection.bHow[i] = false;
@@ -370,28 +412,28 @@ function cropCanvas() {
 	  // in case of dragging resize cubes
 	  var iFW, iFH;
 	  if (theSelection.bDrag[0]) {
-      var iFX = iMouseX - theSelection.px;
-      var iFY = iMouseY - theSelection.py;
-      iFW = theSelection.w + theSelection.x - iFX;
-      iFH = theSelection.h + theSelection.y - iFY;
+      var iFX = iMouseX * backwardX - theSelection.px;
+      var iFY = iMouseY * backwardY - theSelection.py;
+      iFW = adjustedW + adjustedX - iFX;
+      iFH = adjustedH + adjustedY - iFY;
 	  }
 	  if (theSelection.bDrag[1]) {
       var iFX = theSelection.x;
-      var iFY = iMouseY - theSelection.py;
+      var iFY = iMouseY * backwardY - theSelection.py;
       iFW = iMouseX - theSelection.px - iFX;
-      iFH = theSelection.h + theSelection.y - iFY;
+      iFH = adjustedH + adjustedY - iFY;
 	  }
 	  if (theSelection.bDrag[2]) {
       var iFX = theSelection.x;
       var iFY = theSelection.y;
-      iFW = iMouseX - theSelection.px - iFX;
-      iFH = iMouseY - theSelection.py - iFY;
+      iFW = iMouseX * backwardX - theSelection.px - iFX;
+      iFH = iMouseY * backwardY - theSelection.py - iFY;
 	  }
 	  if (theSelection.bDrag[3]) {
-      var iFX = iMouseX - theSelection.px;
+      var iFX = iMouseX * backwardX - theSelection.px;
       var iFY = theSelection.y;
- 	    iFW = theSelection.w + theSelection.x - iFX;
-      iFH = iMouseY - theSelection.py - iFY;
+ 	    iFW = adjustedW + adjustedX - iFX;
+      iFH = iMouseY * backwardY - theSelection.py - iFY;
 	  }
 
 	  if (iFW > theSelection.csizeh * 2 && iFH > theSelection.csizeh * 2) {
@@ -406,6 +448,9 @@ function cropCanvas() {
 
 	    
   Hammer(canvas).on("dragend", function(e) { // binding mouseup event
+  
+  	console.log("dragend from cropCanvas");
+  	
     e.gesture.preventDefault();
     
     theSelection.bDragAll = false;
