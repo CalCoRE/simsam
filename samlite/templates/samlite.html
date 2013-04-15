@@ -1,6 +1,7 @@
 <!Doctype html>
 <html lang="en">
 <head>
+
     <title>SAM</title>
     <meta charset="UTF-8" />
 
@@ -28,12 +29,79 @@
 	window.framesequence = [{% for frame in frame_sequence %}"{{ frame|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}];
 	window.projectId = {{ project }};
 	window.spritecollection = [{% for sprite in sprite_collection %}"{{ sprite|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}];
+	
+	var cameraMode = true;
+	
+	function changeMode() {
+		if( cameraMode ) {
+			
+		}
+		else {
+		
+		}
+	}
     </script>
     
+
 </head>
-<body class="unselectable">
+<body>
 <!-- only display this if the user is logged in -->
-<p>animationId = {{ animation }}</p>
+<!--<p>animationId = {{ animation }}</p>-->
+
+{% if user.is_authenticated %}
+
+
+<div id="wholescreen">
+  <!-- INTERFACE PANELS HERE -->
+  <div id="construction_frame">
+  	<div id="video_frame">
+  		<video id="camera"></video>
+  		<div id="replay"></div>
+  		 <!-- is this allowed? attempting… -->
+  	</div>
+  	<div id="bottom_frame">
+  		<div id="toggle">
+  			<div id="play_mode" class="big"></div>
+  			<div id="record_mode" class="small"></div>
+  		</div>
+  		<div id="video_output"><!-- filmstrip--></div>
+  		<div id="trash"></div>
+  	</div>
+  </div>
+  <div id="right_frame">
+  	<div id="menu_options">
+  		<div id="crop_buttons">
+        <button class="crop_button" id="startcropping" onclick="cropCanvas()">Start Cropping</button>
+				<button class="crop_button" id="savecrop" onclick="saveCrop()">Save Crop</button>
+				<button class="crop_button" id="cancelcrop" onclick="deleteRect()">Cancel Crop</button>
+    	</div>
+  	</div>
+  	<div id="sprite_drawer"></div>
+  </div>
+  <!-- END INTERFACE PANELS -->
+  
+  <!-- PERSISTENT FLOATING ICONS HERE -->
+  <div id="home_button" class="floating_button">home</div>
+  <div id="right_menu_button" class="floating_button">menu</div>
+  <!-- END FLOATING ICONS -->
+</div>
+  
+  
+<!-- JUST SO IT DOESN'T CRY ABOUT MISSING ELEMENTS -->
+<!-- THEY WILL NEED TO BE INTEGRATED/CONVERTED SOON-->
+
+<input type="text" id="playback_index">
+<div id="container"></div>
+<input type="hidden" id="fps" value="10">
+  
+{% endif %}
+
+</body>
+</html>
+
+
+
+<!--
 
 {% if user.is_authenticated %}
     <div class="header"> 
@@ -49,7 +117,7 @@
         
     </div>
 
-    <!-- if a project is open or starting a new project, show the simsam applications -->
+    <!-- if a project is open or starting a new project, show the simsam applications
     <p>{{ frame_sequence }}</p>
     <p>{{ sprite_collection }}</p>
     <br />
@@ -148,3 +216,4 @@
 
 </body>
 </html>
+-->

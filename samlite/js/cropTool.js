@@ -62,7 +62,7 @@ function rescanCropThumbnails() {
 	  console.log("rescanCropThumbnails");
   }
   cropFrames = [];
-  $("#crop_output *").each(function(index, thumbnail) {
+  $("#sprite_drawer *").each(function(index, thumbnail) {
 		var frameId;
 	  frameId = $(thumbnail).attr("data-frame-id");
 	  cropFrames.push(cropFrameRegistry[frameId]);
@@ -103,7 +103,7 @@ function saveCropCanvas(canvas, tempId) {
 			delete cropFrameRegistry[tempId];
 			cropFrameRegistry[response.id] = frame;
 			$(frame).attr("data-frame-id", response.id);
-			return $("#crop_output canvas[data-frame-id='" + tempId + "']").attr("data-frame-id", response.id);
+			return $("#sprite_drawer canvas[data-frame-id='" + tempId + "']").attr("data-frame-id", response.id);
 		}
 	};
 	
@@ -114,6 +114,7 @@ function saveCropCanvas(canvas, tempId) {
 function getResults() {
     // get results of crop
     // code adapted from http://www.script-tutorials.com/html5-image-crop-tool/
+    // exit crop
 
     var temp_ctx, temp_canvas;
 
@@ -136,9 +137,9 @@ function getResults() {
     $('#crop_result').attr('src', vData); //display result
     deleteRect(); //delete cropping rectangle from canvas
 
-    var frame, frameId, frameIndex, frameOrdinal, crop_output, thumbnail;
+    var frame, frameId, frameIndex, frameOrdinal, sprite_drawer, thumbnail;
 
-    crop_output = $("#crop_output").get(0); //get the newly cropped image
+    sprite_drawer = $("#sprite_drawer").get(0); //get the newly cropped image
 
     frameOrdinal = cropFrames.push(temp_canvas);
 
@@ -221,8 +222,8 @@ function getResults() {
 
   cropFrameRegistry[frameId] = temp_canvas; //add to cropped elements by id
 
-  crop_output.appendChild(temp_canvas); //display in drawer
-  $("#crop_output").sortable("refresh"); 
+  sprite_drawer.appendChild(temp_canvas); //display in drawer
+  $("#sprite_drawer").sortable("refresh"); 
 
   saveCropCanvas(temp_canvas, frameId); //save the cropped image
    
@@ -264,19 +265,27 @@ Selection.prototype.draw = function() {
 function cropCanvas() { 
   // code from http://www.script-tutorials.com/html5-image-crop-tool/
   /// mhwj heavily edited to work on touch devices, lots of comments below
-  canvas = document.getElementById('canvas');
+  
+  // before
+  //canvas = document.getElementById('canvas');
+  //
+  
+  canvas = $(".playback-frame").get(0)
+  
   ctx = canvas.getContext('2d');
   image = new Image();
   image.onload = function() {}
   image.src = canvas.toDataURL();
   theSelection = new Selection(200, 200, 200, 200);
-        
-
+  
+  $(".playback-frame").unbind('click');
+  
   Hammer(canvas).on("dragstart", function(e) { // binding mousedown event
       
     //e.preventDefault(); // this prevents the mobile browsers from treating 
       										// this touch event like they would otherwise and scrolling the screen around
     e.gesture.preventDefault();
+    //e.gesture.stopPropogation();
     
     var intxn = e.gesture.touches[0];
       										
@@ -407,6 +416,8 @@ function cropCanvas() {
 	  theSelection.px = 0;
 	  theSelection.py = 0;
   });
+  
+  //$("#canvas").click(screenClick());
   
   drawScene();
 };

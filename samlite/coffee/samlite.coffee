@@ -11,6 +11,9 @@ playbackClass = "playback-frame"
 window.isPlaying = false
 window.playbackIndex = 0
 window.debug = true             # turns on console logging
+menu = false # side menu
+recording = false
+anyCamera = true
 
 # sprite collection wasn't initialized for a new animation and were
 # creating an error when they were first used
@@ -56,7 +59,10 @@ $(document).ready ->
         
         navigator.getUserMedia constraints, success, failure
     else
-        alert "Your browser does not support getUserMedia()"
+    	anyCamera = false
+   		toggleMode
+    	alert "Your browser does not support getUserMedia()"
+    
         
     # wire up buttons
     $(buttons.shoot).click shoot
@@ -69,6 +75,10 @@ $(document).ready ->
     $(buttons.shoot).button()
     $("#simbutton").click startSimlite
     $("#sambutton").click startSamlite
+    #MHWJ
+    $("#right_menu_button").click toggleMenu 
+    $("#play_mode").click play
+    $("#record_mode").click toggleMode
 
     
     #http://farhadi.ir/projects/html5sortable/
@@ -101,7 +111,7 @@ $(document).ready ->
         loadFrames(element)
 
 loadSprites = (sprite) ->
-    output = $("#crop_output").get(0) 
+    output = $("#sprite_drawer").get(0) 
     canvas = document.createElement('canvas')
     ctx = canvas.getContext('2d')
     img = new Image()
@@ -189,12 +199,13 @@ toggleCamera = ->
         placeFrame window.playbackIndex
 
 # simulates a user clicking the checkbox
-cameraOn = ->
-    if window.debug then console.log "camera on"
-    cameraSwitch.prop("checked", true).iphoneStyle "refresh"
-cameraOff =  ->
-    if window.debug then console.log "camera off"
-    cameraSwitch.prop("checked", false).iphoneStyle "refresh"
+# MHWJ getting rid of this, no more checkbox
+#cameraOn = ->
+#    if window.debug then console.log "camera on"
+#    cameraSwitch.prop("checked", true).iphoneStyle "refresh"
+#cameraOff =  ->
+#    if window.debug then console.log "camera off"
+#    cameraSwitch.prop("checked", false).iphoneStyle "refresh"
     
 
 # Captures a image frame from the provided video element.
@@ -222,7 +233,6 @@ capture = (video, scaleFactor) ->
 window.shoot = ->
     pause()
     clearPlayback()
-    cameraOn()
 
     # we're in the global scope, so need to make some of our references
     video  = $("#camera").get 0
@@ -324,7 +334,7 @@ saveFrameSequence = ->
 clearPlayback = ->
     if window.debug then console.log "clearPlayback"
     # .removeClass() with no arguments removes all class names
-    $("#playback_container *").removeClass().remove()
+    $("#replay *").removeClass().remove()
         
 # put a still frame on top of the webcam view; it may be a transparent
 # onion-skin or an opaque playback frame
@@ -339,7 +349,8 @@ placeFrame = (frameIndex, className = "") ->
     # allow special overlay styling of frames
     $(frame).addClass className
     frame.id = "canvas"
-    $("#playback_container").append frame
+    #$(frame).click screenClick()
+    $("#replay").append frame
     
 # run through the canvas elements in the thumbnail list and update
 # everything to by in sync with those thumbnails, including the onclick
@@ -360,8 +371,8 @@ rescanThumbnails = ->
         $(thumbnail).unbind("click").click ->
             pause()
             clearPlayback()
-            cameraOn()
-            placeFrame index, overlayClass
+            # if it's in recording mode then overlay, otherwise opaque
+            placeFrame index, (if recording then overlayClass else playbackClass)
             window.playbackIndex = index
             updateIndexView()
 
@@ -396,8 +407,7 @@ window.play = ->
         window.playbackIndex = 0
         updateIndexView()
     window.isPlaying = true
-    cameraOff()
-    container = $("#video_container")
+    container = $("#video_frame")
     interval = 1 / $("#fps").val() * 1000
     beginningIndex = window.playbackIndex
     
@@ -422,7 +432,7 @@ window.play = ->
             
     if playbackFrames.length is 0
         window.isPlaying = false
-        $("#playback_container").append "<div class='frametext'>Empty</div>"
+        $("#replay").append "<div class='frametext'>Empty</div>"
             
 # playback controls    
         
@@ -468,11 +478,10 @@ updateIndexView = -> $("#playback_index").get(0).value = window.playbackIndex
 startSimlite = ->
     # hide samlite containers
     $('#controls_container').hide()
-    $('#playback_container').hide()
-    $('#video_container').hide()
+    $('#replay').hide()
+    $('#video_frame').hide()
     $('#simbutton').hide()
     $('#crop_buttons').hide()
-    cameraOff()
     # show simlite containers
     $('#container').show()
     $('#output').show()
@@ -481,8 +490,8 @@ startSimlite = ->
 startSamlite = ->
     # show SAM containers
     $('#controls_container').show()
-    $('#playback_container').show()
-    $('#video_container').show()
+    $('#replay').show()
+    $('#video_frame').show()
     $('#simbutton').show()
     $('#crop_buttons').show()
     # hide SiM containers
@@ -490,4 +499,36 @@ startSamlite = ->
     $('#output').hide()
     $('#sambutton').hide()
     
-    
+    #MHWJ
+toggleMenu = ->
+		if menu
+    	$('#right_frame').hide()
+    	$('#construction_frame').css("right", "0px")
+    	menu = false
+		else
+    	# show SAM containers
+    	$('#right_frame').css("border-left-color", "#cccccc")
+    	$('#right_frame').css("border-left-style", "groove")
+    	$('#right_frame').show()
+    	$('#construction_frame').css("right", "200px")
+    	menu = true
+
+window.screenClick = ->
+		if (recording)
+			shoot
+		else
+			play
+
+toggleMode = ->
+		if (recording or not anyCamera)
+			recording = false
+			$('#play_mode').removeClass('small').addClass('big')
+			$('#record_mode').removeClass('big').addClass('small')
+			$('#play_mode').unbind('click').click play
+			$('#record_mode').unbind('click').click toggleMode
+		else
+			recording = true
+			$('#record_mode').removeClass('small').addClass('big')
+			$('#play_mode').removeClass('big').addClass('small')
+			$('#play_mode').unbind('click').click toggleMode
+			$('#record_mode').unbind('click').click shoot
