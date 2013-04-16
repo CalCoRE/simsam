@@ -244,11 +244,16 @@ window.shoot = ->
     thumbnail = capture video, thumbnailScaleFactor
     console.log("frame")
     console.log(frame)
-
-    # add it after the current play index
-    frameIndex = playbackIndex + 1
-    frameId = getRandomId()
-    playbackFrames.splice(frameIndex, 0, frame)
+    
+    if playbackFrames.length == 0
+        # add the frame at the beginning, first frame
+        playbackFrames[0] = frame
+        frameId = frameIndex = 0
+    else
+        # add it after the current play index
+        frameIndex = playbackIndex + 1
+        frameId = getRandomId()
+        playbackFrames.splice(frameIndex, 0, frame)
 
         
     # store ids that link the frame and the thumbnail
@@ -264,7 +269,11 @@ window.shoot = ->
     console.log(playbackFrames)
     
     # display the thumbnail at the correct position
-    $("#video_output canvas:eq(#{playbackIndex})").after(thumbnail)
+    if playbackFrames.length > 1
+        $("#video_output canvas:eq(#{playbackIndex})").after(thumbnail)
+    else
+        output.appendChild(thumbnail)
+
     $("#video_output").sortable "refresh"
     
     # make the thumbnail clickable and sort the playback frames to match
