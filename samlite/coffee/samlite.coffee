@@ -17,6 +17,9 @@ window.debug = true             # turns on console logging
 # Amanda: is this the right way to do this?
 window.spritecollection = []
 
+# camera is on to start with
+cameraState = 1
+
 
 $(document).ready ->
 
@@ -175,25 +178,29 @@ makeUnselectable = (node) ->
 
 toggleCamera = ->
     if cameraSwitch.is ':checked'
-        if window.debug then console.log "toggle camera off"
+        if window.debug then console.log "toggle camera on"
         # hide the playback frames which would otherwise hide
         # the camera feed
         clearPlayback()
+        cameraState = 1
         # show the camera feed
         $(camera).css "display","block" 
     else
         if window.debug then console.log "toggle camera off"
         # hide the camera feed
         $(camera).css "display","none"
+        cameraState = 0
         # display the most recently displayed playback frame
         placeFrame window.playbackIndex
 
 # simulates a user clicking the checkbox
 cameraOn = ->
     if window.debug then console.log "camera on"
+    cameraState = 1
     cameraSwitch.prop("checked", true).iphoneStyle "refresh"
 cameraOff =  ->
     if window.debug then console.log "camera off"
+    cameraState = 0
     cameraSwitch.prop("checked", false).iphoneStyle "refresh"
     
 
@@ -383,9 +390,14 @@ rescanThumbnails = ->
         $(thumbnail).unbind("click").click ->
             pause()
             clearPlayback()
-            cameraOn()
-            placeFrame index, overlayClass
             window.playbackIndex = index
+            # if camera in on, display as onionskin
+            if cameraState == 1
+                # if camera is on, display onionskin
+                placeFrame index, overlayClass
+            else
+                # if camera is off, display full image
+                placeFrame window.playbackIndex
             updateIndexView()
 
     updateIndexView()
