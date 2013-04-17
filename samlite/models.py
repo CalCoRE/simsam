@@ -34,4 +34,5 @@ class AnimationFrame(ImageWrapper):
     # nothing to do, everything done in ImageWrapper
 
     # constants
-    image_directory = "sitestatic/media/sam_frames/"
+    #image_directory = "sitestatic/media/sam_frames/"
+    image_directory = "/home/chrism/simsam/sitestatic/media/sam_frames/"
