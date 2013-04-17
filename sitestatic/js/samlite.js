@@ -110,7 +110,7 @@
       canvas.height = img.height;
       return ctx.drawImage(img, 0, 0, img.width, img.height);
     };
-    img.src = 'http://' + window.location.host + '/static/sprites/' + sprite + '.jpg';
+    img.src = 'http://' + window.location.host + '/static/media/sprites/' + sprite + '.jpg';
     $(canvas).attr("data-frame-id", sprite);
     return output.appendChild(canvas);
   };
@@ -126,7 +126,7 @@
       canvas.height = img.height;
       return ctx.drawImage(img, 0, 0, img.width, img.height);
     };
-    img.src = 'http://' + window.location.host + '/static/sam_frames/' + frame + '.jpg';
+    img.src = 'http://' + window.location.host + '/static/media/sam_frames/' + frame + '.jpg';
     frameOrdinal = playbackFrames.push(canvas);
     thumbnail = document.createElement('canvas');
     context = thumbnail.getContext('2d');
