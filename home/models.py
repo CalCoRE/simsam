@@ -77,4 +77,4 @@ class Sprite(ImageWrapper):
     name = models.CharField(max_length=100)
 
     #image_directory = "sitestatic/media/sprites/"
-    image_directory = "/home/chrism/simsam/sitestatic/media/sam_frames/"
+    image_directory = "/home/chrism/simsam/sitestatic/media/sprites/"
