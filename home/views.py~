@@ -38,7 +38,7 @@ def login_user(request):
                 login(request, user)
                 state = "You're successfully logged in!"
                 if len(SimsamUser.objects.filter(user=user)) < 1:
-                        SimsamUser.objects.create(user=user, first_name=user.username)
+                        simsamuser = SimsamUser.objects.create(user=user, first_name=user.username)
                
                 t = loader.get_template("createOrOpenProject.html")
                 c = RequestContext(request, {})
