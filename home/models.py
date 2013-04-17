@@ -76,4 +76,5 @@ class Sprite(ImageWrapper):
     """A little image, cropped from a sam, used in a sim."""
     name = models.CharField(max_length=100)
 
-    image_directory = "sitestatic/media/sprites/"
+    #image_directory = "sitestatic/media/sprites/"
+    image_directory = "/home/chrism/simsam/sitestatic/media/sam_frames/"
