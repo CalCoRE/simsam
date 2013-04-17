@@ -399,6 +399,7 @@ trash = (event) ->
     $("#trash .sortable-placeholder").remove()
     rescanThumbnails()
     if window.playbackIndex >= playbackFrames.length then frameEnd()
+    saveFrameSequence()
 
 # Put a series of opaque still canvases over the webcam view, effectively
 # "playing back" the movie. Works by looping through the playback frames
