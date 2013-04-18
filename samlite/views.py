@@ -130,10 +130,10 @@ def make_project(request):
     framesequence = spritecollection = []
     if request.user.is_authenticated():
         user = request.user
-        if hasattr(user, '_wrapped') and hasattr(user, '_setup'):
+        '''if hasattr(user, '_wrapped') and hasattr(user, '_setup'):
                 if user._wrapped.__class__ == object:
                         user._setup()
-                user = user._wrapped
+                user = user._wrapped'''
         simsamuser = SimsamUser.objects.filter(user=user)[0]
     
     projectName = request.POST.get('projectName')
@@ -178,10 +178,10 @@ def openproject(request):
     projects = []
     if request.user.is_authenticated():
         user = request.user
-        if hasattr(user, '_wrapped') and hasattr(user, '_setup'):
+        '''if hasattr(user, '_wrapped') and hasattr(user, '_setup'):
                 if user._wrapped.__class__ == object:
                         user._setup()
-                user = user._wrapped
+                user = user._wrapped'''
         simsamuser = SimsamUser.objects.get(user=user)
 
     projects = Project.objects.filter(owner=simsamuser)
@@ -197,10 +197,10 @@ def chooseproject(request):
     framesequence = spritecollection = []
     if request.user.is_authenticated():
         user = request.user
-        if hasattr(user, '_wrapped') and hasattr(user, '_setup'):
+        '''if hasattr(user, '_wrapped') and hasattr(user, '_setup'):
                 if user._wrapped.__class__ == object:
                         user._setup()
-                user = user._wrapped
+                user = user._wrapped'''
         simsamuser = SimsamUser.objects.get(user=user)
     if request.POST:
         projectname = request.POST.get('projectName')
