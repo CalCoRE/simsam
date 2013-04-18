@@ -112,7 +112,7 @@ loadSprites = (sprite) ->
         canvas.width = img.width
         canvas.height = img.height
         ctx.drawImage(img, 0, 0, img.width, img.height)
-    img.src = 'http://' + window.location.host + '/static/sprites/' + sprite + '.jpg'
+    img.src = 'http://' + window.location.host + '/static/media/sprites/' + sprite + '.jpg'
     $(canvas).attr("data-frame-id", sprite)
     output.appendChild canvas   
     
@@ -126,7 +126,7 @@ loadFrames = (frame) ->
         canvas.width = img.width
         canvas.height = img.height
         ctx.drawImage(img, 0, 0, img.width, img.height)
-    img.src = 'http://' + window.location.host + '/static/sam_frames/' + frame + '.jpg'
+    img.src = 'http://' + window.location.host + '/static/media/sam_frames/' + frame + '.jpg'
 
     frameOrdinal = playbackFrames.push canvas
     thumbnail = document.createElement('canvas')
@@ -136,7 +136,7 @@ loadFrames = (frame) ->
         thumbnail.width = thumb.width * thumbnailScaleFactor
         thumbnail.height = thumb.height * thumbnailScaleFactor
         context.drawImage(thumb, 0, 0, thumbnail.width, thumbnail.height)
-    thumb.src = 'http://' + window.location.host + '/static/sam_frames/' + frame + '.jpg'
+    thumb.src = 'http://' + window.location.host + '/static/media/sam_frames/' + frame + '.jpg'
     frameId = frameIndex = frameOrdinal - 1
     $(thumbnail).attr "data-frame-id", frame
     $(canvas).attr "data-frame-id", frame
