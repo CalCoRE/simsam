@@ -32,9 +32,9 @@
 
   $(document).ready(function() {
     var constraints, element, failure, success, _i, _j, _len, _len1, _ref, _ref1, _results;
-    $('#sambutton').hide();
     $('#container').hide();
     $('#output').hide();
+    $('#right_frame').hide();
     window.camera = $("#camera").get(0);
     window.buttons = {
       shoot: $("#shoot_button").get(0),
@@ -60,8 +60,6 @@
       navigator.getUserMedia(constraints, success, failure);
     } else {
       anyCamera = false;
-      toggleMode;
-
       alert("Your browser does not support getUserMedia()");
     }
     $(buttons.shoot).click(shoot);
@@ -154,7 +152,7 @@
     output.appendChild(thumbnail);
     $("#video_output").sortable("refresh");
     rescanThumbnails();
-    return placeFrame(frameIndex, overlayClass);
+    return placeFrame(frameIndex, (recording ? overlayClass : playbackClass));
   };
 
   makeUnselectable = function(node) {
@@ -311,6 +309,7 @@
     frame = playbackFrames[frameIndex];
     $(frame).addClass(className);
     frame.id = "canvas";
+    $(frame).click(screenClick());
     return $("#replay").append(frame);
   };
 
@@ -467,9 +466,9 @@
   };
 
   startSimlite = function() {
-    $('#controls_container').hide();
     $('#replay').hide();
     $('#video_frame').hide();
+    $('#bottom_frame').hide();
     $('#simbutton').hide();
     $('#crop_buttons').hide();
     $('#container').show();
@@ -492,12 +491,14 @@
     if (menu) {
       $('#right_frame').hide();
       $('#construction_frame').css("right", "0px");
+      $('#right_menu_button').css("image", "../images/openmenu.png");
+      $('#right_menu_button').css("right", "5px");
       return menu = false;
     } else {
-      $('#right_frame').css("border-left-color", "#cccccc");
-      $('#right_frame').css("border-left-style", "groove");
       $('#right_frame').show();
       $('#construction_frame').css("right", "200px");
+      $('#right_menu_button').css("image", "../images/closemenu.png");
+      $('#right_menu_button').css("right", "205px");
       return menu = true;
     }
   };
@@ -515,6 +516,7 @@
       recording = false;
       $('#play_mode').removeClass('small').addClass('big');
       $('#record_mode').removeClass('big').addClass('small');
+      placeFrame(window.playbackIndex, playbackClass);
       $('#play_mode').unbind('click').click(play);
       return $('#record_mode').unbind('click').click(toggleMode);
     } else {

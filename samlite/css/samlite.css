@@ -10,6 +10,9 @@
 }
 
 #construction_frame { 
+	border-right-width: 1px; 
+	border-right-color: #4c4c4c; 
+	border-right-style: solid; 
 	max-height: 100%;
 	bottom: 0px;
 	top: 0px;
@@ -18,11 +21,15 @@
 	max-width: 100%;
 	position: absolute;
 	z-index: 0;
-	border-right-color: #cccccc;
-	border-right-style: groove;
+}
+
+#container {
+	height: 100%;
+	background-color: white;
 }
 
 #video_frame {
+	background-color: white;
 	position: absolute;
 	right: 0px;
 	left: 0px;
@@ -63,8 +70,9 @@
 }
 
 #bottom_frame {
-	border-top-color: #cccccc;
-	border-top-style: groove;
+	border-top-color: #4c4c4c;
+	border-top-width: 1px;
+	border-top-style: solid;
 	max-width: 100%;
 	right: 0px;
 	left: 0px;
@@ -139,43 +147,69 @@
 	white-space: nowrap;
 }
 
+#home_button {
+	background-repeat: no-repeat;
+	background-image: url(../images/home.png);
+	left: 5px;
+	top: 5px;
+	opacity:.50;
+	filter:alpha(opacity=50);
+	filter: “alpha(opacity=50)”;
+}
+
+#right_menu_button {
+	background-repeat: no-repeat;
+	background-image: url(../images/openmenu.png);
+	right: 5px;
+	top: 5px;
+	opacity:.50;
+	filter:alpha(opacity=50);
+	filter: “alpha(opacity=50)”;
+}
+
+.floating_button {
+	z-index: 100;
+	border-style: solid;
+	border-color: white;
+	border-width: 3px;
+	background-color: white;
+	padding: 5px;
+	height: 31px;
+	width: 31px;
+	position: fixed;
+	border-radius: 4px;
+}
+
 #right_frame {
+	width: 200px;
 	visibility: hide;
 	bottom: 0px;
 	top: 0px;
 	right: 0px;
 	position: absolute;
 	height: 100%;
-	width: 0px;
 }
 
-.floating_button {
-	border-width: 1px;
-	border-color: #e6e6e6;
-	border-style: outset;
-	height: 50px;
-	width: 50px;
-	position: fixed;
-	border-radius: 4px;
+#menu_options {
+	width: 100%;
+	position: relative;
 }
 
-#right_menu_button {
-	right: 5px;
-	top: 5px;
+.menu_button {
+	background-color: #cccccc;
+	padding-bottom: 5px;
+	padding-top: 5px;
+	font-size: large;
+	border-style: none;
+	color: #333333;
+	font-family: Helvetica, Verdana, Arial, sans-serif;
+	width: 100%;
+	cursor:pointer;
 }
 
-#home_button {
-	left: 5px;
-	top: 5px;
-}
-
-.maindisplay {
-}
-
-#crop_buttons {
-	right: 0px;
-	top: 0px;
-	position: absolute;
+.menu_button:hover {
+	background-color: #333333;
+	color: #cccccc;
 }
 
 /* old samlite

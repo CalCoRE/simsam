@@ -52,6 +52,7 @@
 <div id="wholescreen">
   <!-- INTERFACE PANELS HERE -->
   <div id="construction_frame">
+  	<div id="container"></div>
   	<div id="video_frame">
   		<video id="camera"></video>
   		<div id="replay"></div>
@@ -68,10 +69,14 @@
   </div>
   <div id="right_frame">
   	<div id="menu_options">
+  		<div id="switch_button">
+  			<button class="menu_button" id="simbutton">Make Simulation</button>
+  			<button class="menu_button" id="sambutton">Make Animation</button>
+  		</div>
   		<div id="crop_buttons">
-        <button class="crop_button" id="startcropping" onclick="cropCanvas()">Start Cropping</button>
-				<button class="crop_button" id="savecrop" onclick="getResults()">Save Crop</button>
-				<button class="crop_button" id="cancelcrop" onclick="deleteRect()">Cancel Crop</button>
+        <button class="menu_button" id="startcropping" onclick="cropCanvas()">Start Cropping</button>
+				<button class="menu_button" id="savecrop" onclick="getResults()">Save Crop</button>
+				<button class="menu_button" id="cancelcrop" onclick="deleteRect()">Cancel Crop</button>
     	</div>
   	</div>
   	<div id="sprite_drawer"></div>
@@ -79,8 +84,8 @@
   <!-- END INTERFACE PANELS -->
   
   <!-- PERSISTENT FLOATING ICONS HERE -->
-  <div id="home_button" class="floating_button">home</div>
-  <div id="right_menu_button" class="floating_button">menu</div>
+  <div id="home_button" class="floating_button"></div>
+  <div id="right_menu_button" class="floating_button"></div>
   <!-- END FLOATING ICONS -->
 </div>
   
@@ -89,7 +94,6 @@
 <!-- THEY WILL NEED TO BE INTEGRATED/CONVERTED SOON-->
 
 <input type="text" id="playback_index">
-<div id="container"></div>
 <input type="hidden" id="fps" value="10">
   
 {% endif %}

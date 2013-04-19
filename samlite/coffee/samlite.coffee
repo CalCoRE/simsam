@@ -32,9 +32,10 @@ $(document).ready ->
 	# frameRegistry[i] =  i<window.spritecollection.length; window.spritecollection.forEach(displayCanvas)
 
     # hide elements of sim
-    $('#sambutton').hide()
+    #$('#sambutton').hide()
     $('#container').hide()
     $('#output').hide()
+    $('#right_frame').hide()
 
     # get some handy references to DOM nodes
     window.camera = $("#camera").get 0
@@ -59,10 +60,8 @@ $(document).ready ->
         
         navigator.getUserMedia constraints, success, failure
     else
-    	anyCamera = false
-   		toggleMode
-    	alert "Your browser does not support getUserMedia()"
-    
+    		anyCamera = false
+    		alert "Your browser does not support getUserMedia()"
         
     # wire up buttons
     $(buttons.shoot).click shoot
@@ -154,7 +153,7 @@ loadFrames = (frame) ->
 
     rescanThumbnails()
  
-    placeFrame frameIndex, overlayClass
+    placeFrame frameIndex, (if recording then overlayClass else playbackClass)
     
    
     #camera = $("#camera").get(0)
@@ -349,7 +348,7 @@ placeFrame = (frameIndex, className = "") ->
     # allow special overlay styling of frames
     $(frame).addClass className
     frame.id = "canvas"
-    #$(frame).click screenClick()
+    $(frame).click screenClick()
     $("#replay").append frame
     
 # run through the canvas elements in the thumbnail list and update
@@ -477,9 +476,10 @@ updateIndexView = -> $("#playback_index").get(0).value = window.playbackIndex
 # functions to switch between sam and sim
 startSimlite = ->
     # hide samlite containers
-    $('#controls_container').hide()
+    #$('#controls_container').hide()
     $('#replay').hide()
     $('#video_frame').hide()
+    $('#bottom_frame').hide()
     $('#simbutton').hide()
     $('#crop_buttons').hide()
     # show simlite containers
@@ -504,13 +504,17 @@ toggleMenu = ->
 		if menu
     	$('#right_frame').hide()
     	$('#construction_frame').css("right", "0px")
+    	$('#right_menu_button').css("image", "../images/openmenu.png")
+    	$('#right_menu_button').css("right", "5px")
     	menu = false
 		else
     	# show SAM containers
-    	$('#right_frame').css("border-left-color", "#cccccc")
-    	$('#right_frame').css("border-left-style", "groove")
+    	#$('#right_frame').css("border-left-color", "#cccccc")
+    	#$('#right_frame').css("border-left-style", "groove")
     	$('#right_frame').show()
     	$('#construction_frame').css("right", "200px")
+    	$('#right_menu_button').css("image", "../images/closemenu.png")
+    	$('#right_menu_button').css("right", "205px")
     	menu = true
 
 window.screenClick = ->
@@ -524,6 +528,7 @@ toggleMode = ->
 			recording = false
 			$('#play_mode').removeClass('small').addClass('big')
 			$('#record_mode').removeClass('big').addClass('small')
+			placeFrame window.playbackIndex, playbackClass
 			$('#play_mode').unbind('click').click play
 			$('#record_mode').unbind('click').click toggleMode
 		else

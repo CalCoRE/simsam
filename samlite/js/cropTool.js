@@ -72,7 +72,7 @@ function deleteRect() {
 	ctx.drawImage(image, 0, 0, ctx.canvas.width, ctx.canvas.height);
 	
 	//unbind mousemove event
-	//$('#canvas').unbind(drag);
+	canvas.click(screenClick());
 }
 
 
