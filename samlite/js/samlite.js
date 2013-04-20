@@ -466,7 +466,6 @@
   };
 
   startSimlite = function() {
-    $('#replay').hide();
     $('#video_frame').hide();
     $('#bottom_frame').hide();
     $('#simbutton').hide();
@@ -477,9 +476,8 @@
   };
 
   startSamlite = function() {
-    $('#controls_container').show();
-    $('#replay').show();
     $('#video_frame').show();
+    $('#bottom_frame').show();
     $('#simbutton').show();
     $('#crop_buttons').show();
     $('#container').hide();
@@ -516,15 +514,16 @@
       recording = false;
       $('#play_mode').removeClass('small').addClass('big');
       $('#record_mode').removeClass('big').addClass('small');
-      placeFrame(window.playbackIndex, playbackClass);
       $('#play_mode').unbind('click').click(play);
-      return $('#record_mode').unbind('click').click(toggleMode);
+      $('#record_mode').unbind('click').click(toggleMode);
+      return placeFrame(window.playbackIndex, playbackClass);
     } else {
       recording = true;
       $('#record_mode').removeClass('small').addClass('big');
       $('#play_mode').removeClass('big').addClass('small');
       $('#play_mode').unbind('click').click(toggleMode);
-      return $('#record_mode').unbind('click').click(shoot);
+      $('#record_mode').unbind('click').click(shoot);
+      return placeFrame(window.playbackIndex, overlayClass);
     }
   };
 
