@@ -1,14 +1,40 @@
+<!Doctype html>
+<html>
+    <head>
+        <title>Playing with Sprites</title>
+        <!--<script src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.4.2.min.js"></script>-->
+        <script src="{{ STATIC_URL }}js/kinetic.js"></script>
+        <script src="{{ STATIC_URL }}js/sprite.js"></script>
+    </head>
+    <body>
+        <div id="container"></div>
+        <script defer="defer">
+            var stage = new Kinetic.Stage({
+                container: 'container',
+                width: 578,
+                height: 200
+            });
+            var layer = new Kinetic.Layer();
+            init();
+        </script>
+        <button onclick="window.interval=setInterval(tick,500);">go</button>
+        <button onclick="clearInterval(interval);">stop</button>
+    </body>
+</html>
+
+<!--
+
 <!DOCTYPE html>
 <html debug="true">
 <meta charset="UTF-8">
 <head>
-    <!--<script src="http://www.html5canvastutorials.com/libraries/kinetic-v3.8.3.js"></script>-->
+    <!--<script src="http://www.html5canvastutorials.com/libraries/kinetic-v3.8.3.js"></script>
     <script src="http://kineticjs.com/download/v4.0.5/kinetic-v4.0.5.js"></script>
-    <!--<script src="http://www.html5canvastutorials.com/libraries/kinetic-v3.6.0.js"></script>-->
+    <!--<script src="http://www.html5canvastutorials.com/libraries/kinetic-v3.6.0.js"></script>
     <script src="{{ STATIC_URL }}js/simlite.js"></script>
-    <script type="text/javascript" src="https://getfirebug.com/firebug-lite.js"></script> <!-- debug for ipad -->
+    <script type="text/javascript" src="https://getfirebug.com/firebug-lite.js"></script> <!-- debug for ipad 
 </head>
-<body><!--</body> onmousedown="return false;">-->
+<body><!--</body> onmousedown="return false;">
     <p><h1>Hello!!</h1></p>
     <div id="container">
     </div>
@@ -16,3 +42,4 @@
     </div>
 </body>
 </html>
+-->
