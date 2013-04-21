@@ -11,7 +11,7 @@
 #   see anything on the screen.
 
 # A prototypical sprite
-class GenericSprite extends Kinetic.Rect
+class GenericSprite extends Kinetic.Image
     # These properties will be in the prototype of the Sprite
     # and thus appear as properties of all instances of that sprite
 
@@ -33,7 +33,7 @@ class GenericSprite extends Kinetic.Rect
             fill: 'black' # todo: the image
             strokeWidth: 0
             offset: [50, 25] # IMPORTANT: this should be half the height and half the width, which allows rotation about the center of the shape 
-        Kinetic.Rect.call(this, shapeParams)
+        Kinetic.Image.call(this, shapeParams)
 
     applyRules: (environment) ->
         for rule in @_rules
