@@ -1,0 +1,100 @@
+<html>
+	<head>
+	
+		<!-- imported useful libraries - feel free to add more if needed -->
+	
+    <script src="lib/jquery.js"></script>
+    <script src="lib/jquery-ui.js"></script>
+		
+		<!-- our own stuff -->
+		<link rel="stylesheet" href="samlite.css">
+		<script src="interface.js"></script>
+	</head>
+	
+	<body>
+		
+		<div id="wholescreen">
+		  <!-- INTERFACE PANELS HERE -->
+		  <!-- upper left panel, where the "action" happens -->
+		  <div id="construction_frame">
+		  	<!-- container is needed for the camera overlay onion skin effect -->
+		  	<div id="container"></div>
+		  	<!-- video_frame holds the "camera" feed or "replay" image selected -->
+		  	<div id="video_frame">
+		  		<video id="camera"></video>
+		  		<div id="replay">
+			  		<!-- warp zone section.
+			  			   in the real program, this is dynamically 
+			  				 added. but, can be further styled with css -->
+		  			<img src="mock_images/1.jpg" class="playback-frame">
+		  			<!-- end warp zone -->
+		  		</div>
+		  	</div>
+		  	<!-- bottom bar -->
+		  	<div id="bottom_frame">
+		  		<!-- select a mode -->
+		  		<div id="toggle">
+		  			<div id="play_mode" class="big" onclick="toggleMode()"></div>
+		  			<div id="record_mode" class="small" onclick="toggleMode()"></div>
+		  		</div>
+		  		<!-- filmstrip -->
+		  		<div id="video_output">
+			  		<!-- warp zone section.
+			  			   in the real program, these are dynamically 
+			  				 added. but, can be further styled with css -->
+			  		<img src="mock_images/1.jpg" draggable="true" width="160" height="120">
+			  		<img src="mock_images/2.jpg" draggable="true" width="160" height="120">
+			  		<img src="mock_images/3.jpg" draggable="true" width="160" height="120">
+			  		<img src="mock_images/4.jpg" draggable="true" width="160" height="120">
+			  		<img src="mock_images/5.jpg" draggable="true" width="160" height="120">
+			  		<img src="mock_images/6.jpg" draggable="true" width="160" height="120">
+			  		<img src="mock_images/7.jpg" draggable="true" width="160" height="120">
+			  		<img src="mock_images/8.jpg" draggable="true" width="160" height="120">
+		  			<!-- end warp zone -->
+		  		</div>
+		  		<div id="trash"></div>
+		  	</div>
+		  </div>
+		  <!-- right hand tools menu - toggles open and closed -->
+		  <div id="right_frame" hidden="true">
+		  	<!-- text menu options first -->
+		  	<div id="menu_options">
+		  		<!-- application options -->
+		  		<div id="switch_button">
+		  			<button class="menu_button" id="simbutton" style="display:hidden;">
+		  			Make Simulation</button>
+		  			<button class="menu_button" id="sambutton">
+		  			Make Animation</button>
+		  		</div>
+		  		<!-- cropping functions -->
+		  		<div id="crop_buttons">
+		        <button class="menu_button" id="startcropping" onclick="cropCanvas()">
+		        Start Cropping</button>
+						<button class="menu_button" id="savecrop" onclick="getResults()">
+						Save Crop</button>
+						<button class="menu_button" id="cancelcrop" onclick="deleteRect()">
+						Cancel Crop</button>
+		    	</div>
+		  	</div>
+		  	<!-- after the text menu, include the sprite drawer -->
+		  	<div id="sprite_drawer">
+		  		<!-- begin warp zone 
+		  				 this will be dynamically edited, but can be styled with css -->
+		  		<img src="mock_images/crop1.jpg">
+		  		<img src="mock_images/crop2.jpg">
+		  		<!-- end ward zone -->
+		  	</div>
+		  </div>
+		  <!-- END INTERFACE PANELS -->
+		  
+		  
+		  <!-- PERSISTENT FLOATING BUTTONS HERE 
+		  		 these are the home and menu icons on the left and 
+		  		 right of the main part of the screen -->
+		  <div id="home_button" class="floating_button"></div>
+		  <div id="right_menu_button" class="floating_button" onclick="toggleMenu()"></div>
+		  <!-- END FLOATING ICONS -->
+		</div>
+	
+	</body>
+</html>
