@@ -32,6 +32,7 @@
 
   $(document).ready(function() {
     var constraints, element, failure, success, _i, _j, _len, _len1, _ref, _ref1, _results;
+    $('#sambutton').hide();
     $('#container').hide();
     $('#output').hide();
     $('#right_frame').hide();
@@ -482,6 +483,7 @@
     $('#video_frame').show();
     $('#simbutton').show();
     $('#crop_buttons').show();
+    $('#bottom_frame').show();
     $('#container').hide();
     $('#output').hide();
     return $('#sambutton').hide();
@@ -521,11 +523,16 @@
       return $('#record_mode').unbind('click').click(toggleMode);
     } else {
       recording = true;
-      $('#record_mode').removeClass('small').addClass('big');
-      $('#play_mode').removeClass('big').addClass('small');
-      $('#play_mode').unbind('click').click(toggleMode);
-      return $('#record_mode').unbind('click').click(shoot);
+      return toggleCamera;
     }
   };
+
+  $('#record_mode').removeClass('small').addClass('big');
+
+  $('#play_mode').removeClass('big').addClass('small');
+
+  $('#play_mode').unbind('click').click(toggleMode);
+
+  $('#record_mode').unbind('click').click(shoot);
 
 }).call(this);

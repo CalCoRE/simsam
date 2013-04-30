@@ -32,7 +32,7 @@ $(document).ready ->
 	# frameRegistry[i] =  i<window.spritecollection.length; window.spritecollection.forEach(displayCanvas)
 
     # hide elements of sim
-    #$('#sambutton').hide()
+    $('#sambutton').hide()
     $('#container').hide()
     $('#output').hide()
     $('#right_frame').hide()
@@ -494,6 +494,7 @@ startSamlite = ->
     $('#video_frame').show()
     $('#simbutton').show()
     $('#crop_buttons').show()
+    $('#bottom_frame').show()
     # hide SiM containers
     $('#container').hide()
     $('#output').hide()
@@ -524,16 +525,17 @@ window.screenClick = ->
 			play
 
 toggleMode = ->
-		if (recording or not anyCamera)
-			recording = false
-			$('#play_mode').removeClass('small').addClass('big')
-			$('#record_mode').removeClass('big').addClass('small')
-			placeFrame window.playbackIndex, playbackClass
-			$('#play_mode').unbind('click').click play
-			$('#record_mode').unbind('click').click toggleMode
-		else
-			recording = true
-			$('#record_mode').removeClass('small').addClass('big')
+                if (recording or not anyCamera)
+                        recording = false
+                        $('#play_mode').removeClass('small').addClass('big')
+                        $('#record_mode').removeClass('big').addClass('small')
+                        placeFrame window.playbackIndex, playbackClass
+                        $('#play_mode').unbind('click').click play
+                        $('#record_mode').unbind('click').click toggleMode
+                else
+                        recording = true
+                        toggleCamera
+        		$('#record_mode').removeClass('small').addClass('big')
 			$('#play_mode').removeClass('big').addClass('small')
 			$('#play_mode').unbind('click').click toggleMode
 			$('#record_mode').unbind('click').click shoot
