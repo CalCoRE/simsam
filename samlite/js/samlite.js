@@ -345,8 +345,9 @@
     $("#trash .sortable-placeholder").remove();
     rescanThumbnails();
     if (window.playbackIndex >= playbackFrames.length) {
-      return frameEnd();
+      frameEnd();
     }
+    return saveFrameSequence();
   };
 
   window.play = function() {
