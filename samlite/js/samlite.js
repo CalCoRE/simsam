@@ -522,16 +522,13 @@
       $('#play_mode').unbind('click').click(play);
       return $('#record_mode').unbind('click').click(toggleMode);
     } else {
-      return recording = true;
+      recording = true;
+      alert("recording");
+      $('#record_mode').removeClass('small').addClass('big');
+      $('#play_mode').removeClass('big').addClass('small');
+      $('#play_mode').unbind('click').click(toggleMode);
+      return $('#record_mode').unbind('click').click(shoot);
     }
   };
-
-  $('#record_mode').removeClass('small').addClass('big');
-
-  $('#play_mode').removeClass('big').addClass('small');
-
-  $('#play_mode').unbind('click').click(toggleMode);
-
-  $('#record_mode').unbind('click').click(shoot);
 
 }).call(this);
