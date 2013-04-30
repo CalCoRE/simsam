@@ -43,6 +43,11 @@
 		{% endfor %}
 		<input type="submit" value="Open Project" />
 	</form>
+        <p>Or make a new project.</p>
+        <form class="chooseproject" action="make_project" method="post">
+                New Project Name: <input type="text" name="projectName" />
+                <input type="submit" value="Make New Project" />
+        </form>
 	
 	
 	{% else %}

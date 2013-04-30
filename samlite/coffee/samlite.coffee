@@ -75,7 +75,7 @@ $(document).ready ->
     $("#simbutton").click startSimlite
     $("#sambutton").click startSamlite
     #MHWJ
-    $("#right_menu_button").click toggleMenu 
+    $("#right_menu_button").click toggleMenu
     $("#play_mode").click play
     $("#record_mode").click toggleMode
 
@@ -537,3 +537,5 @@ toggleMode = ->
 			$('#play_mode').removeClass('big').addClass('small')
 			$('#play_mode').unbind('click').click toggleMode
 			$('#record_mode').unbind('click').click shoot
+
+
