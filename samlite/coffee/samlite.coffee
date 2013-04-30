@@ -535,7 +535,9 @@ toggleMode = ->
                         $('#record_mode').unbind('click').click toggleMode
                 else
                         recording = true
-                        alert("recording")
+                        maxFrame = playbackFrames.length - 1
+                        placeFrame maxFrame, overlayClass
+                        #alert("recording")
                         $('#record_mode').removeClass('small').addClass('big')        
                         $('#play_mode').removeClass('big').addClass('small')
                         $('#play_mode').unbind('click').click toggleMode

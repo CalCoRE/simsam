@@ -515,6 +515,7 @@
   };
 
   toggleMode = function() {
+    var maxFrame;
     if (recording || !anyCamera) {
       recording = false;
       $('#play_mode').removeClass('small').addClass('big');
@@ -524,7 +525,8 @@
       return $('#record_mode').unbind('click').click(toggleMode);
     } else {
       recording = true;
-      alert("recording");
+      maxFrame = playbackFrames.length - 1;
+      placeFrame(maxFrame, overlayClass);
       $('#record_mode').removeClass('small').addClass('big');
       $('#play_mode').removeClass('big').addClass('small');
       $('#play_mode').unbind('click').click(toggleMode);
