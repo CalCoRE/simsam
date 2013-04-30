@@ -534,7 +534,6 @@ toggleMode = ->
                         $('#record_mode').unbind('click').click toggleMode
                 else
                         recording = true
-                        toggleCamera
         		$('#record_mode').removeClass('small').addClass('big')
 			$('#play_mode').removeClass('big').addClass('small')
 			$('#play_mode').unbind('click').click toggleMode

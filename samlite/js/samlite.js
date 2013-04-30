@@ -522,8 +522,7 @@
       $('#play_mode').unbind('click').click(play);
       return $('#record_mode').unbind('click').click(toggleMode);
     } else {
-      recording = true;
-      return toggleCamera;
+      return recording = true;
     }
   };
 
