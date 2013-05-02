@@ -152,8 +152,6 @@
 	background-image: url(../images/home.png);
 	left: 5px;
 	top: 5px;
-        height: 31px;
-        width: 31px;
 	opacity:.50;
 	filter:alpha(opacity=50);
 	filter: “alpha(opacity=50)”;
