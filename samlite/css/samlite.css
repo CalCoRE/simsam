@@ -156,6 +156,10 @@
 	filter:alpha(opacity=50);
 	filter: “alpha(opacity=50)”;
 }
+#home_button:hover{
+        height: 50px;
+        width: 50px;
+}
 
 #right_menu_button {
 	background-repeat: no-repeat;
