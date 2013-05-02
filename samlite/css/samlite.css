@@ -156,10 +156,6 @@
 	filter:alpha(opacity=50);
 	filter: “alpha(opacity=50)”;
 }
-#home_button:hover{
-        height: 50px;
-        width: 50px;
-}
 
 #right_menu_button {
 	background-repeat: no-repeat;
@@ -178,8 +174,8 @@
 	border-width: 3px;
 	background-color: white;
 	padding: 5px;
-	height: 31px;
-	width: 31px;
+	/*height: 31px;
+	width: 31px;*/
 	position: fixed;
 	border-radius: 4px;
 }
