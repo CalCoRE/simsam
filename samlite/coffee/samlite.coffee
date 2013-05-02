@@ -545,6 +545,7 @@ toggleMode = ->
                         $('#record_mode').unbind('click').click shoot
 
 goHome = ->
+        alert("gohome")
         ajaxOptions =
                 url: "openproject"
                 type: "POST"

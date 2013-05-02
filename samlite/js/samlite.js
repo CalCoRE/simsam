@@ -537,6 +537,7 @@
 
   goHome = function() {
     var ajaxOptions, done;
+    alert("gohome");
     ajaxOptions = {
       url: "openproject",
       type: "POST",
