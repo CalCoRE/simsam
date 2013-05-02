@@ -76,6 +76,7 @@ $(document).ready ->
     $("#sambutton").click startSamlite
     #MHWJ
     $("#right_menu_button").click toggleMenu
+    $("#home_button").click goHome
     $("#play_mode").click play
     $("#record_mode").click toggleMode
 
@@ -543,4 +544,12 @@ toggleMode = ->
                         $('#play_mode').unbind('click').click toggleMode
                         $('#record_mode').unbind('click').click shoot
 
+goHome = ->
+        ajaxOptions =
+                url: "openproject"
+                type: "POST"
+                dataType: "json"
+        done = (response) ->
+                if window.debug then console.log "go home ajax, sent:", ajaxOptions, "response:", response
+        $.ajax(ajaxOptions).done(done)
 
