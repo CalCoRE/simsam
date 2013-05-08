@@ -88,19 +88,6 @@ $(document).ready ->
     $("#video_output").sortable().bind 'sortupdate', saveFrameSequence
     $("#trash").sortable({connectWith:"#video_output"}).bind 'receive', trash
     
-    # fps slider
-    $("#fps_slider").slider
-        value: 10
-        min: 1
-        max: 50
-        step: 1
-        slide: (event,ui) ->
-            $("#fps").val ui.value
-    
-    # camera toggle button
-    cameraSwitch = $("#camera_onoff").iphoneStyle
-        onChange: toggleCamera
-        
     # prevent text highlighting
     # opera-specific
     makeUnselectable $(document.body).get 0
@@ -111,6 +98,9 @@ $(document).ready ->
         loadSprites(element)
     for element in window.framesequence
         loadFrames(element)
+
+    # always start in record mode
+    switchToRecordMode()
 
 loadSprites = (sprite) ->
     output = $("#sprite_drawer").get(0) 
@@ -562,20 +552,27 @@ window.screenClick = ->
 
 toggleMode = ->
     if (recording or not anyCamera)
-        recording = false
-        $('#play_mode').removeClass('small').addClass('big')
-        $('#record_mode').removeClass('big').addClass('small')
-        placeFrame window.playbackIndex, playbackClass
-        $('#play_mode').unbind('click').click play
-        $('#record_mode').unbind('click').click toggleMode
+        switchToPlaybackMode()
     else
-        recording = true
-        if playbackFrames.length > 0
-            maxFrame = playbackFrames.length - 1
-            placeFrame maxFrame, overlayClass
-        #alert("recording")
-        $('#record_mode').removeClass('small').addClass('big')        
-        $('#play_mode').removeClass('big').addClass('small')
-        $('#play_mode').unbind('click').click toggleMode
-        $('#record_mode').unbind('click').click shoot
+        switchToRecordMode()
+
+
+switchToRecordMode = ->
+    recording = true
+    if playbackFrames.length > 0
+        maxFrame = playbackFrames.length - 1
+        placeFrame maxFrame, overlayClass
+    #alert("recording")
+    $('#record_mode').removeClass('small').addClass('big')        
+    $('#play_mode').removeClass('big').addClass('small')
+    $('#play_mode').unbind('click').click toggleMode
+    $('#record_mode').unbind('click').click shoot
+
+switchToPlaybackMode = ->
+    recording = false
+    $('#play_mode').removeClass('small').addClass('big')
+    $('#record_mode').removeClass('big').addClass('small')
+    placeFrame window.playbackIndex, playbackClass
+    $('#play_mode').unbind('click').click play
+    $('#record_mode').unbind('click').click toggleMode
 
