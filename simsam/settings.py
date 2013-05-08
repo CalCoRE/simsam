@@ -78,17 +78,16 @@ STATICFILES_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
     ("js", os.path.join(SITE_ROOT, '../home/js')),
     ("css", os.path.join(SITE_ROOT, '../home/css')),
-    ("images", os.path.join(SITE_ROOT, '../home/images')), 
+    ("images", os.path.join(SITE_ROOT, '../home/images')),
     ("js", os.path.join(SITE_ROOT, '../samlite/js')),
     ("css", os.path.join(SITE_ROOT, '../samlite/css')),
     ("images", os.path.join(SITE_ROOT, '../samlite/images')),
     ("js", os.path.join(SITE_ROOT, '../simlite/js')),
     ("css", os.path.join(SITE_ROOT, '../simlite/css')),
-    ("images", os.path.join(SITE_ROOT, '../simlite/images')), 
-    ("sam_frames", os.path.join(SITE_ROOT, '../sitestatic/media/sam_frames')),
-    ("sprites", os.path.join(SITE_ROOT, '../sitestatic/media/sprites')),
+    ("images", os.path.join(SITE_ROOT, '../simlite/images')),
 
-    os.path.join(SITE_ROOT, '../home/static'), 
+    # we don't use these, marked for removal
+    os.path.join(SITE_ROOT, '../home/static'),
     os.path.join(SITE_ROOT, '../samlite/static'),
     os.path.join(SITE_ROOT, '../simlite/static'),
 )

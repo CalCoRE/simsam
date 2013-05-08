@@ -37,4 +37,4 @@ class AnimationFrame(ImageWrapper):
 
     # constants
     image_directory = os.path.join(
-        util.get_root_path(), 'sitestatic/media/sam_frames/')
+        util.get_root_path(), 'sitestatic/sam_frames/')
