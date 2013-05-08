@@ -7,11 +7,6 @@ from django.utils import simplejson as json
 
 import random
 
-'''from samlite.models import Animation
-from samlite.models import AnimationFrame
-from home.models import Sprite
-from home.models import SimsamUser, Project'''
-
 from home.models import *
 from samlite.models import *
 
@@ -174,7 +169,8 @@ def openproject(request):
     if request.user.is_authenticated():
         user = request.user
         simsamuser = SimsamUser.objects.get(user=user)
-        projects = Project.objects.filter(owner=simsamuser)
+
+    projects = Project.objects.filter(owner=simsamuser)
     t = loader.get_template("chooseproject.html")
     c = RequestContext(request, {"projectList": projects})
     return HttpResponse(t.render(c))

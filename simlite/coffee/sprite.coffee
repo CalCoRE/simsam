@@ -2,16 +2,16 @@
 
 # * positive x is to the RIGHT, positive y is DOWN, 0,0 is the upper left corner
 # * The "center" of the shape is initially it's upper left corner. We want to
-# define it as half the width to the right and half the height down from there
-# with the offset property. This allows rotation to happen about the true
-# center of the shape.
-# * You have to set the offset property when the shape is defined, you
-# apparently can't do it later (I might be wrong about this).
+#   define it as half the width to the right and half the height down from there
+#   with the offset property. This allows rotation to happen about the true 
+#   center of the shape.
+# * You have to set the offset property when the shape is defined, you 
+#   apparently can't do it later (I might be wrong about this).
 # * You have to call layer.draw() after making changes to shapes in order to
-# see anything on the screen.
+#   see anything on the screen.
 
 # A prototypical sprite
-class GenericSprite extends Kinetic.Rect
+class GenericSprite extends Kinetic.Image
     # These properties will be in the prototype of the Sprite
     # and thus appear as properties of all instances of that sprite
 
@@ -32,8 +32,8 @@ class GenericSprite extends Kinetic.Rect
             height: 50 # todo: based on image
             fill: 'black' # todo: the image
             strokeWidth: 0
-            offset: [50, 25] # IMPORTANT: this should be half the height and half the width, which allows rotation about the center of the shape
-        Kinetic.Rect.call(this, shapeParams)
+            offset: [50, 25] # IMPORTANT: this should be half the height and half the width, which allows rotation about the center of the shape 
+        Kinetic.Image.call(this, shapeParams)
 
     applyRules: (environment) ->
         for rule in @_rules

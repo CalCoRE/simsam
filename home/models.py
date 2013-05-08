@@ -1,15 +1,17 @@
+import datetime
+import os
 from django.db import models
 from django.contrib.auth.models import User
 
-import datetime
+import util
 
-# Create your models here.
+
 class Project(models.Model):
     """A project containing an animation, a simulation, and associated data."""
     name = models.CharField(max_length=100)
     owner = models.ForeignKey('SimsamUser', related_name="projects")
-    parent_project = models.ForeignKey('Project',
-        related_name='child_projects', blank=True, null=True)
+    parent_project = models.ForeignKey(
+        'Project', related_name='child_projects', blank=True, null=True)
 
     # implicit properties
     # * animations (many animations to one project)
@@ -19,7 +21,8 @@ class Project(models.Model):
     def __unicode__(self):
         return self.name
 
-class SimsamUser(models.Model):  
+
+class SimsamUser(models.Model):
     """One-to-one with a django user, but with SiMSAM-related info."""
     user = models.OneToOneField(User, primary_key=True)
     first_name = models.CharField(max_length=40)
@@ -32,13 +35,15 @@ class SimsamUser(models.Model):
     def __unicode__(self):
         return self.first_name + u' ' + self.last_name
 
+
 class ImageWrapper(models.Model):
     """Handles base64-string-encoded images and saving them; is abstract."""
     # db fields
     image_hash = models.CharField(max_length=40, primary_key=True)
-    created_date = models.DateTimeField('date created',
-        default=datetime.datetime.now)
+    created_date = models.DateTimeField(
+        'date created', default=datetime.datetime.now)
 
+    # python's funky way of making this class abstract
     class Meta:
         abstract = True
 
@@ -72,9 +77,10 @@ class ImageWrapper(models.Model):
         # do the default django save magic
         super(ImageWrapper, self).save(*args, **kwargs)
 
+
 class Sprite(ImageWrapper):
     """A little image, cropped from a sam, used in a sim."""
     name = models.CharField(max_length=100)
 
-    #image_directory = "sitestatic/media/sprites/" #use this for local
-    image_directory = "/home/chrism/simsam/sitestatic/media/sprites/" #use this for dax
+    image_directory = os.path.join(
+        util.get_root_path(), 'sitestatic/media/sprites')
