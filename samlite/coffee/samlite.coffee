@@ -368,6 +368,9 @@ placeFrame = (frameIndex, className = "") ->
     frame.id = "canvas"
     $(frame).click screenClick()
     $("#replay").append frame
+
+placeBlankFrame = ->
+    $("#replay").append('<div class="blank-frame"><div>nothing here</div></div>')
     
 # run through the canvas elements in the thumbnail list and update
 # everything to by in sync with those thumbnails, including the onclick
@@ -562,6 +565,10 @@ switchToRecordMode = ->
     if playbackFrames.length > 0
         maxFrame = playbackFrames.length - 1
         placeFrame maxFrame, overlayClass
+    else
+        # placeFrame would do this for us, but we have nothing to place
+        # so clear the blank frame
+        clearPlayback()
     #alert("recording")
     $('#record_mode').removeClass('small').addClass('big')        
     $('#play_mode').removeClass('big').addClass('small')
@@ -570,9 +577,13 @@ switchToRecordMode = ->
 
 switchToPlaybackMode = ->
     recording = false
+    if playbackFrames.length > 0
+        placeFrame window.playbackIndex, playbackClass
+    else
+        placeBlankFrame()
     $('#play_mode').removeClass('small').addClass('big')
     $('#record_mode').removeClass('big').addClass('small')
-    placeFrame window.playbackIndex, playbackClass
     $('#play_mode').unbind('click').click play
     $('#record_mode').unbind('click').click toggleMode
+
 

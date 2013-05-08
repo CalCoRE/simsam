@@ -52,6 +52,17 @@
     width: 100%;
 }
 
+.blank-frame {
+    -o-object-fit: fill;
+    height: 100%;
+    width: 100%;
+    background-color: white;
+}
+
+.blank-frame div {
+    padding-top: 300px;
+}
+
 #camera {
 	position: absolute;
 	top: 0px;
