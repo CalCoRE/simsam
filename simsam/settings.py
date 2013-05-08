@@ -79,16 +79,17 @@ STATICFILES_DIRS = (
     ("js", os.path.join(SITE_ROOT, '../home/js')),
     ("css", os.path.join(SITE_ROOT, '../home/css')),
     ("images", os.path.join(SITE_ROOT, '../home/images')),
-    ("js", os.path.join(SITE_ROOT, '../samlite/js')),
-    ("css", os.path.join(SITE_ROOT, '../samlite/css')),
-    ("images", os.path.join(SITE_ROOT, '../samlite/images')),
+    #("js", os.path.join(SITE_ROOT, '../samlite/js')),
+    #("css", os.path.join(SITE_ROOT, '../samlite/css')),
+    #("images", os.path.join(SITE_ROOT, '../samlite/images')),
     ("js", os.path.join(SITE_ROOT, '../simlite/js')),
     ("css", os.path.join(SITE_ROOT, '../simlite/css')),
     ("images", os.path.join(SITE_ROOT, '../simlite/images')),
+    #("sam_frames", os.path.join(SITE_ROOT, '../sitestatic/sam_frames')),
 
     # we don't use these, marked for removal
     os.path.join(SITE_ROOT, '../home/static'),
-    os.path.join(SITE_ROOT, '../samlite/static'),
+    #os.path.join(SITE_ROOT, '../samlite/static'),
     os.path.join(SITE_ROOT, '../simlite/static'),
 )
 
@@ -130,7 +131,7 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(SITE_ROOT, 'home/templates'),
-    os.path.join(SITE_ROOT, 'samlite/templates'),
+    #os.path.join(SITE_ROOT, 'samlite/templates'),
     os.path.join(SITE_ROOT, 'simlite/templates'),
 )
 
@@ -146,7 +147,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'home',
-    'samlite',
+    #'samlite',
     'simlite',
 )
 

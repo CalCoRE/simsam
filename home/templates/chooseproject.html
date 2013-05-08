@@ -1,0 +1,67 @@
+<!Doctype html>
+<html lang="en">
+<head>
+	<title>SAM</title>
+        <meta charset="UTF-8" />
+      
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/samlite.css">
+	<script src="http://kineticjs.com/download/v4.0.5/kinetic-v4.0.5.js"></script>
+
+	<!-- <script src="{{ STATIC_URL }}js/jquery.js"></script>
+    	<script src="{{ STATIC_URL }}js/jquery-ui.js"></script>
+	<script src="{{ STATIC_URL }}js/samlite.js"></script> -->
+
+
+</head>
+
+<body>
+	<div class="header"> 
+		<h1 class="greeting">hello {{ user.username }}</h1>
+		<div id="logout"> 
+		<form action="logout/" method="post">
+    			<input id="logoutbutton" type="submit" value="Logout" />
+		</form>
+		</div>
+	</div>
+
+	<h3>Projects</h3>
+
+	<!-- {% for project in projectList %}
+		<input type="button" class="projectName" id="{{ project.id }}" value="{{ project.name }}" onclick="javascript: openProject(this.id); return false;"></input>
+		<br />
+	{% empty %}
+		<p>Is this your first time here? Create a new project!</p>
+		<form class="chooseproject" action="make_project" method="post">
+			New Project Name: <input type="text" name="projectName" />
+			<input type="submit" value="Make New Project" />
+	{% endfor %} -->
+
+	{% if projectList %}	
+	<form method="post" name="myForm" action="chooseproject/">
+		{% for project in projectList %}
+		  <input type="radio" name="projectName" value="{{ project.name }}" onClick=0 />{{ project.name }}<br>
+		{% endfor %}
+		<input type="submit" value="Open Project" />
+	</form>
+        <p>Or make a new project.</p>
+        <form class="chooseproject" action="make_project" method="post">
+                New Project Name: <input type="text" name="projectName" />
+                <input type="submit" value="Make New Project" />
+        </form>
+	
+	
+	{% else %}
+		<p>Is this your first time here? Create a new project!</p>
+		<form class="chooseproject" action="make_project" method="post">
+        		New Project Name: <input type="text" name="projectName" />
+			<input type="submit" value="Make New Project" />
+    		</form>
+	{% endif %}
+
+	
+	
+
+
+</body>
+
+</html>
