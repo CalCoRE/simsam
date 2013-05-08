@@ -574,8 +574,10 @@
       return $('#record_mode').unbind('click').click(toggleMode);
     } else {
       recording = true;
-      maxFrame = playbackFrames.length - 1;
-      placeFrame(maxFrame, overlayClass);
+      if (playbackFrames.length > 0) {
+        maxFrame = playbackFrames.length - 1;
+        placeFrame(maxFrame, overlayClass);
+      }
       $('#record_mode').removeClass('small').addClass('big');
       $('#play_mode').removeClass('big').addClass('small');
       $('#play_mode').unbind('click').click(toggleMode);

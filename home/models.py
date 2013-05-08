@@ -83,4 +83,4 @@ class Sprite(ImageWrapper):
     name = models.CharField(max_length=100)
 
     image_directory = os.path.join(
-        util.get_root_path(), 'sitestatic/media/sprites')
+        util.get_root_path(), 'sitestatic/media/sprites/')

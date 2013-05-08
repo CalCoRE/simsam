@@ -561,20 +561,21 @@ window.screenClick = ->
 			play
 
 toggleMode = ->
-                if (recording or not anyCamera)
-                        recording = false
-                        $('#play_mode').removeClass('small').addClass('big')
-                        $('#record_mode').removeClass('big').addClass('small')
-                        placeFrame window.playbackIndex, playbackClass
-                        $('#play_mode').unbind('click').click play
-                        $('#record_mode').unbind('click').click toggleMode
-                else
-                        recording = true
-                        maxFrame = playbackFrames.length - 1
-                        placeFrame maxFrame, overlayClass
-                        #alert("recording")
-                        $('#record_mode').removeClass('small').addClass('big')        
-                        $('#play_mode').removeClass('big').addClass('small')
-                        $('#play_mode').unbind('click').click toggleMode
-                        $('#record_mode').unbind('click').click shoot
+    if (recording or not anyCamera)
+        recording = false
+        $('#play_mode').removeClass('small').addClass('big')
+        $('#record_mode').removeClass('big').addClass('small')
+        placeFrame window.playbackIndex, playbackClass
+        $('#play_mode').unbind('click').click play
+        $('#record_mode').unbind('click').click toggleMode
+    else
+        recording = true
+        if playbackFrames.length > 0
+            maxFrame = playbackFrames.length - 1
+            placeFrame maxFrame, overlayClass
+        #alert("recording")
+        $('#record_mode').removeClass('small').addClass('big')        
+        $('#play_mode').removeClass('big').addClass('small')
+        $('#play_mode').unbind('click').click toggleMode
+        $('#record_mode').unbind('click').click shoot
 
