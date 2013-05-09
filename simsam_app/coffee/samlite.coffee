@@ -12,16 +12,13 @@ window.isPlaying = false
 window.playbackIndex = 0
 window.debug = true             # turns on console logging
 menu = false # side menu
-recording = false
+recording = true #starts out in record mode
 anyCamera = true
 
 # sprite collection wasn't initialized for a new animation and were
 # creating an error when they were first used
 # Amanda: is this the right way to do this?
 window.spritecollection = []
-
-# camera is on to start with
-cameraState = 1
 
 
 $(document).ready ->
@@ -390,17 +387,10 @@ rescanThumbnails = ->
         idsToSave.push frameId
         $(thumbnail).unbind("click").click ->
             pause()
-            clearPlayback()
+            #clearPlayback()
             # if it's in recording mode then overlay, otherwise opaque
             placeFrame index, (if recording then overlayClass else playbackClass)
             window.playbackIndex = index
-            # if camera in on, display as onionskin
-            if cameraState == 1
-                # if camera is on, display onionskin
-                placeFrame index, overlayClass
-            else
-                # if camera is off, display full image
-                placeFrame window.playbackIndex
             updateIndexView()
 
     updateIndexView()
