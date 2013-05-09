@@ -2,6 +2,7 @@ import datetime
 import os
 from django.db import models
 from django.contrib.auth.models import User
+from django.conf import settings
 
 import util
 
@@ -69,7 +70,9 @@ class ImageWrapper(models.Model):
         # if this is a first-time instantiation
         if self.string_data:
             image_data = self.string_data.decode("base64")
-            output = open(self.image_directory + self.image_hash + ".jpg", "wb")
+            file_name = self.image_hash + ".jpg"
+            image_path = os.path.join(self.image_directory, file_name)
+            output = open(image_path, "wb")
             output.write(image_data)
             output.close()
             self.string_data = None
@@ -83,4 +86,4 @@ class Sprite(ImageWrapper):
     name = models.CharField(max_length=100)
 
     image_directory = os.path.join(
-        util.get_root_path(), 'sitestatic/sprites/')
+        settings.MEDIA_ROOT, 'sprites')

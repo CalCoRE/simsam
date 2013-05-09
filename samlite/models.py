@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 import os
 from django.db import models
+from django.conf import settings
 
 from home.models import Project
 from home.models import ImageWrapper
@@ -37,4 +38,4 @@ class AnimationFrame(ImageWrapper):
 
     # constants
     image_directory = os.path.join(
-        util.get_root_path(), 'sitestatic/sam_frames/')
+        settings.MEDIA_ROOT, 'sam_frames')

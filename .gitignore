@@ -12,5 +12,5 @@ samlite/.DS_Store
 
 *.sublime-workspace
 
-sitestatic/sam_frames/*
-sitestatic/sprites/*
+media/sam_frames/*
+media/sprites/*
