@@ -550,7 +550,7 @@ toggleMode = ->
         switchToRecordMode()
 
 
-switchToRecordMode = ->
+window.switchToRecordMode = ->
     recording = true
     if playbackFrames.length > 0
         maxFrame = playbackFrames.length - 1
@@ -565,7 +565,7 @@ switchToRecordMode = ->
     $('#play_mode').unbind('click').click toggleMode
     $('#record_mode').unbind('click').click shoot
 
-switchToPlaybackMode = ->
+window.switchToPlaybackMode = ->
     recording = false
     if playbackFrames.length > 0
         placeFrame window.playbackIndex, playbackClass

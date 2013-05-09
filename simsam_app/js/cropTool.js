@@ -288,12 +288,14 @@ function cropCanvas() {
   // before
   //canvas = document.getElementById('canvas');
   //
+
+  window.switchToPlaybackMode();
   
-  canvas = $(".playback-frame").get(0)
+  canvas = $(".playback-frame").get(0);
   
   ctx = canvas.getContext('2d');
   image = new Image();
-  image.onload = function() {}
+  image.onload = function() {};
   image.src = canvas.toDataURL();
   theSelection = new Selection(200, 200, 200, 200);
   
