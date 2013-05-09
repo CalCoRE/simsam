@@ -1,0 +1,223 @@
+<!Doctype html>
+<html lang="en">
+<head>
+
+    <title>{{ proj_name }}</title>
+    <meta charset="UTF-8" />
+
+    <script src="{{ STATIC_URL }}js/jquery.js"></script>
+    <script src="{{ STATIC_URL }}js/jquery-ui.js"></script>
+    <script src="{{ STATIC_URL }}js/html5sortable.js"></script>
+    <script src="{{ STATIC_URL }}js/html5support.js"></script>
+    <script src="{{ STATIC_URL }}js/hammer.min.js"></script>
+    <script src="http://kineticjs.com/download/v4.0.5/kinetic-v4.0.5.js"></script>
+
+    <script src="{{ STATIC_URL }}js/simlite.js"></script>
+    <script src="{{ STATIC_URL }}js/cropTool.js"></script>
+    <script src="{{ STATIC_URL }}js/samlite.js"></script>
+    
+
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/samlite.css">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.0/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/iphone-style-checkboxes.css">
+
+    <script type="text/javascript">
+        window.animationId = {{ animation }};
+	window.framesequence = [{% for frame in frame_sequence %}"{{ frame|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}];
+	window.projectId = {{ project }};
+	window.spritecollection = [{% for sprite in sprite_collection %}"{{ sprite|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}];
+	
+	var cameraMode = true;
+	
+	function changeMode() {
+		if( cameraMode ) {
+			
+		}
+		else {
+		
+		}
+	}
+    </script>
+    
+
+</head>
+<body>
+<!-- only display this if the user is logged in -->
+<!--<p>animationId = {{ animation }}</p>-->
+
+{% if user.is_authenticated %}
+
+
+<div id="wholescreen">
+  <!-- INTERFACE PANELS HERE -->
+  <div id="construction_frame">
+  	<div id="container"></div>
+  	<div id="video_frame">
+  		<video id="camera"></video>
+  		<div id="replay"></div>
+  		 <!-- is this allowed? attempting… -->
+  	</div>
+  	<div id="bottom_frame">
+  		<div id="toggle">
+  			<div id="play_mode" class="big"></div>
+  			<div id="record_mode" class="small"></div>
+  		</div>
+  		<div id="video_output"><!-- filmstrip--></div>
+  		<div id="trash"></div>
+  	</div>
+  </div>
+  <div id="right_frame">
+  	<div id="menu_options">
+  		<div id="switch_button">
+  			<button class="menu_button" id="simbutton">Make Simulation</button>
+  			<button class="menu_button" id="sambutton">Make Animation</button>
+  		</div>
+  		<div id="crop_buttons">
+        <button class="menu_button" id="startcropping" onclick="cropCanvas()">Start Cropping</button>
+				<button class="menu_button" id="savecrop" onclick="getResults()">Save Crop</button>
+				<button class="menu_button" id="cancelcrop" onclick="deleteRect()">Cancel Crop</button>
+    	</div>
+  	</div>
+  	<div id="sprite_drawer"></div>
+  </div>
+  <!-- END INTERFACE PANELS -->
+  
+  <!-- PERSISTENT FLOATING ICONS HERE -->
+  <!-- <div id="home_button" class="floating_button"></div> -->
+  <form action="openproject" method="post">
+	<input type="submit" value="" id="home_button" class="floating_button" />
+  </form>
+  <div id="right_menu_button" class="floating_button"></div>
+  <!-- END FLOATING ICONS -->
+</div>
+  
+  
+<!-- JUST SO IT DOESN'T CRY ABOUT MISSING ELEMENTS -->
+<!-- THEY WILL NEED TO BE INTEGRATED/CONVERTED SOON-->
+
+<input type="text" id="playback_index">
+<input type="hidden" id="fps" value="10">
+  
+{% endif %}
+
+</body>
+</html>
+
+
+
+<!--
+
+{% if user.is_authenticated %}
+    <div class="header"> 
+	<h1 class="greeting">hello {{ user.username }}</h1>
+	<div id="logout"> 
+	<form action="logout/" method="post">
+    		<input id="logoutbutton" type="submit" value="Logout" />
+   		<input type="button" value="Switch To SAM" class="switchbutton" id="sambutton"></input>
+		<input type="button" value="Switch to SiM" class="switchbutton" id="simbutton"></input>
+    	</form>
+        
+        </div>
+        
+    </div>
+
+    <!-- if a project is open or starting a new project, show the simsam applications
+    <p>{{ frame_sequence }}</p>
+    <p>{{ sprite_collection }}</p>
+    <br />
+
+    <h2>Project: {{ proj_name }}</h2>Animation: {{ anim_name }} &nbsp; Simulation: {{ sim_name }} 
+    <p></p>
+    
+    <div id="main_container" class="float_container">
+ 	
+
+        <div id="video_container" class="float">
+            <div id="playback_container"></div>
+            <video id="camera" class="main-video"></video>
+        </div>
+        <div id="controls_container" class="float">
+            <div>
+                Webcam:&nbsp;
+                <input type="checkbox" id="camera_onoff" checked>
+            </div>
+            <div>
+                <button id="shoot_button"></button>
+            </div>
+            <div id="play_control_buttons">
+                <span id="beginning_button" class="play_control_button"></span>
+                <span id="frame_back_button" class="play_control_button"></span>
+                <span id="play_button" class="play_control_button"></span>
+                <span id="pause_button" class="play_control_button"></span>
+                <span id="frame_forward_button" class="play_control_button"></span>
+                <span id="end_button" class="play_control_button"></span>
+            </div>
+            <div id="slider_container">
+                <div>
+                    Slow
+                    &nbsp;&nbsp;
+                    Medium
+                    &nbsp;&nbsp;
+                    Quick
+                    &nbsp;&nbsp;&nbsp;
+                    Fast
+                </div>
+                <div id="fps_slider"></div>
+                <input type="hidden" id="fps" value="10">
+            </div>
+            <div id="trash"></div>
+	    
+
+            <div style="display:none">
+                playback index:
+                <input type="text" id="playback_index">
+            </div>
+        </div>
+        <div id="sprite_container">
+        </div>
+    </div>
+
+
+    <div id="container"></div>
+    <div id="output"></div>
+
+    <div id="crop_buttons">
+        <button class="crop_button" id="startcropping" onclick="cropCanvas()">Start Cropping</button>
+	<button class="crop_button" id="savecrop" onclick="getResults()">Save Crop</button>
+	<button class="crop_button" id="cancelcrop" onclick="deleteRect()">Cancel Crop</button>
+    </div>
+
+   
+	<form action="openAnim" method="post">
+		<input type="hidden" name="projectId" id="projectId" value="{{ project }}" />
+		<input type="submit" value="Open Different Animation" />
+	</form>
+	<form action="newanim" method="post">
+		<input type="hidden" name="projectId" id="projectId" value="{{ project }}" />
+		<input type="hidden" name="simsamuser" id="simsamuser" value="{{ simsamuser }}" />
+		New Animation Name: <input type="text" name="animName" />
+		<input type="submit" value="Make New Animation" />
+	</form>
+
+    <h3>Cropped Images - Sprites</h3>
+    <div id="crop_output"></div>
+    <h3>Webcam Images - Animation Timeline</h3>
+    <div id="video_output"></div>
+
+
+    <form class="chooseproject" action="openproject" method="post">
+	<input type="submit" value="Open Project" />
+    </form>
+
+    <form class="chooseproject" action="make_project" method="post">
+        New Project Name: <input type="text" name="projectName" />
+	<input type="submit" value="Make New Project" />
+    </form>
+{% else %}
+    <p>Error: you are not logged in!</p>
+
+{% endif %} 
+
+</body>
+</html>
+-->
