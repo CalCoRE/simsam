@@ -20,7 +20,6 @@ urlpatterns = patterns('',
     url(r"^login/openAnim", "home.views.openAnim"),
     url(r"^login/logout/", "home.views.logout_user"),
     url(r"^login/chooseanim$", "home.views.chooseanim"),
-    #url(r"^(.*)", include("samlite.urls")),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

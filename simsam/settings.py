@@ -82,15 +82,15 @@ STATICFILES_DIRS = (
     #("js", os.path.join(SITE_ROOT, '../samlite/js')),
     #("css", os.path.join(SITE_ROOT, '../samlite/css')),
     #("images", os.path.join(SITE_ROOT, '../samlite/images')),
-    ("js", os.path.join(SITE_ROOT, '../simlite/js')),
-    ("css", os.path.join(SITE_ROOT, '../simlite/css')),
-    ("images", os.path.join(SITE_ROOT, '../simlite/images')),
-    #("sam_frames", os.path.join(SITE_ROOT, '../sitestatic/sam_frames')),
+    #("js", os.path.join(SITE_ROOT, '../simlite/js')),
+    #("css", os.path.join(SITE_ROOT, '../simlite/css')),
+    #("images", os.path.join(SITE_ROOT, '../simlite/images')),
+    ("sam_frames", os.path.join(SITE_ROOT, '../sitestatic/sam_frames')),
 
     # we don't use these, marked for removal
     os.path.join(SITE_ROOT, '../home/static'),
     #os.path.join(SITE_ROOT, '../samlite/static'),
-    os.path.join(SITE_ROOT, '../simlite/static'),
+    #os.path.join(SITE_ROOT, '../simlite/static'),
 )
 
 # List of finder classes that know how to find static files in
@@ -132,7 +132,7 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(SITE_ROOT, 'home/templates'),
     #os.path.join(SITE_ROOT, 'samlite/templates'),
-    os.path.join(SITE_ROOT, 'simlite/templates'),
+    #os.path.join(SITE_ROOT, 'simlite/templates'),
 )
 
 INSTALLED_APPS = (
@@ -148,7 +148,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'home',
     #'samlite',
-    'simlite',
+    #'simlite',
 )
 
 # A sample logging configuration. The only tangible logging

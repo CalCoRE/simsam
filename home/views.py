@@ -1,4 +1,4 @@
-from django.template import RequestContext, loader
+from django.template import RequestContext, loader, Context
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
@@ -263,6 +263,11 @@ def chooseanim(request):
         spritecollection = animation.sprite_collection
 
     return HttpResponseRedirect("/?project=" + str(project.id) + "&animation=" + str(animation.id))
+
+def sprite(request):
+    t = loader.get_template("sprite.html")
+    c = RequestContext(request, {})
+    return HttpResponse(t.render(c))
 
 
 
