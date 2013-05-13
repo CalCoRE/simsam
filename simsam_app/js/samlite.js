@@ -31,7 +31,7 @@
   window.spritecollection = [];
 
   $(document).ready(function() {
-    var constraints, element, failure, success, _i, _j, _len, _len1, _ref, _ref1;
+    var constraints, element, failure, success, _i, _j, _len, _len1, _ref, _ref1, _results;
     $('#sambutton').hide();
     $('#container').hide();
     $('#output').hide();
@@ -53,10 +53,12 @@
     if (html5support.getUserMedia()) {
       success = function(stream) {
         camera.src = stream;
-        return camera.play();
+        camera.play();
+        return switchToRecordMode();
       };
       failure = function(error) {
-        return alert(JSON.stringify(error));
+        alert(JSON.stringify(error));
+        return switchToPlaybackMode();
       };
       navigator.getUserMedia(constraints, success, failure);
     } else {
@@ -88,11 +90,12 @@
       loadSprites(element);
     }
     _ref1 = window.framesequence;
+    _results = [];
     for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
       element = _ref1[_j];
-      loadFrames(element);
+      _results.push(loadFrames(element));
     }
-    return switchToRecordMode();
+    return _results;
   });
 
   loadSprites = function(sprite) {

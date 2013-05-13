@@ -10,3 +10,28 @@ body {
     margin: auto;
     border-bottom: 2px solid #DDDDDD;
 }
+.greeting {
+    font-family: "Verdana", "Sans";
+    text-align: left;
+    color: gray;
+    padding-top: 30px;
+    width: 100px;
+    margin: auto;
+    position: relative;
+    float: left;
+}
+#logoutbutton {
+    margin: auto;
+    margin-left: 415px;
+    margin-top: 80px;
+
+    height: 30px;
+    width: 75px;
+    background-color: gray;
+    border: 1px solid;
+    border-radius: 25px;
+    -moz-border-radius: 25px;
+    color: white;
+}
+
+

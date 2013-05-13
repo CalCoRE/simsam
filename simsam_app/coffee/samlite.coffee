@@ -56,7 +56,12 @@ $(document).ready ->
         success = (stream) ->
             camera.src = stream
             camera.play()
-        failure = (error) -> alert JSON.stringify error
+            #if getUserMedia is available, start in record mode
+            switchToRecordMode()
+        failure = (error) -> 
+            alert JSON.stringify error
+            #if not available, start in playback mode
+            switchToPlaybackMode()
         
         navigator.getUserMedia constraints, success, failure
     else
@@ -97,7 +102,7 @@ $(document).ready ->
         loadFrames(element)
 
     # always start in record mode
-    switchToRecordMode()
+    #switchToRecordMode()
 
 loadSprites = (sprite) ->
     output = $("#sprite_drawer").get(0) 
