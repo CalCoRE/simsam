@@ -85,8 +85,8 @@ def logout_user(request):
 
 @login_required
 def save_image(request):
-    image_string = request.REQUEST('image_string')
-    image_type = request.REQUEST('image_type')
+    image_string = request.REQUEST.get('image_string')
+    image_type = request.REQUEST.get('image_type')
     animation_id = request.REQUEST.get('animation_id')
     if image_type == 'AnimationFrame':
         image_class = AnimationFrame
@@ -195,13 +195,8 @@ def newanim(request):
 @login_required
 def openproject(request):
     # display the page listing current projects
-    user = ""
-    projects = []
-    if request.user.is_authenticated():
-        user = request.user
-        simsamuser = SimsamUser.objects.get(user=user)
-
-    projects = Project.objects.filter(owner=simsamuser)
+    simsam_user = SimsamUser.lookup(request.user)
+    projects = Project.objects.filter(owner=simsam_user)
     t = loader.get_template("chooseproject.html")
     c = RequestContext(request, {"projectList": projects})
     return HttpResponse(t.render(c))
