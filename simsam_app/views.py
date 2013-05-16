@@ -13,6 +13,7 @@ import pprint
 
 
 def home(request):
+    """Welcome/home screen; doesn't require log in."""
     t = loader.get_template("createOrOpenProject.html")
     c = RequestContext(request, {})
     return HttpResponse(t.render(c))
@@ -20,29 +21,23 @@ def home(request):
 
 @login_required
 def app(request):
-    if request.user.is_authenticated():
-        #if the user is signed in, display the samlite.html page
-        simsam_user = SimsamUser.lookup(request.user)
-        project_id = request.REQUEST.get('project', None)
-        animation_id = request.REQUEST.get('animation', None)
-        project = Project.objects.get(id=int(project_id))
-        animation = Animation.objects.get(id=int(animation_id))
-        t = loader.get_template("sam.html")
-        c = RequestContext(request, {
-            "project_name": project.name,
-            "project_id": project_id,
-            "animation_name": animation.name,
-            "animation_id": animation_id,
-            "frame_sequence": animation.frame_sequence,
-            "sprite_collection": animation.sprite_collection,
-            "simsam_user": simsam_user
-        })
-        return HttpResponse(t.render(c))
-    else:
-        #if not logged in, display the login page
-        t = loader.get_template("index.html")
-        c = RequestContext(request, {})
-        return HttpResponse(t.render(c))
+    """Where the SiMSAM action is at."""
+    simsam_user = SimsamUser.lookup(request.user)
+    project_id = request.REQUEST.get('project', None)
+    animation_id = request.REQUEST.get('animation', None)
+    project = Project.objects.get(id=int(project_id))
+    animation = Animation.objects.get(id=int(animation_id))
+    t = loader.get_template("sam.html")
+    c = RequestContext(request, {
+        "project_name": project.name,
+        "project_id": project_id,
+        "animation_name": animation.name,
+        "animation_id": animation_id,
+        "frame_sequence": animation.frame_sequence,
+        "sprite_collection": animation.sprite_collection,
+        "simsam_user": simsam_user
+    })
+    return HttpResponse(t.render(c))
 
 
 def sandbox(request):
@@ -52,8 +47,8 @@ def sandbox(request):
     return HttpResponse(t.render(c))
 
 
-#process user login
 def login_user(request):
+    """Currently a separate page; todo: embed form in home, make this ajax."""
     state = "Welcome to SiMSAM! Please log in below..."
     username = password = ''
     if request.POST:
@@ -85,6 +80,7 @@ def logout_user(request):
 
 @login_required
 def save_image(request):
+    """Saves base64-encoded strings as jpgs, either sam frames or sprites."""
     image_string = request.REQUEST.get('image_string')
     image_type = request.REQUEST.get('image_type')
     animation_id = request.REQUEST.get('animation_id')
@@ -125,76 +121,60 @@ def save_image(request):
     }))
 
 
-#save a new frame sequence after images have been moved around in the timeline
 @login_required
 def save_frame_sequence(request):
-    if request.REQUEST:
-        animation_id = request.REQUEST.get(u'animation_id', default=None)
-        frame_sequence = [int(x) for x in request.REQUEST.getlist(u'frame_sequence[]')]
-        #frame_sequence = request.REQUEST.get(u'frame_sequence[]')
-        animation = Animation.objects.get(id=animation_id)
-        #animation.frame_sequence = ListField()
-        animation.frame_sequence = frame_sequence
-        animation.save()
-
+    """Save a new frame sequence on image reordering in the timeline."""
+    animation_id = request.REQUEST.get('animation_id', default=None)
+    frame_sequence = [int(x) for x in request.REQUEST.getlist('frame_sequence[]')]
+    animation = Animation.objects.get(id=animation_id)
+    animation.frame_sequence = frame_sequence
+    animation.save()
     return HttpResponse(json.dumps({
         'success': True,
         'message': ""
     }))
 
 
-#start a new project
 @login_required
 def make_project(request):
-    project_name = ""
-    simsamuser = project = animation = simulation = None
-    if request.user.is_authenticated():
-        user = request.user
-        simsamuser = SimsamUser.objects.filter(user=user)[0]
-
+    """Create a new project with a given name and open it."""
+    simsam_user = SimsamUser.lookup(request.user)
     project_name = request.REQUEST.get('projectName')
-    if len(simsamuser.projects.filter(name=project_name)) > 0:
+    if len(simsam_user.projects.filter(name=project_name)) > 0:
         # if the project name already exists, open it
         return chooseproject(request)
     else:
         # set up the new project
-        project = Project.objects.create(
-            name=project_name, owner=simsamuser)
-        animation = project.animations.create(
-            name=project_name + "-anim" + str(0))
-        simulation = project.simulations.create(
-            name=project_name + "-sim" + str(0))
+        project = Project.objects.create(name=project_name, owner=simsam_user)
+        animation = project.animations.create(name=project_name + "-anim0")
+        simulation = project.simulations.create(name=project_name + "-sim0")
+        project.save()
         animation.save()
         simulation.save()
-        project.save()
         return HttpResponseRedirect("/app?project={}&animation={}".format(
             project.id, animation.id))
 
 
-# create a new animation within an open project
 @login_required
 def newanim(request):
-    project = animation = None
-    if request.REQUEST:
-        project_id = request.REQUEST.get('projectId')
-        # unused, but available
-        # simsamuser = request.REQUEST.get('simsamuser')
-        animName = request.REQUEST.get('animName')
-        project = Project.objects.get(id=project_id)
-        if len(project.animations.filter(name=animName)) > 0:
-                # if the animation already exists, open it
-                animation = project.animations.get(name=animName)
-        else:
-                animation = project.animations.create(name=animName)
-                project.save()
-                animation.save()
-    return HttpResponseRedirect("/?project={}&animation={}".format(
-        project_id, animation_id))
+    """Create a new animation within an open project."""
+    project_id = request.REQUEST.get('projectId')
+    animation_name = request.REQUEST.get('animName')
+    project = Project.objects.get(id=project_id)
+    if len(project.animations.filter(name=animation_name)) > 0:
+            # if the animation already exists, open it
+            animation = project.animations.get(name=animation_name)
+    else:
+            animation = project.animations.create(name=animation_name)
+            project.save()
+            animation.save()
+    return HttpResponseRedirect("/app?project={}&animation={}".format(
+        project.id, animation.id))
 
 
 @login_required
 def openproject(request):
-    # display the page listing current projects
+    """Display the page listing current projects."""
     simsam_user = SimsamUser.lookup(request.user)
     projects = Project.objects.filter(owner=simsam_user)
     t = loader.get_template("chooseproject.html")
@@ -204,31 +184,22 @@ def openproject(request):
 
 @login_required
 def chooseproject(request):
-    # open the chosen project
-    project_name = ""
-    simsam_user = project = animation = None
-    if request.user.is_authenticated():
-        simsam_user = SimsamUser.lookup(request.user)
-    if request.REQUEST:
-        project_name = request.REQUEST.get('projectName')
-        #simsam_user = request.REQUEST.get("simsam_user")
-        project = Project.objects.get(name=project_name, owner=simsam_user)
-        anim1 = project.name + "-anim" + str(0)
-        animation = project.animations.get(name=anim1)
-
+    """Open the chosen project."""
+    simsam_user = SimsamUser.lookup(request.user)
+    project_name = request.REQUEST.get('projectName')
+    project = Project.objects.get(name=project_name, owner=simsam_user)
+    anim1 = project.name + "-anim0"
+    animation = project.animations.get(name=anim1)
     return HttpResponseRedirect("/app?project={}&animation={}".format(
         project.id, animation.id))
 
 
 @login_required
 def openAnim(request):
-    # display the page listing the project's animations
-    animations = []
-    project = None
-    if request.REQUEST:
-        projectId = request.REQUEST.get(u'projectId')
-        project = Project.objects.get(id=projectId)
-        animations = project.animations.all()
+    """Display the page listing the project's animations."""
+    project_id = request.REQUEST.get('projectId')
+    project = Project.objects.get(id=project_id)
+    animations = project.animations.all()
     t = loader.get_template("chooseanim.html")
     c = RequestContext(request, {"animList": animations, "project": project})
     return HttpResponse(t.render(c))
@@ -236,17 +207,11 @@ def openAnim(request):
 
 @login_required
 def chooseanim(request):
-    # open the chosen animation
-    project = None
-    animation = None
-    if request.REQUEST:
-        project_id = request.REQUEST.get(u'projectId')
-        animId = request.REQUEST.get(u'animId')
-        project = Project.objects.get(id=project_id)
-        animation = Animation.objects.get(id=animId)
-
+    """Open the chosen animation."""
+    project_id = request.REQUEST.get('projectId')
+    animation_id = request.REQUEST.get('animId')
     return HttpResponseRedirect("/app?project={}&animation={}".format(
-        project.id, animation.id))
+        project_id, animation_id))
 
 
 # chris wrote this just for testing sprite.coffee, it should be removed
