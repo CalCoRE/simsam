@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import datetime
 import os
 from django.db import models
@@ -81,9 +83,74 @@ class ImageWrapper(models.Model):
         super(ImageWrapper, self).save(*args, **kwargs)
 
 
+class Animation(models.Model):
+    """The SAM in SiMSAM."""
+    name = models.CharField(max_length=40)
+    project = models.ForeignKey(Project, related_name='animations')
+    parent_animation = models.ForeignKey(
+        'self', related_name='child_animations', blank=True, null=True)
+    # comma-separated list of hashes
+    #frame_sequence = models.TextField(blank=True, default='')
+    frame_sequence = util.ListField()
+    # comma-separated list of hashes
+    #sprite_collection = models.TextField(blank=True, default='')
+    sprite_collection = util.ListField()
+
+    # implicit properties
+    # * child_animations (many child animations to one parent animation)
+
+    def __unicode__(self):
+        return self.name
+
+
+class AnimationFrame(ImageWrapper):
+    """An single frame of an animation; really just a jpg image."""
+    # db fields
+    # nothing to do, everything done in ImageWrapper
+
+    # constants
+    image_directory = os.path.join(settings.MEDIA_ROOT, 'sam_frames')
+
+
 class Sprite(ImageWrapper):
     """A little image, cropped from a sam, used in a sim."""
     name = models.CharField(max_length=100)
 
-    image_directory = os.path.join(
-        settings.MEDIA_ROOT, 'sprites')
+    image_directory = os.path.join(settings.MEDIA_ROOT, 'sprites')
+
+
+class Simulation(models.Model):
+    """The Si in SiMSAM."""
+    name = models.CharField(max_length=40)
+    project = models.ForeignKey(Project, related_name='simulations')
+    parent_simulation = models.ForeignKey(
+        'self', related_name='child_simulations', blank=True, null=True)
+
+    # implicit properties
+    # * objects (many-to-many)
+    # * states (many states to one simulation)
+    # * child_simulations (many child simulations to one parent simulation)
+
+    def __unicode__(self):
+        return self.name
+
+
+class SimulationState(models.Model):
+    """The saved state/condition/arrangement of a simulation at one moment."""
+    name = models.CharField(max_length=40)
+    simulation = models.ForeignKey(Simulation, related_name='states')
+    serialized_state = models.TextField()
+    is_current = models.BooleanField()
+
+    def __unicode__(self):
+        return self.name
+
+
+class SimulationObject(models.Model):
+    """An entity/object/thing in a simulation."""
+    sprite_filename = models.CharField(max_length=40)
+    serialized_rules = models.TextField(blank=True, default='')
+    simluations = models.ManyToManyField(Simulation, related_name='objects')
+
+    def __unicode__(self):
+        return self.sprite_filename

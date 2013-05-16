@@ -12,16 +12,13 @@ window.isPlaying = false
 window.playbackIndex = 0
 window.debug = true             # turns on console logging
 menu = false # side menu
-recording = false
+recording = true #starts out in record mode
 anyCamera = true
 
 # sprite collection wasn't initialized for a new animation and were
 # creating an error when they were first used
 # Amanda: is this the right way to do this?
 window.spritecollection = []
-
-# camera is on to start with
-cameraState = 1
 
 
 $(document).ready ->
@@ -59,7 +56,12 @@ $(document).ready ->
         success = (stream) ->
             camera.src = stream
             camera.play()
-        failure = (error) -> alert JSON.stringify error
+            #if getUserMedia is available, start in record mode
+            switchToRecordMode()
+        failure = (error) -> 
+            alert JSON.stringify error
+            #if not available, start in playback mode
+            switchToPlaybackMode()
         
         navigator.getUserMedia constraints, success, failure
     else
@@ -100,7 +102,7 @@ $(document).ready ->
         loadFrames(element)
 
     # always start in record mode
-    switchToRecordMode()
+    #switchToRecordMode()
 
 loadSprites = (sprite) ->
     output = $("#sprite_drawer").get(0) 
@@ -390,17 +392,10 @@ rescanThumbnails = ->
         idsToSave.push frameId
         $(thumbnail).unbind("click").click ->
             pause()
-            clearPlayback()
+            #clearPlayback()
             # if it's in recording mode then overlay, otherwise opaque
             placeFrame index, (if recording then overlayClass else playbackClass)
             window.playbackIndex = index
-            # if camera in on, display as onionskin
-            if cameraState == 1
-                # if camera is on, display onionskin
-                placeFrame index, overlayClass
-            else
-                # if camera is off, display full image
-                placeFrame window.playbackIndex
             updateIndexView()
 
     updateIndexView()
@@ -560,7 +555,7 @@ toggleMode = ->
         switchToRecordMode()
 
 
-switchToRecordMode = ->
+window.switchToRecordMode = ->
     recording = true
     if playbackFrames.length > 0
         maxFrame = playbackFrames.length - 1
@@ -575,7 +570,7 @@ switchToRecordMode = ->
     $('#play_mode').unbind('click').click toggleMode
     $('#record_mode').unbind('click').click shoot
 
-switchToPlaybackMode = ->
+window.switchToPlaybackMode = ->
     recording = false
     if playbackFrames.length > 0
         placeFrame window.playbackIndex, playbackClass

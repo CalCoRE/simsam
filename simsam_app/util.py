@@ -1,5 +1,4 @@
 import ast
-import os
 from django.db import models
 
 
@@ -26,8 +25,3 @@ class ListField(models.TextField):
     def value_to_string(self, obj):
             value = self._get_val_from_obj(obj)
             return self.get_db_prep_value(value)
-
-
-def get_root_path():
-    script_path = os.path.dirname(os.path.abspath(__file__))
-    return os.path.join(script_path, '..')

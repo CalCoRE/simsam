@@ -76,20 +76,22 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    ("js", os.path.join(SITE_ROOT, '../home/js')),
-    ("css", os.path.join(SITE_ROOT, '../home/css')),
-    ("images", os.path.join(SITE_ROOT, '../home/images')),
-    ("js", os.path.join(SITE_ROOT, '../samlite/js')),
-    ("css", os.path.join(SITE_ROOT, '../samlite/css')),
-    ("images", os.path.join(SITE_ROOT, '../samlite/images')),
-    ("js", os.path.join(SITE_ROOT, '../simlite/js')),
-    ("css", os.path.join(SITE_ROOT, '../simlite/css')),
-    ("images", os.path.join(SITE_ROOT, '../simlite/images')),
+    ("js", os.path.join(SITE_ROOT, '../simsam_app/js')),
+    ("css", os.path.join(SITE_ROOT, '../simsam_app/css')),
+    ("images", os.path.join(SITE_ROOT, '../simsam_app/images')),
+    #("js", os.path.join(SITE_ROOT, '../samlite/js')),
+    #("css", os.path.join(SITE_ROOT, '../samlite/css')),
+    #("images", os.path.join(SITE_ROOT, '../samlite/images')),
+    #("js", os.path.join(SITE_ROOT, '../simlite/js')),
+    #("css", os.path.join(SITE_ROOT, '../simlite/css')),
+    #("images", os.path.join(SITE_ROOT, '../simlite/images')),
+    # ("sam_frames", os.path.join(SITE_ROOT, '../sitestatic/sam_frames')),
+    # ("sprites", os.path.join(SITE_ROOT, '../sitestatic/sprites')),
 
     # we don't use these, marked for removal
-    os.path.join(SITE_ROOT, '../home/static'),
-    os.path.join(SITE_ROOT, '../samlite/static'),
-    os.path.join(SITE_ROOT, '../simlite/static'),
+    os.path.join(SITE_ROOT, '../simsam_app/static'),
+    #os.path.join(SITE_ROOT, '../samlite/static'),
+    #os.path.join(SITE_ROOT, '../simlite/static'),
 )
 
 # List of finder classes that know how to find static files in
@@ -129,9 +131,9 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(SITE_ROOT, 'home/templates'),
-    os.path.join(SITE_ROOT, 'samlite/templates'),
-    os.path.join(SITE_ROOT, 'simlite/templates'),
+    os.path.join(SITE_ROOT, 'simsam_app/templates'),
+    #os.path.join(SITE_ROOT, 'samlite/templates'),
+    #os.path.join(SITE_ROOT, 'simlite/templates'),
 )
 
 INSTALLED_APPS = (
@@ -145,9 +147,9 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-    'home',
-    'samlite',
-    'simlite',
+    'simsam_app',
+    #'samlite',
+    #'simlite',
 )
 
 # A sample logging configuration. The only tangible logging

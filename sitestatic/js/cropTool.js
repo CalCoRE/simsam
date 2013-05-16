@@ -252,7 +252,7 @@ function getResults() {
 Selection.prototype.draw = function() {
   // code from http://www.script-tutorials.com/html5-image-crop-tool/
 
-  ctx.strokeStyle = '#000';
+  ctx.strokeStyle = '#fff';
   ctx.lineWidth = 2;
   ctx.strokeRect(this.x, this.y, this.w, this.h);
 
@@ -263,22 +263,22 @@ Selection.prototype.draw = function() {
 
   //draw the resize corner cubes
   ctx.fillStyle = '#fff';
-  ctx.fillRect(this.x - this.iCSize[0], 
+  /*ctx.fillRect(this.x - this.iCSize[0], 
   						 this.y - this.iCSize[0], 
   						 this.iCSize[0] * 2, 
-  						 this.iCSize[0] * 2);
-  ctx.fillRect(this.x + this.w - this.iCSize[1], 
+  						 this.iCSize[0] * 2);*/
+  /*ctx.fillRect(this.x + this.w - this.iCSize[1], 
   						 this.y - this.iCSize[1], 
   						 this.iCSize[1] * 2, 
-  						 this.iCSize[1] * 2);
+  						 this.iCSize[1] * 2);*/
   ctx.fillRect(this.x + this.w - this.iCSize[2], 
   						 this.y + this.h - this.iCSize[2], 
-  						 this.iCSize[2] * 2, 
-  						 this.iCSize[2] * 2);
-  ctx.fillRect(this.x - this.iCSize[3], 
+  						 this.iCSize[2] * 3, 
+  						 this.iCSize[2] * 3);
+  /*ctx.fillRect(this.x - this.iCSize[3], 
   						 this.y + this.h - this.iCSize[3], 
   						 this.iCSize[3] * 2, 
-  						 this.iCSize[3] * 2);
+  						 this.iCSize[3] * 2);*/
 }
 
 function cropCanvas() { 
@@ -288,12 +288,14 @@ function cropCanvas() {
   // before
   //canvas = document.getElementById('canvas');
   //
+
+  window.switchToPlaybackMode();
   
-  canvas = $(".playback-frame").get(0)
+  canvas = $(".playback-frame").get(0);
   
   ctx = canvas.getContext('2d');
   image = new Image();
-  image.onload = function() {}
+  image.onload = function() {};
   image.src = canvas.toDataURL();
   theSelection = new Selection(200, 200, 200, 200);
   
@@ -330,22 +332,22 @@ function cropCanvas() {
   	console.log("adjustedselection ", aspectAdjust(canvas,theSelection) );
 	
 		// hovering over resize cubes
-	  if (iMouseX > adjustedX - theSelection.csizeh && 
+	  /*if (iMouseX > adjustedX - theSelection.csizeh && 
   	  	iMouseX < adjustedX + theSelection.csizeh && 
   	  	iMouseY > adjustedY - theSelection.csizeh && 
   	  	iMouseY < adjustedY + theSelection.csizeh) {
       theSelection.bDrag[0] = true;
       theSelection.px = iMouseX - adjustedX;
       theSelection.py = iMouseY - adjustedY;
-	  }
-	  if (iMouseX > adjustedX + adjustedW - theSelection.csizeh && 
+	  }*/
+	  /*if (iMouseX > adjustedX + adjustedW - theSelection.csizeh && 
       	iMouseX < adjustedX + adjustedW + theSelection.csizeh && 
       	iMouseY > adjustedY - theSelection.csizeh && 
       	iMouseY < adjustedY + theSelection.csizeh) {
       theSelection.bDrag[1] = true;
       theSelection.px = iMouseX - adjustedX - adjustedW;
       theSelection.py = iMouseY - adjustedY;
-	  }
+	  }*/
 	  if (iMouseX > adjustedX + adjustedW - theSelection.csizeh && 
       	iMouseX < adjustedX + adjustedW + theSelection.csizeh && 
       	iMouseY > adjustedY + adjustedH - theSelection.csizeh && 
@@ -354,14 +356,14 @@ function cropCanvas() {
       theSelection.px = iMouseX - adjustedX - adjustedW;
       theSelection.py = iMouseY - adjustedY - adjustedH;
     }
-	  if (iMouseX > adjustedX - theSelection.csizeh && 
+	  /*if (iMouseX > adjustedX - theSelection.csizeh && 
       	iMouseX < adjustedX + theSelection.csizeh && 
       	iMouseY > adjustedY + adjustedH - theSelection.csizeh && 
       	iMouseY < adjustedY + adjustedH + theSelection.csizeh) {
       theSelection.bDrag[3] = true;
 	    theSelection.px = iMouseX - adjustedX;
 	    theSelection.py = iMouseY - adjustedY - adjustedH;
-		}
+		}*/
 
   	if (iMouseX > adjustedX + theSelection.csizeh && 
 	  		iMouseX < adjustedX + adjustedW - theSelection.csizeh && 

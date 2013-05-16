@@ -1,8 +1,6 @@
 from django.contrib import admin
 
-from home.models import *
-from samlite.models import *
-from simlite.models import *
+from simsam_app.models import *
 
 admin.site.register(Project)
 admin.site.register(SimsamUser)
