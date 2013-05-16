@@ -35,6 +35,26 @@ class SimsamUser(models.Model):
     # implicit properties
     # * projects (many projects to one owner)
 
+    @classmethod
+    def lookup(klass, user):
+        if hasattr(user, '_wrapped') and hasattr(user, '_setup'):
+            if user._wrapped.__class__ == object:
+                    user._setup()
+            user = user._wrapped
+        results = SimsamUser.objects.filter(user=user)
+        if len(results) == 0:
+            # for whatever reason, the session user doesn't have a matching
+            # database (simsam) user, so make one, save it, and move on.
+            simsam_user = SimsamUser.objects.create(user=user, first_name=user.username)
+        elif len(results) > 1:
+            raise Exception('More than one user found')
+        else:
+            # we've eliminated the other possibilities, we can safely reference
+            # the first index of this list
+            simsam_user = results[0]
+        return simsam_user
+
+
     def __unicode__(self):
         return self.first_name + u' ' + self.last_name
 

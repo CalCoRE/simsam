@@ -25,9 +25,9 @@
     <link rel="stylesheet" href="{{ STATIC_URL }}css/iphone-style-checkboxes.css">
 
     <script type="text/javascript">
-        window.animationId = {{ animation }};
+        window.animationId = {{ animation_id }};
 	window.framesequence = [{% for frame in frame_sequence %}"{{ frame|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}];
-	window.projectId = {{ project }};
+	window.projectId = {{ project_id }};
 	window.spritecollection = [{% for sprite in sprite_collection %}"{{ sprite|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}];
 	
 	var cameraMode = true;
