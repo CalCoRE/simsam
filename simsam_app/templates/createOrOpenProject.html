@@ -31,12 +31,6 @@
     			<input id="logoutbutton" type="submit" value="log out" />
 		</form>
 		</div>
-        {% else %}
-        <div id="login"> 
-        <form action="login" method="post">
-                <input id="loginbutton" type="submit" value="log in" />
-        </form>
-        </div>
         {% endif %}
 	</div>
 
@@ -52,6 +46,11 @@
 	</form>
     {% else %}
 	<p>Please Login</p>
+        <div id="login"> 
+        <form action="login" method="post">
+                <input id="loginbutton" type="submit" value="log in" />
+        </form>
+        </div>
     {% endif %}
 
 </body>

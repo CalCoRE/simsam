@@ -148,14 +148,14 @@
 }
 
 #video_output {
-	margin: 2px;
-	max-height: 100%;
-	right: 100px;
-	left: 150px;
-	position: absolute;
-	max-width: 100%;
-	overflow-x: scroll;
-	white-space: nowrap;
+    margin: 2px;
+    max-height: 100%;
+    right: 100px;
+    left: 150px;
+    position: absolute;
+    max-width: 100%;
+    overflow-x: scroll;
+    white-space: nowrap;
 }
 
 #home_button {
