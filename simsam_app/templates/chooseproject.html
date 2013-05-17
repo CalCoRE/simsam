@@ -20,16 +20,6 @@
 
     <h3>Projects</h3>
 
-    <!-- {% for project in projectList %}
-        <input type="button" class="projectName" id="{{ project.id }}" value="{{ project.name }}" onclick="javascript: openProject(this.id); return false;"></input>
-        <br />
-    {% empty %}
-        <p>Is this your first time here? Create a new project!</p>
-        <form class="chooseproject" action="make_project" method="post">
-            New Project Name: <input type="text" name="projectName" />
-            <input type="submit" value="Make New Project" />
-    {% endfor %} -->
-
     {% if projectList %}    
     <form method="post" name="myForm" action="chooseproject/">
         {% for project in projectList %}
