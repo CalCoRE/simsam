@@ -23,7 +23,7 @@
     {% if projectList %}    
     <form method="post" name="myForm" action="chooseproject/">
         {% for project in projectList %}
-          <input type="radio" name="projectName" value="{{ project.name }}" onClick=0 />{{ project.name }}<br>
+          <input type="radio" name="projectId" value="{{ project.id }}" onClick=0 />{{ project.name }}<br>
         {% endfor %}
         <input type="submit" value="Open Project" />
     </form>

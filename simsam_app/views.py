@@ -186,8 +186,9 @@ def openproject(request):
 def chooseproject(request):
     """Open the chosen project."""
     simsam_user = SimsamUser.lookup(request.user)
-    project_name = request.REQUEST.get('projectName')
-    project = Project.objects.get(name=project_name, owner=simsam_user)
+    project_id = request.REQUEST.get('projectId')
+    #project = Project.objects.get(name=project_name, owner=simsam_user)
+    project = Project.objects.get(id=project_id)
     anim1 = project.name + "-anim0"
     animation = project.animations.get(name=anim1)
     return HttpResponseRedirect("/app?project={}&animation={}".format(
