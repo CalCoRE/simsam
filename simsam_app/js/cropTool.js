@@ -293,49 +293,49 @@ function cropCanvas() {
   //canvas = document.getElementById('canvas');
   //
 
-  hideStartCroppingButton();
+        hideStartCroppingButton();
 
-  window.switchToPlaybackMode();
+        window.switchToPlaybackMode();
   
-  canvas = $(".playback-frame").get(0);
+        canvas = $(".playback-frame").get(0);
   
-  ctx = canvas.getContext('2d');
-  image = new Image();
-  image.onload = function() {};
-  image.src = canvas.toDataURL();
-  theSelection = new Selection(200, 200, 200, 200);
+        ctx = canvas.getContext('2d');
+        image = new Image();
+        image.onload = function() {};
+        image.src = canvas.toDataURL();
+        theSelection = new Selection(200, 200, 200, 200);
   
-  $(".playback-frame").unbind('click');
+        $(".playback-frame").unbind('click');
   
-  Hammer(canvas).on("dragstart", function(e) { // binding mousedown event
+        Hammer(canvas).on("dragstart", function(e) { // binding mousedown event
   
-  	console.log("dragstart from cropCanvas");
+  	        console.log("dragstart from cropCanvas");
       
-    //e.preventDefault(); // this prevents the mobile browsers from treating 
+        //e.preventDefault(); // this prevents the mobile browsers from treating 
       										// this touch event like they would otherwise and scrolling the screen around
-    e.gesture.preventDefault();
-    //e.gesture.stopPropogation();
+        e.gesture.preventDefault();
+        //e.gesture.stopPropogation();
     
-    var intxn = e.gesture.touches[0];
+        var intxn = e.gesture.touches[0];
       										
-	  var canvasOffset = $(canvas).offset();
-	  iMouseX = Math.floor(intxn.pageX - canvasOffset.left);
-	  iMouseY = Math.floor(intxn.pageY - canvasOffset.top);
+	        var canvasOffset = $(canvas).offset();
+	        iMouseX = Math.floor(intxn.pageX - canvasOffset.left);
+	        iMouseY = Math.floor(intxn.pageY - canvasOffset.top);
 		
 		
-		adjustedSelection = aspectAdjust(canvas,theSelection)
-		adjustedX = adjustedSelection[0];
-		adjustedY = adjustedSelection[1];
-		adjustedW = adjustedSelection[2];
-		adjustedH = adjustedSelection[3];
+		        adjustedSelection = aspectAdjust(canvas,theSelection)
+		        adjustedX = adjustedSelection[0];
+		        adjustedY = adjustedSelection[1];
+		        adjustedW = adjustedSelection[2];
+		        adjustedH = adjustedSelection[3];
 		
-	  theSelection.px = iMouseX - adjustedX;
-	  theSelection.py = iMouseY - adjustedY;
+	        theSelection.px = iMouseX - adjustedX;
+	        theSelection.py = iMouseY - adjustedY;
 		  
-  	console.log("mouse " , iMouseX , iMouseY );
-  	console.log("offset " , canvasOffset );
-  	console.log("selection ", theSelection );
-  	console.log("adjustedselection ", aspectAdjust(canvas,theSelection) );
+  	        console.log("mouse " , iMouseX , iMouseY );
+  	        console.log("offset " , canvasOffset );
+  	        console.log("selection ", theSelection );
+  	        console.log("adjustedselection ", aspectAdjust(canvas,theSelection) );
 	
 		// hovering over resize cubes
 	  /*if (iMouseX > adjustedX - theSelection.csizeh && 
@@ -354,14 +354,14 @@ function cropCanvas() {
       theSelection.px = iMouseX - adjustedX - adjustedW;
       theSelection.py = iMouseY - adjustedY;
 	  }*/
-	  if (iMouseX > adjustedX + adjustedW - theSelection.csizeh && 
-      	iMouseX < adjustedX + adjustedW + theSelection.csizeh && 
-      	iMouseY > adjustedY + adjustedH - theSelection.csizeh && 
-      	iMouseY < adjustedY + adjustedH + theSelection.csizeh) {
-      theSelection.bDrag[2] = true;
-      theSelection.px = iMouseX - adjustedX - adjustedW;
-      theSelection.py = iMouseY - adjustedY - adjustedH;
-    }
+	        if (iMouseX > adjustedX + adjustedW - theSelection.csizeh && 
+      	        iMouseX < adjustedX + adjustedW + theSelection.csizeh && 
+      	        iMouseY > adjustedY + adjustedH - theSelection.csizeh && 
+      	        iMouseY < adjustedY + adjustedH + theSelection.csizeh) {
+                        theSelection.bDrag[2] = true;
+                        theSelection.px = iMouseX - adjustedX - adjustedW;
+                        theSelection.py = iMouseY - adjustedY - adjustedH;
+                }
 	  /*if (iMouseX > adjustedX - theSelection.csizeh && 
       	iMouseX < adjustedX + theSelection.csizeh && 
       	iMouseY > adjustedY + adjustedH - theSelection.csizeh && 
@@ -371,21 +371,21 @@ function cropCanvas() {
 	    theSelection.py = iMouseY - adjustedY - adjustedH;
 		}*/
 
-  	if (iMouseX > adjustedX + theSelection.csizeh && 
+  	        if (iMouseX > adjustedX + theSelection.csizeh && 
 	  		iMouseX < adjustedX + adjustedW - theSelection.csizeh && 
 	  		iMouseY > adjustedY + theSelection.csizeh && 
 	  		iMouseY < adjustedY + adjustedH - theSelection.csizeh) 		  {
-      theSelection.bDragAll = true;
-	  }
+                                theSelection.bDragAll = true;
+	        }
 		
-  });
+        });
         
-  //$('#canvas').bind(drag, function(e) { // binding mouse move event. Using 'smart' drag var to determine mobile or not
-  Hammer(canvas).on("drag", function(e) {
+        //$('#canvas').bind(drag, function(e) { // binding mouse move event. Using 'smart' drag var to determine mobile or not
+        Hammer(canvas).on("drag", function(e) {
   
-  	console.log("drag from cropCanvas");
+  	        console.log("drag from cropCanvas");
   	
-    e.gesture.preventDefault();
+         e.gesture.preventDefault();
     
 		adjustedSelection = aspectAdjust(canvas,theSelection)
 		adjustedX = adjustedSelection[0];
@@ -395,7 +395,7 @@ function cropCanvas() {
 		backwardX = adjustedSelection[4]; 
 		backwardY = adjustedSelection[5];
     
-    var intxn = e.gesture.touches[0];
+        var intxn = e.gesture.touches[0];
     
 	  var canvasOffset = $(canvas).offset();
 	  
@@ -473,6 +473,7 @@ function cropCanvas() {
   //$("#canvas").click(screenClick());
   
   drawScene();
+
 };
 
 function hideStartCroppingButton() {
