@@ -54,6 +54,7 @@ def login_user(request):
     if request.POST:
         username = request.REQUEST.get('username')
         password = request.REQUEST.get('password')
+        next_url = request.POST.get('next',None)
 
         user = authenticate(username=username, password=password)
         if user is not None:
@@ -61,9 +62,13 @@ def login_user(request):
                 login(request, user)
                 if len(SimsamUser.objects.filter(user=user)) < 1:
                         SimsamUser.objects.create(user=user, first_name=user.username)
-                t = loader.get_template("createOrOpenProject.html")
-                c = RequestContext(request, {})
-                return HttpResponseRedirect('/')
+                if next_url:
+                        return HttpResponseRedirect(next_url)
+                else:
+                        #return HttpResponseRedirect(redirect_to)
+                        t = loader.get_template("createOrOpenProject.html")
+                        c = RequestContext(request, {})
+                        return HttpResponseRedirect('/')
             else:
                 state = "Your account is not active, please contact the site admin."
         else:
@@ -142,7 +147,11 @@ def make_project(request):
     project_name = request.REQUEST.get('projectName')
     if len(simsam_user.projects.filter(name=project_name)) > 0:
         # if the project name already exists, open it
-        return chooseproject(request)
+        project = simsam_user.projects.get(name=project_name)
+        anim1 = project_name + "-anim0"
+        animation = project.animations.get(name=anim1)
+        return HttpResponseRedirect("/app?project={}&animation={}".format(
+            project.id, animation.id))
     else:
         # set up the new project
         project = Project.objects.create(name=project_name, owner=simsam_user)
