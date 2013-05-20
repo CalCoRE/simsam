@@ -37,6 +37,10 @@ $(document).ready ->
     $('#output').hide()
     $('#right_frame').hide()
 
+    # hide save crop and cancel crop buttons (cropping not started yet)
+    $('#savecrop').hide()
+    $('#cancelcrop').hide()
+
     # get some handy references to DOM nodes
     window.camera = $("#camera").get 0
     window.buttons =

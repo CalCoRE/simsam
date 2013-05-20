@@ -73,6 +73,8 @@ function deleteRect() {
 	
 	//unbind mousemove event
 	canvas.click(screenClick());
+
+        showStartCroppingButton();
 }
 
 
@@ -245,7 +247,9 @@ function getResults() {
   $("#sprite_drawer").sortable("refresh"); 
 
   saveCropCanvas(temp_canvas, frameId); //save the cropped image
-   
+
+  showStartCroppingButton();
+
 }
 
 // define Selection draw method
@@ -288,6 +292,8 @@ function cropCanvas() {
   // before
   //canvas = document.getElementById('canvas');
   //
+
+  hideStartCroppingButton();
 
   window.switchToPlaybackMode();
   
@@ -467,4 +473,19 @@ function cropCanvas() {
   //$("#canvas").click(screenClick());
   
   drawScene();
+};
+
+function hideStartCroppingButton() {
+  //display save crop and cancel crop buttons
+  $('#savecrop').show();
+  $('#cancelcrop').show();
+  //hide the start cropping button
+  $('#startcropping').hide();
+};
+function showStartCroppingButton() {
+  //display start cropping button
+  $('#startcropping').show();
+  //hide save crop and cancel crop buttons
+  $('#savecrop').hide();
+  $('#cancelcrop').hide();
 };

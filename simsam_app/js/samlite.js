@@ -36,6 +36,8 @@
     $('#container').hide();
     $('#output').hide();
     $('#right_frame').hide();
+    $('#savecrop').hide();
+    $('#cancelcrop').hide();
     window.camera = $("#camera").get(0);
     window.buttons = {
       shoot: $("#shoot_button").get(0),
