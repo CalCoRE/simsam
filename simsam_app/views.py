@@ -51,10 +51,11 @@ def login_user(request):
     """Currently a separate page; todo: embed form in home, make this ajax."""
     state = "Welcome to SiMSAM! Please log in below..."
     username = password = ''
+    redirect_to = request.REQUEST.get('next','')
     if request.POST:
         username = request.REQUEST.get('username')
         password = request.REQUEST.get('password')
-        next_url = request.POST.get('next',None)
+        next_url = request.REQUEST.get('next','')
 
         user = authenticate(username=username, password=password)
         if user is not None:
@@ -62,7 +63,7 @@ def login_user(request):
                 login(request, user)
                 if len(SimsamUser.objects.filter(user=user)) < 1:
                         SimsamUser.objects.create(user=user, first_name=user.username)
-                if next_url:
+                if len(next_url) > 0:
                         return HttpResponseRedirect(next_url)
                 else:
                         #return HttpResponseRedirect(redirect_to)
@@ -74,7 +75,7 @@ def login_user(request):
         else:
             state = "The username and password were incorrect."
     t = loader.get_template("login.html")
-    c = RequestContext(request, {'state': state})
+    c = RequestContext(request, {"next": redirect_to,})
     return HttpResponse(t.render(c))
 
 
