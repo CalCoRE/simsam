@@ -98,7 +98,7 @@
     } else {
       anyCamera = false;
       switchToPlaybackMode();
-      return opalert("Your browser does not support getUserMedia()");
+      return alert("Your browser does not support getUserMedia()");
     }
   });
 
@@ -546,11 +546,9 @@
   };
 
   window.switchToRecordMode = function() {
-    var maxFrame;
     recording = true;
     if (playbackFrames.length > 0) {
-      maxFrame = playbackFrames.length - 1;
-      placeFrame(maxFrame, overlayClass);
+      placeFrame(window.playbackIndex, overlayClass);
     } else {
       clearPlayback();
     }

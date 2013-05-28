@@ -110,7 +110,7 @@ $(document).ready ->
     else
         anyCamera = false
         switchToPlaybackMode()
-        opalert "Your browser does not support getUserMedia()"
+        alert "Your browser does not support getUserMedia()"
 
     # always start in record mode
     #switchToRecordMode()
@@ -572,8 +572,9 @@ toggleMode = ->
 window.switchToRecordMode = ->
     recording = true
     if playbackFrames.length > 0
-        maxFrame = playbackFrames.length - 1
-        placeFrame maxFrame, overlayClass
+        #maxFrame = playbackFrames.length - 1
+        #placeFrame maxFrame, overlayClass
+        placeFrame window.playbackIndex, overlayClass
     else
         # placeFrame would do this for us, but we have nothing to place
         # so clear the blank frame
