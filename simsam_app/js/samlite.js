@@ -336,16 +336,17 @@
   };
 
   rescanThumbnails = function() {
-    var idsToSave, playbackFrames;
+    var idsToSave;
     if (window.debug) {
       console.log("rescanThumbnails");
     }
-    playbackFrames = [];
+    window.playbackFrames = [];
     idsToSave = [];
+    console.log("hello");
     $("#video_output *").each(function(index, thumbnail) {
       var frameId;
       frameId = $(thumbnail).attr("data-frame-id");
-      playbackFrames.push(frameRegistry[frameId]);
+      window.playbackFrames.push(frameRegistry[frameId]);
       idsToSave.push(frameId);
       return $(thumbnail).unbind("click").click(function() {
         pause();
@@ -367,6 +368,7 @@
     if (window.playbackIndex >= playbackFrames.length) {
       frameEnd();
     }
+    clearPlayback();
     return saveFrameSequence();
   };
 
@@ -478,7 +480,9 @@
     pause();
     max = playbackFrames.length - 1;
     window.playbackIndex = max;
-    placeFrame(max, playbackClass);
+    if (window.playbackFrames.length > 0) {
+      placeFrame(max, playbackClass);
+    }
     return updateIndexView();
   };
 

@@ -392,14 +392,15 @@ placeBlankFrame = ->
 rescanThumbnails = ->
     if window.debug then console.log "rescanThumbnails"
     # reset the playbackFrames list so it can be rebuilt in the right order
-    playbackFrames = []
+    window.playbackFrames = []
     idsToSave = []
+    console.log("hello")
     
     # build the new playback list and also rebuild the thumbnail click events
     # so they match the correct indices
     $("#video_output *").each (index, thumbnail) ->
         frameId = $(thumbnail).attr "data-frame-id"
-        playbackFrames.push frameRegistry[frameId]
+        window.playbackFrames.push frameRegistry[frameId]
         idsToSave.push frameId
         $(thumbnail).unbind("click").click ->
             pause()
@@ -420,6 +421,7 @@ trash = (event) ->
     $("#trash .sortable-placeholder").remove()
     rescanThumbnails()
     if window.playbackIndex >= playbackFrames.length then frameEnd()
+    clearPlayback()
     saveFrameSequence()
 
 # Put a series of opaque still canvases over the webcam view, effectively
@@ -501,7 +503,8 @@ frameEnd = ->
     pause()
     max = playbackFrames.length - 1
     window.playbackIndex = max
-    placeFrame max, playbackClass
+    if window.playbackFrames.length > 0
+        placeFrame max, playbackClass
     updateIndexView()
     
 # just for window.debugging
