@@ -56,21 +56,7 @@ $(document).ready ->
     constraints = {audio:true, video:true}
         
     # check that we have webcam support
-    if html5support.getUserMedia()
-        success = (stream) ->
-            camera.src = stream
-            camera.play()
-            #if getUserMedia is available, start in record mode
-            switchToRecordMode()
-        failure = (error) -> 
-            alert JSON.stringify error
-            #if not available, start in playback mode
-            switchToPlaybackMode()
-        
-        navigator.getUserMedia constraints, success, failure
-    else
-    		anyCamera = false
-    		alert "Your browser does not support getUserMedia()"
+    
         
     # wire up buttons
     $(buttons.shoot).click shoot
@@ -107,6 +93,24 @@ $(document).ready ->
 
     # if there are no frames available, do not allow cropping
     if playbackFrames.length == 0 then $('#startcropping').hide()
+
+    # check that we have webcam support
+    if html5support.getUserMedia()
+        success = (stream) ->
+            camera.src = stream
+            camera.play()
+            #if getUserMedia is available, start in record mode
+            switchToRecordMode()
+        failure = (error) -> 
+            alert JSON.stringify error
+            #if not available, start in playback mode
+            switchToPlaybackMode()
+        
+        navigator.getUserMedia constraints, success, failure
+    else
+        anyCamera = false
+        switchToPlaybackMode()
+        opalert "Your browser does not support getUserMedia()"
 
     # always start in record mode
     #switchToRecordMode()

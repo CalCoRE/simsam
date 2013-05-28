@@ -52,21 +52,6 @@
       audio: true,
       video: true
     };
-    if (html5support.getUserMedia()) {
-      success = function(stream) {
-        camera.src = stream;
-        camera.play();
-        return switchToRecordMode();
-      };
-      failure = function(error) {
-        alert(JSON.stringify(error));
-        return switchToPlaybackMode();
-      };
-      navigator.getUserMedia(constraints, success, failure);
-    } else {
-      anyCamera = false;
-      alert("Your browser does not support getUserMedia()");
-    }
     $(buttons.shoot).click(shoot);
     $(buttons.play).click(play);
     $(buttons.pause).click(pause);
@@ -97,7 +82,23 @@
       loadFrames(element);
     }
     if (playbackFrames.length === 0) {
-      return $('#startcropping').hide();
+      $('#startcropping').hide();
+    }
+    if (html5support.getUserMedia()) {
+      success = function(stream) {
+        camera.src = stream;
+        camera.play();
+        return switchToRecordMode();
+      };
+      failure = function(error) {
+        alert(JSON.stringify(error));
+        return switchToPlaybackMode();
+      };
+      return navigator.getUserMedia(constraints, success, failure);
+    } else {
+      anyCamera = false;
+      switchToPlaybackMode();
+      return opalert("Your browser does not support getUserMedia()");
     }
   });
 
