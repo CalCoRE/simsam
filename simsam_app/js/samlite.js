@@ -92,18 +92,21 @@
       };
       failure = function(error) {
         alert(JSON.stringify(error));
+        window.playbackIndex = 0;
         return switchToPlaybackMode();
       };
       return navigator.getUserMedia(constraints, success, failure);
     } else {
       anyCamera = false;
+      window.playbackIndex = 0;
       switchToPlaybackMode();
       return alert("Your browser does not support getUserMedia()");
     }
   });
 
   loadSprites = function(sprite) {
-    var canvas, ctx, img, output;
+    var canvas, ctx, img, output,
+      _this = this;
     output = $("#sprite_drawer").get(0);
     canvas = document.createElement('canvas');
     ctx = canvas.getContext('2d');
@@ -115,6 +118,9 @@
     };
     img.src = 'http://' + window.location.host + '/media/sprites/' + sprite + '.jpg';
     $(canvas).attr("data-frame-id", sprite);
+    canvas.addEventListener("dblclick", function(e) {
+      return addObject(img);
+    });
     return output.appendChild(canvas);
   };
 

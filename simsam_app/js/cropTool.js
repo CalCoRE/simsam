@@ -86,18 +86,8 @@ function rescanCropThumbnails() {
   $("#sprite_drawer *").each(function(index, thumbnail) {
 		var frameId;
 	  frameId = $(thumbnail).attr("data-frame-id");
-	  cropFrames.push(cropFrameRegistry[frameId]);
-	  //return $(thumbnail).unbind(clk).bind(clk, function() { mhwj unsure of what this is about but trying with hammer
-	  Hammer(thumbnail).on("touch", function() {
-	    pause();
-	    clearPlayback();
-	    cameraOn();
-	    placeFrame(index, overlayClass);
-	    window.playbackIndex = index;
-	    return updateIndexView();
-	  });
-	});
-  return updateIndexView();
+	  cropFrames.push(cropFrameRegistry[frameId])
+  });
 }
 
 
@@ -170,9 +160,12 @@ function getResults() {
     var imageObj = new Image();
     imageObj.src = vData;
 
-    //when double-clicking on crop in drawer, add cropped image to sim stage ///MHWJ 
+    //when double-clicking on crop in drawer, add cropped image to sim stage ///MHWJ
+    temp_canvas.addEventListener('dblclick', function(){ 
+        addObject(imageObj);
+    });
     Hammer(temp_canvas).on("doubletap", function(e){
-    	e.preventDefault();
+    	//e.preventDefault();
     
         var obj = new Kinetic.Image({
       	  x: 100,

@@ -104,11 +104,12 @@ $(document).ready ->
         failure = (error) -> 
             alert JSON.stringify error
             #if not available, start in playback mode
+            window.playbackIndex = 0
             switchToPlaybackMode()
-        
         navigator.getUserMedia constraints, success, failure
     else
         anyCamera = false
+        window.playbackIndex = 0
         switchToPlaybackMode()
         alert "Your browser does not support getUserMedia()"
 
@@ -126,6 +127,7 @@ loadSprites = (sprite) ->
         ctx.drawImage(img, 0, 0, img.width, img.height)
     img.src = 'http://' + window.location.host + '/media/sprites/' + sprite + '.jpg'
     $(canvas).attr("data-frame-id", sprite)
+    canvas.addEventListener "dblclick", (e) => addObject(img)
     output.appendChild canvas   
     
 

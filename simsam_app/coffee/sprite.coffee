@@ -117,7 +117,7 @@ class Interaction extends Rule
 window.spriteList = []
 
 window.tick = ->
-    for sprite in spriteList
+    for sprite in window.spriteList
         sprite.applyRules()
     window.layer.draw()
 
@@ -126,7 +126,7 @@ window.tick = ->
 window.init = ->
     window.Star = SpriteFactory('Star')
     window.starA = new Star('A')
-    spriteList.push(starA)
+    window.spriteList.push(starA)
     layer.add(starA)
 
     stage.add(layer)

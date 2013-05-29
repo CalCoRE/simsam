@@ -148,9 +148,10 @@
   window.spriteList = [];
 
   window.tick = function() {
-    var sprite, _i, _len;
-    for (_i = 0, _len = spriteList.length; _i < _len; _i++) {
-      sprite = spriteList[_i];
+    var sprite, _i, _len, _ref;
+    _ref = window.spriteList;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      sprite = _ref[_i];
       sprite.applyRules();
     }
     return window.layer.draw();
@@ -160,7 +161,7 @@
     var moveDown, moveRight, spin, stretchy;
     window.Star = SpriteFactory('Star');
     window.starA = new Star('A');
-    spriteList.push(starA);
+    window.spriteList.push(starA);
     layer.add(starA);
     stage.add(layer);
     moveRight = new Rule();
