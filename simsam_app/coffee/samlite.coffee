@@ -194,20 +194,28 @@ makeUnselectable = (node) ->
 
 toggleCamera = ->
     if cameraSwitch.is ':checked'
-        if window.debug then console.log "toggle camera on"
-        # hide the playback frames which would otherwise hide
-        # the camera feed
-        clearPlayback()
-        cameraState = 1
-        # show the camera feed
-        $(camera).css "display","block" 
+        cameraOn
     else
-        if window.debug then console.log "toggle camera off"
-        # hide the camera feed
-        $(camera).css "display","none"
-        cameraState = 0
-        # display the most recently displayed playback frame
-        placeFrame window.playbackIndex
+        cameraOff
+
+# sometimes we want to turn camera on or off rather than toggle
+
+cameraOn = ->
+		if window.debug then console.log "toggle camera on"
+		# hide the playback frames which would otherwise hide
+		# the camera feed
+		clearPlayback()
+		cameraState = 1
+		# show the camera feed
+		$(camera).css "display","block" 
+        
+cameraOff = ->
+		if window.debug then console.log "toggle camera off"
+		# hide the camera feed
+		$(camera).css "display","none"
+		cameraState = 0
+		# display the most recently displayed playback frame
+		placeFrame window.playbackIndex
 
 # simulates a user clicking the checkbox
 # MHWJ getting rid of this, no more checkbox
@@ -263,7 +271,7 @@ window.shoot = ->
     # capture a new frame
     frame = capture video, 1
     thumbnail = capture video, thumbnailScaleFactor
-    console.log("frame")
+    console.log("shot frame")
     console.log(frame)
     
     if playbackFrames.length == 0
@@ -286,7 +294,9 @@ window.shoot = ->
     # store the frame in the registry so the playback frames can be reordered
     # by id when the thumbnails are reordered
     frameRegistry[frameId] = frame
+    console.log("frameRegistry")
     console.log(frameRegistry)
+    console.log("playbackFrames")
     console.log(playbackFrames)
     
     # display the thumbnail at the correct position
@@ -313,6 +323,7 @@ window.shoot = ->
 saveCanvas = (canvas, tempId) ->
     imageStringRaw = canvas.toDataURL "image/jpeg"
     imageString = imageStringRaw.replace "data:image/jpeg;base64,", ""
+    if window.debug then console.log "savecanvas", window.animationId
     
     ajaxOptions =
         url: "save_image"
