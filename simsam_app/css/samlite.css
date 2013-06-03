@@ -154,7 +154,7 @@
   border-right: solid #eee 1px;
 }
 
-#video_output * {
+#video_output canvas {
     cursor: move;
 }
 
