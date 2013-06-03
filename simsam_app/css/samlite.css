@@ -1,6 +1,5 @@
 #wholescreen {
 	position: absolute;
-	background-color: #cccccc;
 	right: 0px;
 	left: 0px;
 	bottom: 0px;
@@ -10,10 +9,8 @@
 }
 
 #construction_frame { 
-	border-right-width: 1px; 
-	border-right-color: #4c4c4c; 
-	border-right-style: solid; 
 	max-height: 100%;
+	border-right: 1px solid #eee;
 	bottom: 0px;
 	top: 0px;
 	left: 0px;
@@ -25,11 +22,10 @@
 
 #container {
 	height: 100%;
-	background-color: white;
 }
 
 #video_frame {
-	background-color: white;
+	background-color: #fff;
 	position: absolute;
 	right: 0px;
 	left: 0px;
@@ -81,9 +77,9 @@
 }
 
 #bottom_frame {
-	border-top-color: #4c4c4c;
-	border-top-width: 1px;
-	border-top-style: solid;
+	border-top-style: groove;
+	border-top-color: #fefffe;
+	border-top-width: 2px;
 	max-width: 100%;
 	right: 0px;
 	left: 0px;
@@ -93,9 +89,7 @@
 }
 
 #toggle {
-	border-right-style: ridge;
-	border-right-color: #e6e6e6;
-	border-right-width: 1px;
+	border-right: solid 1px #eee;
 	position: absolute;
 	left: 0px;
 	top: 0px;
@@ -112,6 +106,7 @@
 	top: 10px;
 	left: 10px;
 	position: absolute;
+	cursor: pointer;
 }
 
 #record_mode {
@@ -121,6 +116,7 @@
 	bottom: 10px;
 	right: 10px;
 	position: absolute;
+	cursor: pointer;
 }
 
 .small {
@@ -136,9 +132,7 @@
 }
 
 #trash {
-  border-left-style: ridge;
-  border-left-color: #e6e6e6;
-  border-left-width: 1px;
+  border-left: solid #fff 1px;
   top: 0px;
   right: 0px;
   position: absolute;
@@ -148,41 +142,40 @@
 }
 
 #video_output {
-    margin: 2px;
-    max-height: 100%;
-    right: 100px;
-    left: 150px;
-    position: absolute;
-    max-width: 100%;
-    overflow-x: scroll;
-    white-space: nowrap;
+	margin: 2px;
+	max-height: 100%;
+	right: 100px;
+	left: 150px;
+	position: absolute;
+	max-width: 100%;
+	overflow-x: scroll;
+	white-space: nowrap;
+	border-left: 1px solid white;
+  border-right: solid #eee 1px;
+}
+
+#video_output * {
+    cursor: move;
 }
 
 #home_button {
-	background-repeat: no-repeat;
 	background-image: url(../images/home.png);
 	left: 5px;
-	top: 5px;
-        width: 50px;
-        height: 50px;
-	opacity:.50;
-	filter:alpha(opacity=50);
-	filter: “alpha(opacity=50)”;
+        width: 46px;
+        height: 48px;
 }
 
 #right_menu_button {
-	background-repeat: no-repeat;
 	background-image: url(../images/openmenu.png);
 	right: 5px;
 	top: 5px;
         width: 31px;
         height: 31px;
-	opacity:.50;
-	filter:alpha(opacity=50);
-	filter: “alpha(opacity=50)”;
 }
 
 .floating_button {
+	background-repeat: no-repeat;
+	top: 5px;
 	z-index: 100;
 	border-style: solid;
 	border-color: white;
@@ -191,14 +184,22 @@
 	padding: 5px;
 	position: fixed;
 	border-radius: 4px;
+	opacity:.50;
+	filter:alpha(opacity=50);
+	filter: “alpha(opacity=50)”;
+	cursor: pointer;
 }
 
 #right_frame {
+	border-left-width: 2px;
+	border-left-color: white;
+	border-left-style: groove;
 	width: 200px;
 	visibility: hide;
 	bottom: 0px;
 	top: 0px;
 	right: 0px;
+	padding-top: 10px;
 	position: absolute;
 	height: 100%;
 }
@@ -209,18 +210,326 @@
 }
 
 .menu_button {
-	background-color: #cccccc;
-	padding-bottom: 5px;
-	padding-top: 5px;
-	font-size: large;
-	border-style: none;
-	color: #333333;
-	font-family: Helvetica, Verdana, Arial, sans-serif;
+	visibility: visible;
+	border-top-color: white;
+	border-top-width: 1px;
+	border-bottom-color: #d3d3d3;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-left-style: none;
+	border-right-style: none;
+	border-top-style: solid;
+	padding-bottom: 15px;
+	padding-top: 15px;
+	text-align: center;
 	width: 100%;
 	cursor:pointer;
+	background-opacity: 0;
 }
 
 .menu_button:hover {
-	background-color: #333333;
-	color: #cccccc;
+	color: black;
 }
+
+.frame {
+	background: #fff;
+	box-shadow: inset 10px 0px 40px #ccc;
+	font-size: large;
+	background-opacity: 0;
+	color: #5d5d5d;
+	font-family: Helvetica, Verdana, Arial, sans-serif;
+}
+
+#sprite_drawer canvas {
+  display: block;
+  margin: 10px auto 10px auto;
+  border: 1px solid #444;
+}
+
+/* old samlite
+
+body {
+    margin-left: 10%;
+    margin-right: 10%;
+    font-family: "Verdana", "Sans";
+}
+
+.float_container:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+
+.float {
+    position: relative;
+    float: left;
+}
+*.unselectable {
+   -moz-user-select: -moz-none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+
+   /*
+     Introduced in IE 10.
+     See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
+   */
+   
+   /*
+   -ms-user-select: none;
+   user-select: none;
+}
+#main_container {
+    width: 1000px;
+    overflow:hidden;
+}
+#video_container {
+    position: relative;
+    padding: 8px;
+    border: 1px solid #009933;
+    width: 640px;
+    height: 484px;
+    /*float: center;*/
+    
+    /*
+    
+}
+.overlay-frame {
+    opacity: 0.25;
+}
+#playback_container {
+    position: absolute;
+}
+.frametext {
+    color: gray;
+    font-family: "Verdana", "Sans";
+    font-size: 3em;
+    line-height: 10em;
+    margin-left: 240px;
+    position: relative;
+}
+#controls_container {
+    width: 300px;
+    font-family: "Verdana", "Sans";
+    margin: 10px;
+    text-align: center;
+}
+.iPhoneCheckContainer {
+    display: inline-block;
+    top: 7px;
+}
+#shoot_button {
+    background-image: url('../images/camera.png');
+    background-repeat: no-repeat;
+    border-radius: 10px;
+    height: 150px;
+    margin: 20px;
+    width: 230px;
+    border-width: 2px;
+}
+#video_output {
+    top: 4px;
+    position:relative;
+    border: 1px solid #009933;
+    margin: 0px;
+    width: 1000px;
+    height: 150px;
+    overflow-x: scroll;
+    white-space: nowrap;
+}
+#video_output * {
+    margin: 4px;
+    margin-left: 10px;
+    padding: 0px;
+    height: 120px;
+    width: 160px;
+    display: inline-block;
+}
+#crop_output {
+    top: 4px;
+    position:relative;
+    border: 1px solid #009933;
+    margin: 0px;
+    width: 1000px;
+    height: 150px;
+    overflow-x: scroll;
+    white-space: nowrap;
+}
+#crop_output * {
+    margin: 4px;
+    margin-left: 10px;
+    padding: 0px;
+    display: inline-block;
+}
+
+.sortable-placeholder {
+    border: 2px dashed gray;
+}
+
+#trash .sortable-placeholder {
+    border: 2px solid gray;
+    border-radius: 8px;
+    height: 95%;
+    position: relative;
+}
+
+/* play control buttons */ /*
+#play_control_buttons {
+    margin-top: 10px;
+    width: 100%;
+}
+#play_control_buttons > span {
+    width: 41px;
+    height: 40px;
+    display: inline-block;
+    background-image: url('../images/play_control_buttons.png');
+}
+#beginning_button {
+    background-position: 0px 0px;
+}
+#beginning_button:active {
+    background-position: 0px 40px;
+}
+#frame_back_button {
+    background-position: 203px 0px;
+}
+#frame_back_button:active {
+    background-position: 203px 40px;
+}
+#play_button {
+    background-position: 162px 0px;
+}
+#play_button:active {
+    background-position: 162px 40px;
+}
+#pause_button {
+    background-position: 122px 0px;
+}
+#pause_button:active {
+    background-position: 122px 40px;
+}
+#frame_forward_button {
+   background-position: 81px 0px;
+}
+#frame_forward_button:active {
+    background-position: 81px 40px;
+}
+#end_button {
+    background-position: 41px 0px;
+}
+#end_button:active {
+    background-position: 41px 40px;
+}
+
+#slider_container {
+    margin-top: 20px;
+}
+
+#fps_slider { 
+    left: 12px;
+    width: 278px;
+}
+
+#trash {
+    background: url('../images/trash.png') no-repeat center;
+    width: 230px;
+    height: 80px;
+    border-radius: 10px;
+    border: 2px solid #DDDDDD;
+    margin: 35px auto auto;
+}
+
+.greeting {
+    font-family: "Verdana", "Sans";
+    text-align: left;
+    color: gray;
+    padding-top: 30px;
+    width: 100px;
+    margin: auto;
+    position: relative;
+    float: left;
+}
+.header {
+    background: url('../images/paint.png') no-repeat left;
+    background-position: 35px 2px;
+    height: 131px;
+    margin: auto;
+    border-bottom: 2px solid #DDDDDD;
+}
+#logoutbutton {
+    margin: auto;
+    margin-left: 415px;
+    margin-top: 80px;
+
+    height: 30px;
+    width: 75px;
+    background-color: gray;
+    border: 1px solid;
+    border-radius: 25px;
+    -moz-border-radius: 25px;
+    color: white;
+}
+#login {
+    height: 100px;
+    font-size: 150%;
+    font-family:  "Verdana", "Sans";
+    padding-left: 10px;
+}
+#loginbutton {
+    height: 30px;
+    width: 75px;
+    background-color: gray;
+    border: 1px solid;
+    border-radius: 25px;
+    -moz-border-radius: 25px;
+    color: white;
+}
+
+#simbutton {
+    background-color: #009933;
+    border: 1px solid;
+    border-radius: 25px;
+    -moz-border-radius: 25px;
+    color: white;
+    margin-left: 100px;
+    width: 100px;
+    height: 30px;
+    font-weight: bold;
+    margin: auto;
+    margin-left: 8px;
+}
+#sambutton {
+    background-color: #009933;
+    border: 1px solid;
+    border-radius: 25px;
+    -moz-border-radius: 25px;
+    color: white;
+    width: 100px;
+    height: 30px;
+    font-weight: bold;
+    margin: auto;
+    margin-left: 8px;
+}
+
+#crop_buttons {
+    margin-left: 160px;
+    margin-top: 8px;
+}
+.crop_button {
+    background-color: #CC6600;
+    color: white;
+    border: 1px solid;
+    border-radius: 25px;
+    -moz-border-radius: 25px;
+    height: 30px; 
+}
+#savecrop {
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+#container {
+     border: 1px solid #CC6600;
+}
+*/

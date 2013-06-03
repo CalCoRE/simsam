@@ -189,6 +189,8 @@ makeUnselectable = (node) ->
 
 # These don't actually turn the camera on and off; it's really always on
 # they just show and hide the canvas displaying what the camera sees
+# if the optionalMode is true, switch to camera regardless of current state
+# that's for when a frame is clicked
 
 toggleCamera = ->
     if cameraSwitch.is ':checked'
@@ -411,6 +413,7 @@ rescanThumbnails = ->
             placeFrame index, (if recording then overlayClass else playbackClass)
             window.playbackIndex = index
             updateIndexView()
+            toggleCamera( true )
 
     updateIndexView()
     
@@ -543,19 +546,19 @@ startSamlite = ->
     #MHWJ
 toggleMenu = ->
 		if menu
-    	$('#right_frame').hide()
-    	$('#construction_frame').css("right", "0px")
+    	$('#right_frame').hide("slide", {direction: "right"}, 500);
+    	$('#construction_frame').animate({ right: '0px' }, 500)
     	$('#right_menu_button').css("image", "../images/openmenu.png")
-    	$('#right_menu_button').css("right", "5px")
+    	$('#right_menu_button').animate({ right: '5px' }, 500)
     	menu = false
 		else
     	# show SAM containers
     	#$('#right_frame').css("border-left-color", "#cccccc")
     	#$('#right_frame').css("border-left-style", "groove")
-    	$('#right_frame').show()
-    	$('#construction_frame').css("right", "200px")
+    	$('#right_frame').show("slide", {direction: "right"}, 500);
+    	$('#construction_frame').animate({ right: '200px' }, 500)
     	$('#right_menu_button').css("image", "../images/closemenu.png")
-    	$('#right_menu_button').css("right", "205px")
+    	$('#right_menu_button').animate({ right: '205px' }, 500)
     	menu = true
 
 window.screenClick = ->

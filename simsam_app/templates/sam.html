@@ -58,7 +58,7 @@
   		<div id="replay"></div>
   		 <!-- is this allowed? attempting… -->
   	</div>
-  	<div id="bottom_frame">
+  	<div id="bottom_frame" class="frame">
   		<div id="toggle">
   			<div id="play_mode" class="big"></div>
   			<div id="record_mode" class="small"></div>
@@ -67,16 +67,16 @@
   		<div id="trash"></div>
   	</div>
   </div>
-  <div id="right_frame">
+  <div id="right_frame" class="frame">
   	<div id="menu_options">
   		<div id="switch_button">
-  			<button class="menu_button" id="simbutton">Make Simulation</button>
-  			<button class="menu_button" id="sambutton">Make Animation</button>
+  			<div class="menu_button" id="simbutton" style="border-top: none;">Make Simulation</div>
+  			<div class="menu_button" id="sambutton" style="border-top: none;">Make Animation</div>
   		</div>
   		<div id="crop_buttons">
-        <button class="menu_button" id="startcropping" onclick="cropCanvas()">Start Cropping</button>
-				<button class="menu_button" id="savecrop" onclick="getResults()">Save Crop</button>
-				<button class="menu_button" id="cancelcrop" onclick="deleteRect()">Cancel Crop</button>
+        <div class="menu_button" id="startcropping" onclick="cropCanvas()">Start Cropping</div>
+				<div class="menu_button" id="savecrop" onclick="getResults()">Save Crop</div>
+				<div class="menu_button" id="cancelcrop" onclick="deleteRect()">Cancel Crop</div>
     	</div>
   	</div>
   	<div id="sprite_drawer"></div>
