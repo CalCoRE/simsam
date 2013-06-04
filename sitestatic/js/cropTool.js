@@ -160,6 +160,7 @@ function getResults() {
     var imageObj = new Image();
     imageObj.src = vData;
 
+/* old simsam
     //when double-clicking on crop in drawer, add cropped image to sim stage ///MHWJ
     temp_canvas.addEventListener('dblclick', function(){ 
         addObject(imageObj);
@@ -231,8 +232,9 @@ function getResults() {
 	sprites.push(obj);
 		/*var objLayer = new Kinetic.Layer();
 		objLayer.add(obj);
-		stage.add(objLayer);*/
+		stage.add(objLayer);
     });
+    */
 
     cropFrameRegistry[frameId] = temp_canvas; //add to cropped elements by id
 
