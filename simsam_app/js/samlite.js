@@ -2,8 +2,6 @@
 (function() {
   var anyCamera, cameraOff, cameraOn, cameraState, cameraSwitch, capture, clearPlayback, frameBack, frameBeginning, frameEnd, frameForward, frameRegistry, getRandomId, loadFrames, loadSprites, makeUnselectable, menu, overlayClass, pause, placeBlankFrame, placeFrame, playbackClass, playbackTimeouts, recording, rescanThumbnails, saveCanvas, saveFrameSequence, startSamlite, startSimlite, thumbnailScaleFactor, toggleCamera, toggleMenu, toggleMode, trash;
 
-  console.log('hi');
-
   thumbnailScaleFactor = 0.25;
 
   cameraSwitch = {};
@@ -35,7 +33,7 @@
   window.spritecollection = [];
 
   $(document).ready(function() {
-    var constraints, element, failure, success, _i, _j, _len, _len1, _ref, _ref1;
+    var element, failure, success, _i, _j, _len, _len1, _ref, _ref1;
     $('#sambutton').hide();
     $('#container').hide();
     $('#output').hide();
@@ -43,10 +41,13 @@
     $('#savecrop').hide();
     $('#cancelcrop').hide();
     window.camera = $("#camera").get(0);
-    constraints = {
-      audio: true,
-      video: true
-    };
+    $("#replay").click(function() {
+      if (recording) {
+        return shoot();
+      } else {
+        return play();
+      }
+    });
     $("#simbutton").click(startSimlite);
     $("#sambutton").click(startSamlite);
     $("#right_menu_button").click(toggleMenu);
@@ -85,7 +86,10 @@
         window.playbackIndex = 0;
         return switchToPlaybackMode();
       };
-      return navigator.getUserMedia(constraints, success, failure);
+      return navigator.getUserMedia({
+        audio: true,
+        video: true
+      }, success, failure);
     } else {
       anyCamera = false;
       window.playbackIndex = 0;
@@ -332,7 +336,6 @@
     frame = playbackFrames[frameIndex];
     $(frame).addClass(className);
     frame.id = "canvas";
-    $(frame).click(screenClick());
     return $("#replay").append(frame);
   };
 
@@ -549,14 +552,6 @@
         right: '205px'
       }, 500);
       return menu = true;
-    }
-  };
-
-  window.screenClick = function() {
-    if (recording) {
-      return shoot;
-    } else {
-      return play;
     }
   };
 
