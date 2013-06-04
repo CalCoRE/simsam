@@ -33,7 +33,7 @@
   window.spritecollection = [];
 
   $(document).ready(function() {
-    var constraints, element, failure, success, _i, _j, _len, _len1, _ref, _ref1;
+    var element, failure, success, _i, _j, _len, _len1, _ref, _ref1;
     $('#sambutton').hide();
     $('#container').hide();
     $('#output').hide();
@@ -41,10 +41,13 @@
     $('#savecrop').hide();
     $('#cancelcrop').hide();
     window.camera = $("#camera").get(0);
-    constraints = {
-      audio: true,
-      video: true
-    };
+    $("#replay").click(function() {
+      if (recording) {
+        return shoot();
+      } else {
+        return play();
+      }
+    });
     $("#simbutton").click(startSimlite);
     $("#sambutton").click(startSamlite);
     $("#right_menu_button").click(toggleMenu);
@@ -83,12 +86,16 @@
         window.playbackIndex = 0;
         return switchToPlaybackMode();
       };
-      return navigator.getUserMedia(constraints, success, failure);
+      return navigator.getUserMedia({
+        audio: true,
+        video: true
+      }, success, failure);
     } else {
       anyCamera = false;
       window.playbackIndex = 0;
       switchToPlaybackMode();
-      return alert("Your browser does not support getUserMedia()");
+      $("#record_mode").css('display', 'none');
+      return alert("Your browser will not allow SiMSAM to use the webcam. Related functions will be disabled.");
     }
   });
 
@@ -105,6 +112,8 @@
     };
     img.src = 'http://' + window.location.host + '/media/sprites/' + sprite + '.jpg';
     $(canvas).attr("data-frame-id", sprite);
+    $(canvas).attr("draggable", true);
+    $(canvas).attr("dropzone", $('container'));
     return output.appendChild(canvas);
   };
 
@@ -329,7 +338,6 @@
     frame = playbackFrames[frameIndex];
     $(frame).addClass(className);
     frame.id = "canvas";
-    $(frame).click(screenClick());
     return $("#replay").append(frame);
   };
 
@@ -549,16 +557,11 @@
     }
   };
 
-  window.screenClick = function() {
-    if (recording) {
-      return shoot;
-    } else {
-      return play;
-    }
-  };
-
   toggleMode = function() {
-    if (recording || !anyCamera) {
+    if (!anyCamera) {
+      return;
+    }
+    if (recording) {
       return switchToPlaybackMode();
     } else {
       return switchToRecordMode();
@@ -566,6 +569,7 @@
   };
 
   window.switchToRecordMode = function() {
+    console.log("switchToRecordMode()");
     recording = true;
     if (playbackFrames.length > 0) {
       placeFrame(window.playbackIndex, overlayClass);
@@ -579,6 +583,7 @@
   };
 
   window.switchToPlaybackMode = function() {
+    console.log("switchToPlaybackMode()");
     recording = false;
     if (playbackFrames.length > 0) {
       placeFrame(window.playbackIndex, playbackClass);

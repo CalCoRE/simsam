@@ -1,3 +1,9 @@
+touchDevice = (typeof(window.ontouchstart) != 'undefined') ? true : false;
+detectDrag = touchDevice ? "touchmove" : "drag";
+detectDragEnd = touchDevice ? "touchend" : "dragend";
+detectDouble = touchDevice ? "dbltap" : "dblclick";
+detectClick = touchDevice ? "tap" : "click";
+
 # random things I've learned about Kinetic.js
 
 # * positive x is to the RIGHT, positive y is DOWN, 0,0 is the upper left corner
@@ -33,7 +39,7 @@ class GenericSprite extends Kinetic.Image
           imgHeight = 50
           wOff = 50
           hOff = 25
-        
+          
         shapeParams =
             x: 50
             y: 50
@@ -52,7 +58,7 @@ class GenericSprite extends Kinetic.Image
         tmpX = 0
         tmpY = 0
         
-        this.on 'dblclick', (event) =>
+        this.on 'dblclick dbltap', (event) =>
         	if !programming
         	  console.log "remember this", this.getAbsolutePosition().x, this.getAbsolutePosition().y
         		# remember all my current info
@@ -70,6 +76,7 @@ class GenericSprite extends Kinetic.Image
             newRule.setTransform(myTransform)
             this.addRule( newRule )
             console.log "analyze diff", tmpX, this.getAbsolutePosition().x, tmpX - this.getAbsolutePosition().x
+            this.setPosition(tmpX, tmpY)
             this.moveTo(layer)
             
           rulesLayer.draw()
@@ -174,13 +181,60 @@ window.loadSpriteTypes = ->
     spriteTypeList = [] # re-init. hmm, this could get messy TODO
     $("#sprite_drawer *").each (i, sprite) ->
         spriteTypeList.push( SpriteFactory( $(sprite).attr("data-frame-id") , $(sprite).attr("data-frame-id") ) )
-        $(sprite).dblclick -> 
+        
+        $(sprite).bind 'dragend', (e) ->
+            console.log "sprite ", $(sprite).attr("data-frame-id"),  " added"
+            # this should be ok now because they've been pished in the right order? hmm...
+            newSprite = new spriteTypeList[i] 
+            console.log "dropped", e.originalEvent.clientX , e.originalEvent.clientY
+            newSprite.setPosition(e.originalEvent.clientX, e.originalEvent.clientY)
+            layer.add( newSprite )
+            spriteList.push( newSprite )
+            layer.draw()
+            e.stopPropagation();
+            e.preventDefault();
+        
+        $(sprite).bind 'touchend', (e) ->
+            console.log "sprite ", $(sprite).attr("data-frame-id"),  " added"
+            # this should be ok now because they've been pished in the right order? hmm...
+            newSprite = new spriteTypeList[i] 
+            console.log "dropped", e.originalEvent.clientX , e.originalEvent.clientY
+            newSprite.setPosition(e.originalEvent.clientX, e.originalEvent.clientY)
+            layer.add( newSprite )
+            spriteList.push( newSprite )
+            layer.draw()
+            e.stopPropagation()
+            e.preventDefault();
+            alert e.targetTouches[0].pageX
+               
+        $(sprite).bind 'dbltap', (e) -> 
             console.log "sprite ", $(sprite).attr("data-frame-id"),  " added"
             # this should be ok now because they've been pished in the right order? hmm...
             newSprite = new spriteTypeList[i] 
             layer.add( newSprite )
             spriteList.push( newSprite )
             layer.draw()
+            e.stopPropagation()
+            e.preventDefault();
+            
+        $(sprite).bind 'dblclick', (e) -> 
+            console.log "sprite ", $(sprite).attr("data-frame-id"),  " added"
+            # this should be ok now because they've been pished in the right order? hmm...
+            newSprite = new spriteTypeList[i] 
+            layer.add( newSprite )
+            spriteList.push( newSprite )
+            layer.draw()
+            e.stopPropagation()
+            e.preventDefault();
+        
+        $(sprite).bind 'touchmove', (e) -> 
+            e.stopPropagation()
+            e.preventDefault();
+        
+        $(sprite).bind 'touchstart', (e) -> 
+            e.stopPropagation()
+            e.preventDefault();
+            
 
 #################
 

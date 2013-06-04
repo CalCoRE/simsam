@@ -44,7 +44,7 @@
             stage = new Kinetic.Stage({
                 container: 'container',
                 width: 1000,
-                height: 800
+                height: 1400
             });
             layer = new Kinetic.Layer();
             rulesLayer = new Kinetic.Layer();
@@ -92,6 +92,9 @@
         <div class="menu_button" id="startcropping" onclick="cropCanvas()">Start Cropping</div>
 				<div class="menu_button" id="savecrop" onclick="getResults()">Save Crop</div>
 				<div class="menu_button" id="cancelcrop" onclick="deleteRect()">Cancel Crop</div>
+    	</div>
+    	<div id="sim_buttons">
+    		<div class="menu_button" onclick="tick()">Play Once</div>
     	</div>
   	</div>
   	<div id="sprite_drawer"></div>
