@@ -33,5 +33,14 @@ body {
     -moz-border-radius: 25px;
     color: white;
 }
+#loginbutton {
+    background-color: gray;
+    height: 30px;
+    width: 75px;
+    border: 1px solid;
+    border-radius: 25px;
+    -moz-border-radius: 25px;
+    color: white;
+}
 
 

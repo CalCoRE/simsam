@@ -189,8 +189,8 @@ window.onload = function(){
 
 	stage = new Kinetic.Stage({
 	          container: "container",
-	          width: 800,
-	          height: 400
+	          width: 1000,
+	          height: 800
 	        });
 	rulesMoved = false; 
 	activeSprites = new Array();

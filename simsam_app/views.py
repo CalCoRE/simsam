@@ -55,7 +55,7 @@ def login_user(request):
     if request.POST:
         username = request.REQUEST.get('username')
         password = request.REQUEST.get('password')
-        next_url = request.REQUEST.get('next','')
+        next_url = request.REQUEST.get('next', '')
 
         user = authenticate(username=username, password=password)
         if user is not None:
@@ -75,13 +75,16 @@ def login_user(request):
         else:
             state = "The username and password were incorrect."
     t = loader.get_template("login.html")
-    c = RequestContext(request, {"next": redirect_to,})
+    c = RequestContext(request, {
+        'next': redirect_to,
+        'user_message': state,
+    })
     return HttpResponse(t.render(c))
 
 
 def logout_user(request):
     logout(request)
-    return HttpResponseRedirect("/")
+    return HttpResponseRedirect('/')
 
 
 @login_required

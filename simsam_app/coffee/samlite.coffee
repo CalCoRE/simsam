@@ -13,6 +13,7 @@ window.playbackIndex = 0
 window.debug = true             # turns on console logging
 menu = false # side menu
 recording = true #starts out in record mode
+cameraState = 1
 anyCamera = true
 
 # sprite collection wasn't initialized for a new animation and were
@@ -22,15 +23,6 @@ window.spritecollection = []
 
 
 $(document).ready ->
-
-    #console.log(playbackFrames)
-    #console.log(frameRegistry)
-
-	#load sprite image from file
-        #playbackFrames[i] = window.spritecollection[i]
-    
-	# frameRegistry[i] =  i<window.spritecollection.length; window.spritecollection.forEach(displayCanvas)
-
     # hide elements of sim
     $('#sambutton').hide()
     $('#container').hide()
@@ -43,30 +35,11 @@ $(document).ready ->
 
     # get some handy references to DOM nodes
     window.camera = $("#camera").get 0
-    window.buttons =
-        shoot: $("#shoot_button").get 0
-        beginning: $("#beginning_button").get 0
-        frameBack: $("#frame_back_button").get 0
-        play: $("#play_button").get 0
-        pause: $("#pause_button").get 0
-        frameForward: $("#frame_forward_button").get 0
-        end: $("#end_button").get 0
     
     # init other stuff
     constraints = {audio:true, video:true}
         
-    # check that we have webcam support
-    
-        
     # wire up buttons
-    $(buttons.shoot).click shoot
-    $(buttons.play).click play
-    $(buttons.pause).click pause
-    $(buttons.frameBack).click frameBack
-    $(buttons.frameForward).click frameForward
-    $(buttons.beginning).click frameBeginning
-    $(buttons.end).click frameEnd
-    $(buttons.shoot).button()
     $("#simbutton").click startSimlite
     $("#sambutton").click startSamlite
     #MHWJ
@@ -74,7 +47,6 @@ $(document).ready ->
     $("#play_mode").click play
     $("#record_mode").click toggleMode
 
-    
     #http://farhadi.ir/projects/html5sortable/
     $("#video_output").sortable().bind 'sortupdate', rescanThumbnails
     $("#video_output").sortable().bind 'sortupdate', saveFrameSequence
@@ -96,12 +68,15 @@ $(document).ready ->
 
     # check that we have webcam support
     if html5support.getUserMedia()
+        console.log("user media available")
         success = (stream) ->
+            console.log("success")
             camera.src = stream
             camera.play()
             #if getUserMedia is available, start in record mode
             switchToRecordMode()
         failure = (error) -> 
+            console.log("failure")
             alert JSON.stringify error
             #if not available, start in playback mode
             window.playbackIndex = 0
@@ -194,7 +169,8 @@ makeUnselectable = (node) ->
 # that's for when a frame is clicked
 
 toggleCamera = ->
-    if cameraSwitch.is ':checked'
+    # if cameraSwitch.is ':checked'
+    if cameraState is 0
         cameraOn
     else
         cameraOff
@@ -402,7 +378,7 @@ placeBlankFrame = ->
     $("#replay").append('<div class="blank-frame"><div>nothing here</div></div>')
     
 # run through the canvas elements in the thumbnail list and update
-# everything to by in sync with those thumbnails, including the onclick
+# everything to be in sync with those thumbnails, including the onclick
 # event for thumbnails
     
 rescanThumbnails = ->
@@ -410,7 +386,6 @@ rescanThumbnails = ->
     # reset the playbackFrames list so it can be rebuilt in the right order
     window.playbackFrames = []
     idsToSave = []
-    console.log("hello")
     
     # build the new playback list and also rebuild the thumbnail click events
     # so they match the correct indices
@@ -420,15 +395,10 @@ rescanThumbnails = ->
         idsToSave.push frameId
         $(thumbnail).unbind("click").click ->
             pause()
-            #clearPlayback()
             # if it's in recording mode then overlay, otherwise opaque
             placeFrame index, (if recording then overlayClass else playbackClass)
             window.playbackIndex = index
-            updateIndexView()
-            toggleCamera( true )
 
-    updateIndexView()
-    
 # Called by the "trash" (really a sortable list linked with the thumbnail
 # list) when a thumbnail is dropped in. Deletes the thumbnail and resyncs.
             
@@ -437,8 +407,26 @@ trash = (event) ->
     $("#trash canvas").remove()
     $("#trash .sortable-placeholder").remove()
     rescanThumbnails()
-    if window.playbackIndex >= playbackFrames.length then frameEnd()
-    clearPlayback()
+    if window.playbackIndex >= playbackFrames.length
+        max = playbackFrames.length - 1
+        window.playbackIndex = max
+        if recording
+            # in record mode, if there are any frames, display the onion skin
+            # of the last one
+            if window.playbackFrames.length > 0
+                placeFrame max, overlayClass
+            # if there are no frames, clear the onionskin and just let the
+            # camera be visible
+            else
+                clearPlayback()
+        else
+            # in playback mode, if there are any frames, display the last one
+            if window.playbackFrames.length > 0
+                placeFrame max, playbackClass
+            # if there are no frames, show a special message saying so
+            else
+                clearPlayback()
+                placeBlankFrame()
     saveFrameSequence()
 
 # Put a series of opaque still canvases over the webcam view, effectively
@@ -458,7 +446,6 @@ window.play = ->
     if playbackFrames.length is window.playbackIndex + 1
         if window.debug then console.log "resetting to zero"
         window.playbackIndex = 0
-        updateIndexView()
     window.isPlaying = true
     container = $("#video_frame")
     interval = 1 / $("#fps").val() * 1000
@@ -476,7 +463,6 @@ window.play = ->
                 else
                     # then move on to the next one
                     window.playbackIndex = index + 1
-                updateIndexView()
             # we want playback to start right away even if the current
             # index is high
             delay = interval * (index - beginningIndex)
@@ -500,7 +486,6 @@ frameBack = ->
     if window.playbackIndex is 0 then return
     else window.playbackIndex -= 1
     placeFrame window.playbackIndex, playbackClass
-    updateIndexView()
     
 frameForward = ->
     pause()
@@ -508,13 +493,11 @@ frameForward = ->
     if window.playbackIndex is max then return
     else window.playbackIndex += 1
     placeFrame window.playbackIndex, playbackClass
-    updateIndexView()
     
 frameBeginning = ->
     pause()
     window.playbackIndex = 0
     placeFrame 0, playbackClass
-    updateIndexView()
     
 frameEnd = ->
     pause()
@@ -522,12 +505,10 @@ frameEnd = ->
     window.playbackIndex = max
     if window.playbackFrames.length > 0
         placeFrame max, playbackClass
-    updateIndexView()
+    else
+        clearPlayback()
+        placeBlankFrame()
     
-# just for window.debugging
-
-updateIndexView = -> $("#playback_index").get(0).value = window.playbackIndex
-
 # functions to switch between sam and sim
 startSimlite = ->
     # hide samlite containers

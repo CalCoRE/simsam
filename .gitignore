@@ -1,16 +1,34 @@
+# unknown purpose
 *.log
 *.pot
-*.pyc
-*.*~
 local_settings.py
+
+# for compiled python byte-code
+*.pyc
+
+# for vim (a text editor)
+*.*~
+
+# for osx
 simsam/.DS_Store
-
 samlite/.DS_Store
-
 .DS_Store
-*.sublime-project
 
+# for sublime text 2 (a text editor)
+*.sublime-project
 *.sublime-workspace
 
-media/sam_frames/*
-media/sprites/*
+
+media/sam_frames/.gitignore
+
+media/sprites/.gitignore
+
+media/sprites/.gitignore
+
+media/sprites/.gitignore
+
+media/sam_frames/.gitignore
+
+simsam_app/js/sprite.js
+
+.gitignore
