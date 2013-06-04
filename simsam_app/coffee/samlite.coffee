@@ -35,10 +35,14 @@ $(document).ready ->
 
     # get some handy references to DOM nodes
     window.camera = $("#camera").get 0
+
+    # clicking on the screen is the same as clicking on the active mode button
+    $("#replay").click ->
+        if (recording)
+            shoot()
+        else
+            play()
     
-    # init other stuff
-    constraints = {audio:true, video:true}
-        
     # wire up buttons
     $("#simbutton").click startSimlite
     $("#sambutton").click startSamlite
@@ -73,7 +77,7 @@ $(document).ready ->
             console.log("success")
             camera.src = stream
             camera.play()
-            #if getUserMedia is available, start in record mode
+            # if getUserMedia is available, start in record mode
             switchToRecordMode()
         failure = (error) -> 
             console.log("failure")
@@ -81,12 +85,13 @@ $(document).ready ->
             #if not available, start in playback mode
             window.playbackIndex = 0
             switchToPlaybackMode()
-        navigator.getUserMedia constraints, success, failure
+        navigator.getUserMedia {audio:true, video:true}, success, failure
     else
         anyCamera = false
         window.playbackIndex = 0
         switchToPlaybackMode()
-        alert "Your browser does not support getUserMedia()"
+        $("#record_mode").css('display', 'none')
+        alert "Your browser will not allow SiMSAM to use the webcam. Related functions will be disabled."
 
     # always start in record mode
     #switchToRecordMode()
@@ -139,22 +144,7 @@ loadFrames = (frame) ->
  
     placeFrame frameIndex, (if recording then overlayClass else playbackClass)
     
-   
-    #camera = $("#camera").get(0)
-    #camera.appendChild canvas
-    #alert(camera)
-    #frameOrdinal = playbackFrames.push canvas
-    #frameId = frameIndex = frameOrdinal - 1
-    #$(canvas).attr("data-frame-id", frame)
-    #output.appendChild canvas  
-    #frameRegistry[frame] = canvas
-    #$("#video_output").sortable "refresh"
-    #rescanThumbnails()
-    #$(canvas).attr("id", "canvas")
-    #placeFrame frame, overlayClass
-    #console.log(frameRegistry)
-    #console.log(playbackFrames)    
-        
+
 makeUnselectable = (node) ->
     if node.nodeType is 1
         node.setAttribute "unselectable", "on"
@@ -178,31 +168,21 @@ toggleCamera = ->
 # sometimes we want to turn camera on or off rather than toggle
 
 cameraOn = ->
-		if window.debug then console.log "toggle camera on"
-		# hide the playback frames which would otherwise hide
-		# the camera feed
-		clearPlayback()
-		cameraState = 1
-		# show the camera feed
-		$(camera).css "display","block" 
+    if window.debug then console.log "toggle camera on"
+    # hide the playback frames which would otherwise hide
+    # the camera feed
+    clearPlayback()
+    cameraState = 1
+    # show the camera feed
+    $(camera).css "display","block" 
         
 cameraOff = ->
-		if window.debug then console.log "toggle camera off"
-		# hide the camera feed
-		$(camera).css "display","none"
-		cameraState = 0
-		# display the most recently displayed playback frame
-		placeFrame window.playbackIndex
-
-# simulates a user clicking the checkbox
-# MHWJ getting rid of this, no more checkbox
-#cameraOn = ->
-#    if window.debug then console.log "camera on"
-#    cameraSwitch.prop("checked", true).iphoneStyle "refresh"
-#cameraOff =  ->
-#    if window.debug then console.log "camera off"
-#    cameraSwitch.prop("checked", false).iphoneStyle "refresh"
-    
+    if window.debug then console.log "toggle camera off"
+    # hide the camera feed
+    $(camera).css "display","none"
+    cameraState = 0
+    # display the most recently displayed playback frame
+    placeFrame window.playbackIndex
 
 # Captures a image frame from the provided video element.
 #
@@ -371,7 +351,6 @@ placeFrame = (frameIndex, className = "") ->
     # allow special overlay styling of frames
     $(frame).addClass className
     frame.id = "canvas"
-    $(frame).click screenClick()
     $("#replay").append frame
 
 placeBlankFrame = ->
@@ -539,36 +518,33 @@ startSamlite = ->
     
     #MHWJ
 toggleMenu = ->
-		if menu
-    	$('#right_frame').hide("slide", {direction: "right"}, 500);
-    	$('#construction_frame').animate({ right: '0px' }, 500)
-    	$('#right_menu_button').css("image", "../images/openmenu.png")
-    	$('#right_menu_button').animate({ right: '5px' }, 500)
-    	menu = false
-		else
-    	# show SAM containers
-    	#$('#right_frame').css("border-left-color", "#cccccc")
-    	#$('#right_frame').css("border-left-style", "groove")
-    	$('#right_frame').show("slide", {direction: "right"}, 500);
-    	$('#construction_frame').animate({ right: '200px' }, 500)
-    	$('#right_menu_button').css("image", "../images/closemenu.png")
-    	$('#right_menu_button').animate({ right: '205px' }, 500)
-    	menu = true
-
-window.screenClick = ->
-		if (recording)
-			shoot
-		else
-			play
+    if menu
+        $('#right_frame').hide("slide", {direction: "right"}, 500);
+        $('#construction_frame').animate({ right: '0px' }, 500)
+        $('#right_menu_button').css("image", "../images/openmenu.png")
+        $('#right_menu_button').animate({ right: '5px' }, 500)
+        menu = false
+    else
+        # show SAM containers
+        $('#right_frame').show("slide", {direction: "right"}, 500);
+        $('#construction_frame').animate({ right: '200px' }, 500)
+        $('#right_menu_button').css("image", "../images/closemenu.png")
+        $('#right_menu_button').animate({ right: '205px' }, 500)
+        menu = true
 
 toggleMode = ->
-    if (recording or not anyCamera)
+    # browsers that don't support getUserMedia start in playback mode
+    # and aren't allowed to leave it
+    if not anyCamera then return
+
+    if recording
         switchToPlaybackMode()
     else
         switchToRecordMode()
 
 
 window.switchToRecordMode = ->
+    console.log("switchToRecordMode()")
     recording = true
     if playbackFrames.length > 0
         #maxFrame = playbackFrames.length - 1
@@ -578,13 +554,13 @@ window.switchToRecordMode = ->
         # placeFrame would do this for us, but we have nothing to place
         # so clear the blank frame
         clearPlayback()
-    #alert("recording")
     $('#record_mode').removeClass('small').addClass('big')        
     $('#play_mode').removeClass('big').addClass('small')
     $('#play_mode').unbind('click').click toggleMode
     $('#record_mode').unbind('click').click shoot
 
 window.switchToPlaybackMode = ->
+    console.log("switchToPlaybackMode()")
     recording = false
     if playbackFrames.length > 0
         placeFrame window.playbackIndex, playbackClass
