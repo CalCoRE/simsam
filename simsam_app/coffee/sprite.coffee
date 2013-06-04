@@ -15,11 +15,6 @@ class GenericSprite extends Kinetic.Image
     # These properties will be in the prototype of the Sprite
     # and thus appear as properties of all instances of that sprite
 
-    # The underscore here indicates private, you aren't supposed to modify
-    # the rules of a single sprite instance, although you could.
-    # Use SpriteFoo::addRule() and SpriteFoo::setRule() instead.
-    _rules: []
-
     # Variables prefixed with @ will be properties of individual sprite
     # instances.
     constructor: (@spriteId) ->
@@ -86,6 +81,11 @@ SpriteFactory = (spriteType, imageId) ->
         # String, the hash id of the jpg
         imageId: imageId
 
+        # The underscore here indicates private, you aren't supposed to modify
+        # the rules of a single sprite instance, although you could.
+        # Use SpriteFoo::addRule() and SpriteFoo::setRule() instead.    
+        _rules: []
+
     return Sprite
 
 # simple transform applied all the time, ignores environment
@@ -150,6 +150,10 @@ window.loadSpriteTypes = ->
             newSprite = new spriteTypeList[i] 
             layer.add( newSprite )
             spriteList.push( newSprite )
+            if i == 1
+            	myRule = new Rule()
+            	myRule.setTransform({dx: 10})
+            	newSprite.addRule(myRule)
             layer.draw()
 
 #################
@@ -176,4 +180,4 @@ window.init = ->
 
     stretchy = new Rule()
     stretchy.setTransform({dyScale: 1.1})
-    Star::addRule(stretchy)
+    starA.addRule(stretchy)
