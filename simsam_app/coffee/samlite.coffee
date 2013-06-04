@@ -408,7 +408,6 @@ trash = (event) ->
     $("#trash .sortable-placeholder").remove()
     rescanThumbnails()
     if window.playbackIndex >= playbackFrames.length then frameEnd()
-    clearPlayback()
     saveFrameSequence()
 
 # Put a series of opaque still canvases over the webcam view, effectively
@@ -487,6 +486,9 @@ frameEnd = ->
     window.playbackIndex = max
     if window.playbackFrames.length > 0
         placeFrame max, playbackClass
+    else
+        clearPlayback()
+        placeBlankFrame()
     
 # functions to switch between sam and sim
 startSimlite = ->

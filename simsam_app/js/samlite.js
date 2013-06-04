@@ -385,7 +385,6 @@
     if (window.playbackIndex >= playbackFrames.length) {
       frameEnd();
     }
-    clearPlayback();
     return saveFrameSequence();
   };
 
@@ -499,6 +498,9 @@
     window.playbackIndex = max;
     if (window.playbackFrames.length > 0) {
       return placeFrame(max, playbackClass);
+    } else {
+      clearPlayback();
+      return placeBlankFrame();
     }
   };
 
