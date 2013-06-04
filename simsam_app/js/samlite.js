@@ -105,8 +105,7 @@
   });
 
   loadSprites = function(sprite) {
-    var canvas, ctx, img, output,
-      _this = this;
+    var canvas, ctx, img, output;
     output = $("#sprite_drawer").get(0);
     canvas = document.createElement('canvas');
     ctx = canvas.getContext('2d');
@@ -118,9 +117,6 @@
     };
     img.src = 'http://' + window.location.host + '/media/sprites/' + sprite + '.jpg';
     $(canvas).attr("data-frame-id", sprite);
-    canvas.addEventListener("dblclick", function(e) {
-      return addObject(img);
-    });
     return output.appendChild(canvas);
   };
 
@@ -519,7 +515,8 @@
     $('#crop_buttons').hide();
     $('#container').show();
     $('#output').show();
-    return $('#sambutton').show();
+    $('#sambutton').show();
+    return window.loadSpriteTypes();
   };
 
   startSamlite = function() {

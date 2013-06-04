@@ -25,14 +25,30 @@ class GenericSprite extends Kinetic.Image
     constructor: (@spriteId) ->
         # Kinetic.Rect isn't a coffeescript class, so we can't just call
         # super, unfortunately. This is almost as good.
+        img = new Image();
+        img.src = 'http://' + window.location.host + '/media/sprites/' + this.imageId + '.jpg'
+        
+        if this.imageId != undefined
+          imgWidth = img.width
+          imHeight = img.height
+          wOff = img.width / 2
+          hOff = img.height / 2
+        else
+          imgWidth = 100
+          imgHeight = 50
+          wOff = 50
+          hOff = 25
+        
         shapeParams =
-            x: 10
-            y: 10
-            width: 100 # todo: based on image
-            height: 50 # todo: based on image
+            x: 50
+            y: 50
+            width: imgWidth # todo: based on image
+            height: imgHeight # todo: based on image
             fill: 'black' # todo: the image
+            image: img
             strokeWidth: 0
-            offset: [50, 25] # IMPORTANT: this should be half the height and half the width, which allows rotation about the center of the shape 
+            draggable: true
+            offset: [ wOff , hOff ] # IMPORTANT: this should be half the height and half the width, which allows rotation about the center of the shape 
         Kinetic.Image.call(this, shapeParams)
 
     applyRules: (environment) ->
@@ -115,11 +131,26 @@ class Interaction extends Rule
             sprite.applyTransform(@transform)
 
 window.spriteList = []
+window.spriteTypeList = []
 
 window.tick = ->
     for sprite in window.spriteList
         sprite.applyRules()
     window.layer.draw()
+
+
+window.loadSpriteTypes = ->
+    console.log "loading sprite types"
+    spriteTypeList = [] # re-init. hmm, this could get messy TODO
+    $("#sprite_drawer *").each (i, sprite) ->
+        spriteTypeList.push( SpriteFactory( $(sprite).attr("data-frame-id") , $(sprite).attr("data-frame-id") ) )
+        $(sprite).dblclick -> 
+            console.log "sprite ", $(sprite).attr("data-frame-id"),  " added"
+            # this should be ok now because they've been pished in the right order? hmm...
+            newSprite = new spriteTypeList[i] 
+            layer.add( newSprite )
+            spriteList.push( newSprite )
+            layer.draw()
 
 #################
 
@@ -133,15 +164,15 @@ window.init = ->
 
     moveRight = new Rule()
     moveRight.setTransform({dx: 10})
-    Star::addRule(moveRight)
+    #Star::addRule(moveRight)
 
     moveDown = new Rule()
     moveDown.setTransform({dy: 10})
-    Star::addRule(moveDown)
+    #Star::addRule(moveDown)
 
     spin = new Rule()
     spin.setTransform({dr: Math.PI/6})
-    Star::addRule(spin)
+    #Star::addRule(spin)
 
     stretchy = new Rule()
     stretchy.setTransform({dyScale: 1.1})

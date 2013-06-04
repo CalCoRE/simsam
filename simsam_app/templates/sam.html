@@ -11,12 +11,11 @@
     <script src="{{ STATIC_URL }}js/html5support.js"></script>
     <script src="{{ STATIC_URL }}js/hammer.min.js"></script>
 
-    <script src="{{ STATIC_URL }}js/simlite.js"></script>
-    <script src="{{ STATIC_URL }}js/cropTool.js"></script>
-    <script src="{{ STATIC_URL }}js/samlite.js"></script>
-
+    <!--<script src="{{ STATIC_URL }}js/simlite.js"></script>-->
     <script src="{{ STATIC_URL }}js/kinetic.js"></script>
+    <script src="{{ STATIC_URL }}js/cropTool.js"></script>
     <script src="{{ STATIC_URL }}js/sprite.js"></script>
+    <script src="{{ STATIC_URL }}js/samlite.js"></script>
     
 
     <link rel="stylesheet" href="{{ STATIC_URL }}css/samlite.css">
@@ -25,21 +24,33 @@
 
     <script type="text/javascript">
         window.animationId = {{ animation_id }};
-	window.framesequence = [{% for frame in frame_sequence %}"{{ frame|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}];
-	window.projectId = {{ project_id }};
-	window.spritecollection = [{% for sprite in sprite_collection %}"{{ sprite|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}];
-	
-	var cameraMode = true;
-	
-	function changeMode() {
-		if( cameraMode ) {
-			
-		}
-		else {
-		
-		}
-	}
-    </script>
+				window.framesequence = [{% for frame in frame_sequence %}"{{ frame|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}];
+				window.projectId = {{ project_id }};
+				window.spritecollection = [{% for sprite in sprite_collection %}"{{ sprite|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}];
+				
+				var cameraMode = true;
+				/*
+				function changeMode() {
+					if( cameraMode ) {
+						
+					}
+					else {
+					
+					}
+				}
+				*/
+				
+    			window.onload = function() {
+            stage = new Kinetic.Stage({
+                container: 'container',
+                width: 1000,
+                height: 800
+            });
+            layer = new Kinetic.Layer();
+            init();
+            tick();
+          };
+        </script>
     
 
 </head>
