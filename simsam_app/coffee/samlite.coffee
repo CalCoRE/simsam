@@ -397,7 +397,6 @@ rescanThumbnails = ->
             # if it's in recording mode then overlay, otherwise opaque
             placeFrame index, (if recording then overlayClass else playbackClass)
             window.playbackIndex = index
-            # toggleCamera( true )
 
 # Called by the "trash" (really a sortable list linked with the thumbnail
 # list) when a thumbnail is dropped in. Deletes the thumbnail and resyncs.
@@ -407,7 +406,26 @@ trash = (event) ->
     $("#trash canvas").remove()
     $("#trash .sortable-placeholder").remove()
     rescanThumbnails()
-    if window.playbackIndex >= playbackFrames.length then frameEnd()
+    if window.playbackIndex >= playbackFrames.length
+        max = playbackFrames.length - 1
+        window.playbackIndex = max
+        if recording
+            # in record mode, if there are any frames, display the onion skin
+            # of the last one
+            if window.playbackFrames.length > 0
+                placeFrame max, overlayClass
+            # if there are no frames, clear the onionskin and just let the
+            # camera be visible
+            else
+                clearPlayback()
+        else
+            # in playback mode, if there are any frames, display the last one
+            if window.playbackFrames.length > 0
+                placeFrame max, playbackClass
+            # if there are no frames, show a special message saying so
+            else
+                clearPlayback()
+                placeBlankFrame()
     saveFrameSequence()
 
 # Put a series of opaque still canvases over the webcam view, effectively

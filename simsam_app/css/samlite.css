@@ -254,8 +254,9 @@
 }
 
 #trash .sortable-placeholder {
-    border: 2px solid gray;
-    border-radius: 8px;
+    border: none;
+    background-color: rgba(0, 0, 0, 0.2);
     height: 95%;
+    width: 95%;
     position: relative;
 }

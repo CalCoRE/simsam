@@ -376,6 +376,8 @@
   };
 
   trash = function(event) {
+    var max;
+
     if (window.debug) {
       console.log("trash");
     }
@@ -383,7 +385,22 @@
     $("#trash .sortable-placeholder").remove();
     rescanThumbnails();
     if (window.playbackIndex >= playbackFrames.length) {
-      frameEnd();
+      max = playbackFrames.length - 1;
+      window.playbackIndex = max;
+      if (recording) {
+        if (window.playbackFrames.length > 0) {
+          placeFrame(max, overlayClass);
+        } else {
+          clearPlayback();
+        }
+      } else {
+        if (window.playbackFrames.length > 0) {
+          placeFrame(max, playbackClass);
+        } else {
+          clearPlayback();
+          placeBlankFrame();
+        }
+      }
     }
     return saveFrameSequence();
   };
