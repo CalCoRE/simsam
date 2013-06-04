@@ -1,6 +1,5 @@
 #wholescreen {
 	position: absolute;
-	background-color: #cccccc;
 	right: 0px;
 	left: 0px;
 	bottom: 0px;
@@ -10,10 +9,8 @@
 }
 
 #construction_frame { 
-	border-right-width: 1px; 
-	border-right-color: #4c4c4c; 
-	border-right-style: solid; 
 	max-height: 100%;
+	border-right: 1px solid #eee;
 	bottom: 0px;
 	top: 0px;
 	left: 0px;
@@ -25,11 +22,10 @@
 
 #container {
 	height: 100%;
-	background-color: white;
 }
 
 #video_frame {
-	background-color: white;
+	background-color: #fff;
 	position: absolute;
 	right: 0px;
 	left: 0px;
@@ -81,9 +77,9 @@
 }
 
 #bottom_frame {
-	border-top-color: #4c4c4c;
-	border-top-width: 1px;
-	border-top-style: solid;
+	border-top-style: groove;
+	border-top-color: #fefffe;
+	border-top-width: 2px;
 	max-width: 100%;
 	right: 0px;
 	left: 0px;
@@ -93,9 +89,7 @@
 }
 
 #toggle {
-	border-right-style: ridge;
-	border-right-color: #e6e6e6;
-	border-right-width: 1px;
+	border-right: solid 1px #eee;
 	position: absolute;
 	left: 0px;
 	top: 0px;
@@ -112,6 +106,7 @@
 	top: 10px;
 	left: 10px;
 	position: absolute;
+	cursor: pointer;
 }
 
 #record_mode {
@@ -121,6 +116,7 @@
 	bottom: 10px;
 	right: 10px;
 	position: absolute;
+	cursor: pointer;
 }
 
 .small {
@@ -136,9 +132,7 @@
 }
 
 #trash {
-  border-left-style: ridge;
-  border-left-color: #e6e6e6;
-  border-left-width: 1px;
+  border-left: solid #fff 1px;
   top: 0px;
   right: 0px;
   position: absolute;
@@ -156,33 +150,32 @@
 	max-width: 100%;
 	overflow-x: scroll;
 	white-space: nowrap;
+	border-left: 1px solid white;
+  border-right: solid #eee 1px;
+}
+
+#video_output canvas {
+    cursor: move;
 }
 
 #home_button {
-	background-repeat: no-repeat;
 	background-image: url(../images/home.png);
 	left: 5px;
-	top: 5px;
-        width: 50px;
-        height: 50px;
-	opacity:.50;
-	filter:alpha(opacity=50);
-	filter: “alpha(opacity=50)”;
+        width: 46px;
+        height: 48px;
 }
 
 #right_menu_button {
-	background-repeat: no-repeat;
 	background-image: url(../images/openmenu.png);
 	right: 5px;
 	top: 5px;
         width: 31px;
         height: 31px;
-	opacity:.50;
-	filter:alpha(opacity=50);
-	filter: “alpha(opacity=50)”;
 }
 
 .floating_button {
+	background-repeat: no-repeat;
+	top: 5px;
 	z-index: 100;
 	border-style: solid;
 	border-color: white;
@@ -191,14 +184,22 @@
 	padding: 5px;
 	position: fixed;
 	border-radius: 4px;
+	opacity:.50;
+	filter:alpha(opacity=50);
+	filter: “alpha(opacity=50)”;
+	cursor: pointer;
 }
 
 #right_frame {
+	border-left-width: 2px;
+	border-left-color: white;
+	border-left-style: groove;
 	width: 200px;
 	visibility: hide;
 	bottom: 0px;
 	top: 0px;
 	right: 0px;
+	padding-top: 10px;
 	position: absolute;
 	height: 100%;
 }
@@ -209,20 +210,40 @@
 }
 
 .menu_button {
-	background-color: #cccccc;
-	padding-bottom: 5px;
-	padding-top: 5px;
-	font-size: large;
-	border-style: none;
-	color: #333333;
-	font-family: Helvetica, Verdana, Arial, sans-serif;
+	visibility: visible;
+	border-top-color: white;
+	border-top-width: 1px;
+	border-bottom-color: #d3d3d3;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-left-style: none;
+	border-right-style: none;
+	border-top-style: solid;
+	padding-bottom: 15px;
+	padding-top: 15px;
+	text-align: center;
 	width: 100%;
 	cursor:pointer;
+	background-opacity: 0;
 }
 
 .menu_button:hover {
-	background-color: #333333;
-	color: #cccccc;
+	color: black;
+}
+
+.frame {
+	background: #fff;
+	box-shadow: inset 10px 0px 40px #ccc;
+	font-size: large;
+	background-opacity: 0;
+	color: #5d5d5d;
+	font-family: Helvetica, Verdana, Arial, sans-serif;
+}
+
+#sprite_drawer canvas {
+  display: block;
+  margin: 10px auto 10px auto;
+  border: 1px solid #444;
 }
 
 /* old samlite
