@@ -86,7 +86,8 @@ $(document).ready ->
         anyCamera = false
         window.playbackIndex = 0
         switchToPlaybackMode()
-        alert "Your browser does not support getUserMedia()"
+        $("#record_mode").css('display', 'none')
+        alert "Your browser will not allow SiMSAM to use the webcam. Related functions will be disabled."
 
     # always start in record mode
     #switchToRecordMode()
@@ -138,22 +139,7 @@ loadFrames = (frame) ->
  
     placeFrame frameIndex, (if recording then overlayClass else playbackClass)
     
-   
-    #camera = $("#camera").get(0)
-    #camera.appendChild canvas
-    #alert(camera)
-    #frameOrdinal = playbackFrames.push canvas
-    #frameId = frameIndex = frameOrdinal - 1
-    #$(canvas).attr("data-frame-id", frame)
-    #output.appendChild canvas  
-    #frameRegistry[frame] = canvas
-    #$("#video_output").sortable "refresh"
-    #rescanThumbnails()
-    #$(canvas).attr("id", "canvas")
-    #placeFrame frame, overlayClass
-    #console.log(frameRegistry)
-    #console.log(playbackFrames)    
-        
+
 makeUnselectable = (node) ->
     if node.nodeType is 1
         node.setAttribute "unselectable", "on"
@@ -192,16 +178,6 @@ cameraOff = ->
 		cameraState = 0
 		# display the most recently displayed playback frame
 		placeFrame window.playbackIndex
-
-# simulates a user clicking the checkbox
-# MHWJ getting rid of this, no more checkbox
-#cameraOn = ->
-#    if window.debug then console.log "camera on"
-#    cameraSwitch.prop("checked", true).iphoneStyle "refresh"
-#cameraOff =  ->
-#    if window.debug then console.log "camera off"
-#    cameraSwitch.prop("checked", false).iphoneStyle "refresh"
-    
 
 # Captures a image frame from the provided video element.
 #
@@ -560,13 +536,18 @@ window.screenClick = ->
 			play
 
 toggleMode = ->
-    if (recording or not anyCamera)
+    # browsers that don't support getUserMedia start in playback mode
+    # and aren't allowed to leave it
+    if not anyCamera then return
+
+    if recording
         switchToPlaybackMode()
     else
         switchToRecordMode()
 
 
 window.switchToRecordMode = ->
+    console.log("switchToRecordMode()")
     recording = true
     if playbackFrames.length > 0
         #maxFrame = playbackFrames.length - 1
@@ -576,13 +557,13 @@ window.switchToRecordMode = ->
         # placeFrame would do this for us, but we have nothing to place
         # so clear the blank frame
         clearPlayback()
-    #alert("recording")
     $('#record_mode').removeClass('small').addClass('big')        
     $('#play_mode').removeClass('big').addClass('small')
     $('#play_mode').unbind('click').click toggleMode
     $('#record_mode').unbind('click').click shoot
 
 window.switchToPlaybackMode = ->
+    console.log("switchToPlaybackMode()")
     recording = false
     if playbackFrames.length > 0
         placeFrame window.playbackIndex, playbackClass

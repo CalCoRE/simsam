@@ -89,7 +89,8 @@
       anyCamera = false;
       window.playbackIndex = 0;
       switchToPlaybackMode();
-      return alert("Your browser does not support getUserMedia()");
+      $("#record_mode").css('display', 'none');
+      return alert("Your browser will not allow SiMSAM to use the webcam. Related functions will be disabled.");
     }
   });
 
@@ -581,7 +582,10 @@
   };
 
   toggleMode = function() {
-    if (recording || !anyCamera) {
+    if (!anyCamera) {
+      return;
+    }
+    if (recording) {
       return switchToPlaybackMode();
     } else {
       return switchToRecordMode();
@@ -589,6 +593,7 @@
   };
 
   window.switchToRecordMode = function() {
+    console.log("switchToRecordMode()");
     recording = true;
     if (playbackFrames.length > 0) {
       placeFrame(window.playbackIndex, overlayClass);
@@ -602,6 +607,7 @@
   };
 
   window.switchToPlaybackMode = function() {
+    console.log("switchToPlaybackMode()");
     recording = false;
     if (playbackFrames.length > 0) {
       placeFrame(window.playbackIndex, playbackClass);
