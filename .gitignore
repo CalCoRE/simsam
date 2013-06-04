@@ -18,3 +18,17 @@ samlite/.DS_Store
 *.sublime-project
 *.sublime-workspace
 
+
+media/sam_frames/.gitignore
+
+media/sprites/.gitignore
+
+media/sprites/.gitignore
+
+media/sprites/.gitignore
+
+media/sam_frames/.gitignore
+
+simsam_app/js/sprite.js
+
+.gitignore
