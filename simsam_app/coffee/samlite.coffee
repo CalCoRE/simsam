@@ -1,3 +1,4 @@
+console.log('hi')
 # globals
 thumbnailScaleFactor = 0.25;
 cameraSwitch = {}               # will be reference to on/off node
