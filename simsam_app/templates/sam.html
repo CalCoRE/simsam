@@ -47,8 +47,12 @@
                 height: 800
             });
             layer = new Kinetic.Layer();
-            init();
-            tick();
+            rulesLayer = new Kinetic.Layer();
+            rulesLayer.setOpacity(.5);
+            stage.add(layer);
+            stage.add(rulesLayer);
+            //init();
+            //tick();
           };
         </script>
     

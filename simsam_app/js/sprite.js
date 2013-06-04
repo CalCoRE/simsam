@@ -8,7 +8,8 @@
     __extends(GenericSprite, _super);
 
     function GenericSprite(spriteId) {
-      var hOff, imHeight, img, imgHeight, imgWidth, shapeParams, wOff;
+      var hOff, imHeight, img, imgHeight, imgWidth, programming, shapeParams, tmpX, tmpY, wOff,
+        _this = this;
       this.spriteId = spriteId;
       img = new Image();
       img.src = 'http://' + window.location.host + '/media/sprites/' + this.imageId + '.jpg';
@@ -35,6 +36,34 @@
         offset: [wOff, hOff]
       };
       Kinetic.Image.call(this, shapeParams);
+      programming = false;
+      tmpX = 0;
+      tmpY = 0;
+      this.on('dblclick', function(event) {
+        var dx, dy, myTransform, newRule;
+        if (!programming) {
+          console.log("remember this", _this.getAbsolutePosition().x, _this.getAbsolutePosition().y);
+          tmpX = _this.getAbsolutePosition().x;
+          tmpY = _this.getAbsolutePosition().y;
+          _this.moveTo(rulesLayer);
+        }
+        if (programming) {
+          newRule = new Rule();
+          dx = _this.getAbsolutePosition().x - tmpX;
+          dy = _this.getAbsolutePosition().y - tmpY;
+          myTransform = {
+            dx: dx,
+            dy: dy
+          };
+          newRule.setTransform(myTransform);
+          _this.addRule(newRule);
+          console.log("analyze diff", tmpX, _this.getAbsolutePosition().x, tmpX - _this.getAbsolutePosition().x);
+          _this.moveTo(layer);
+        }
+        rulesLayer.draw();
+        programming = !programming;
+        return console.log(programming);
+      });
     }
 
     GenericSprite.prototype.applyRules = function(environment) {
@@ -179,18 +208,11 @@
     return $("#sprite_drawer *").each(function(i, sprite) {
       spriteTypeList.push(SpriteFactory($(sprite).attr("data-frame-id"), $(sprite).attr("data-frame-id")));
       return $(sprite).dblclick(function() {
-        var myRule, newSprite;
+        var newSprite;
         console.log("sprite ", $(sprite).attr("data-frame-id"), " added");
         newSprite = new spriteTypeList[i];
         layer.add(newSprite);
         spriteList.push(newSprite);
-        if (i === 1) {
-          myRule = new Rule();
-          myRule.setTransform({
-            dx: 10
-          });
-          newSprite.addRule(myRule);
-        }
         return layer.draw();
       });
     });

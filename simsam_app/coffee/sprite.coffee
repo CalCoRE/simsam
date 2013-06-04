@@ -45,6 +45,37 @@ class GenericSprite extends Kinetic.Image
             draggable: true
             offset: [ wOff , hOff ] # IMPORTANT: this should be half the height and half the width, which allows rotation about the center of the shape 
         Kinetic.Image.call(this, shapeParams)
+        
+        # ASSIGNING RULES
+        
+        programming = false
+        tmpX = 0
+        tmpY = 0
+        
+        this.on 'dblclick', (event) =>
+        	if !programming
+        	  console.log "remember this", this.getAbsolutePosition().x, this.getAbsolutePosition().y
+        		# remember all my current info
+	          tmpX = this.getAbsolutePosition().x
+	          tmpY = this.getAbsolutePosition().y
+	          this.moveTo(rulesLayer)
+        	
+        	if programming
+            newRule = new Rule()
+            dx = this.getAbsolutePosition().x - tmpX
+            dy = this.getAbsolutePosition().y - tmpY
+            myTransform =
+              dx: dx
+              dy: dy
+            newRule.setTransform(myTransform)
+            this.addRule( newRule )
+            console.log "analyze diff", tmpX, this.getAbsolutePosition().x, tmpX - this.getAbsolutePosition().x
+            this.moveTo(layer)
+            
+          rulesLayer.draw()
+        	
+        	programming = !programming
+        	console.log programming
 
     applyRules: (environment) ->
         for rule in @_rules
@@ -138,7 +169,6 @@ window.tick = ->
         sprite.applyRules()
     window.layer.draw()
 
-
 window.loadSpriteTypes = ->
     console.log "loading sprite types"
     spriteTypeList = [] # re-init. hmm, this could get messy TODO
@@ -150,10 +180,6 @@ window.loadSpriteTypes = ->
             newSprite = new spriteTypeList[i] 
             layer.add( newSprite )
             spriteList.push( newSprite )
-            if i == 1
-            	myRule = new Rule()
-            	myRule.setTransform({dx: 10})
-            	newSprite.addRule(myRule)
             layer.draw()
 
 #################
