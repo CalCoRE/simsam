@@ -229,7 +229,13 @@
         spriteList.push(newSprite);
         return stage.draw();
       });
-      $(sprite).bind('touchend', function(e) {
+      $(sprite).bind('touchstart', function(e) {
+        return e.preventDefault();
+      });
+      $(sprite).bind('touchmove', function(e) {
+        return e.preventDefault();
+      });
+      return $(sprite).bind('touchend', function(e) {
         var dropX, dropY, newSprite;
         console.log("sprite ", $(sprite).attr("data-frame-id"), " added");
         newSprite = new spriteTypeList[i];
@@ -262,9 +268,6 @@
           e.preventDefault();
       */
 
-      return $(sprite).bind('touchmove', function(e) {
-        return e.preventDefault();
-      });
     });
   };
 

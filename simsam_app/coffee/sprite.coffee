@@ -79,6 +79,9 @@ class GenericSprite extends Kinetic.Image
             
             programming = !programming
             console.log programming
+        
+        #this.on 'touchmove', (e) ->
+        #    alert e
 
     applyRules: (environment) ->
         for rule in @_rules
@@ -186,7 +189,6 @@ window.loadSpriteTypes = ->
         
         $(sprite).bind 'dragend', (e) ->
             e.preventDefault();
-            
             console.log "sprite ", $(sprite).attr("data-frame-id"),  " added"
             # this should be ok now because they've been pished in the right order? hmm...
             newSprite = new spriteTypeList[i] 
@@ -195,6 +197,12 @@ window.loadSpriteTypes = ->
             layer.add( newSprite )
             spriteList.push( newSprite )
             stage.draw()
+        
+        $(sprite).bind 'touchstart', (e) ->
+            e.preventDefault();
+        
+        $(sprite).bind 'touchmove', (e) ->
+            e.preventDefault();
         
         $(sprite).bind 'touchend', (e) ->
             console.log "sprite ", $(sprite).attr("data-frame-id"),  " added"
@@ -230,10 +238,6 @@ window.loadSpriteTypes = ->
             #e.stopPropagation()
             e.preventDefault();
         ###
-
-        $(sprite).bind 'touchmove', (e) -> 
-            #e.stopPropagation()
-            e.preventDefault();
 
 #################
 
