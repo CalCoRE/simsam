@@ -194,7 +194,7 @@ window.loadSpriteTypes = ->
             newSprite.setPosition(e.originalEvent.clientX, e.originalEvent.clientY)
             layer.add( newSprite )
             spriteList.push( newSprite )
-            layer.draw()
+            stage.draw()
         
         $(sprite).bind 'touchend', (e) ->
             console.log "sprite ", $(sprite).attr("data-frame-id"),  " added"
@@ -202,14 +202,10 @@ window.loadSpriteTypes = ->
             newSprite = new spriteTypeList[i]
             dropX = e.originalEvent.changedTouches[0].pageX
             dropY = e.originalEvent.changedTouches[0].pageY
-            alert dropX
-            alert dropY
             newSprite.setPosition( dropX , dropY )
             layer.add( newSprite )
             spriteList.push( newSprite )
-            layer.draw()
-            alert newSprite.getX()
-            tick();
+            stage.draw()
             #e.stopPropagation()
             #e.preventDefault();
         
