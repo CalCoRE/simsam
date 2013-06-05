@@ -176,7 +176,7 @@ window.tick = ->
         
     for sprite in window.spriteList
         sprite.applyRules()
-    window.layer.draw()
+    stage.draw()
 
 window.loadSpriteTypes = ->
     console.log "loading sprite types"
@@ -186,6 +186,7 @@ window.loadSpriteTypes = ->
         
         $(sprite).bind 'dragend', (e) ->
             e.preventDefault();
+            
             console.log "sprite ", $(sprite).attr("data-frame-id"),  " added"
             # this should be ok now because they've been pished in the right order? hmm...
             newSprite = new spriteTypeList[i] 
@@ -206,7 +207,8 @@ window.loadSpriteTypes = ->
             newSprite.setPosition( dropX , dropY )
             layer.add( newSprite )
             spriteList.push( newSprite )
-            layer.draw()            alert newSprite.getX()
+            layer.draw()
+            alert newSprite.getX()
             tick();
             #e.stopPropagation()
             #e.preventDefault();

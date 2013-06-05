@@ -107,7 +107,7 @@ loadSprites = (sprite) ->
         ctx.drawImage(img, 0, 0, img.width, img.height)
     img.src = 'http://' + window.location.host + '/media/sprites/' + sprite + '.jpg'
     $(canvas).attr("data-frame-id", sprite)
-    $(canvas).attr("draggable", true)
+    $(canvas).attr("draggable", true);
     $(canvas).attr("dropzone", $('container'))
     #canvas.addEventListener "dblclick", (e) => addObject(img)
     #canvas.addEventListener "dblclick", (e) => spriteList.push( new spriteTypeList[] )

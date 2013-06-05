@@ -209,7 +209,7 @@
       sprite = _ref2[_j];
       sprite.applyRules();
     }
-    return window.layer.draw();
+    return stage.draw();
   };
 
   window.loadSpriteTypes = function() {
@@ -240,7 +240,8 @@
         newSprite.setPosition(dropX, dropY);
         layer.add(newSprite);
         spriteList.push(newSprite);
-        layer.draw()(alert(newSprite.getX()));
+        layer.draw();
+        alert(newSprite.getX());
         return tick();
       });
       /* I think we don't need these anymore, but just in case
