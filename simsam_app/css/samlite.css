@@ -255,7 +255,7 @@
   border: 1px solid #444;
 }
 
-.sortable-placeholder {
+#bottom_frame .sortable-placeholder {
     border: 2px dashed gray;
     display: inline-block;
     width: 158px;
