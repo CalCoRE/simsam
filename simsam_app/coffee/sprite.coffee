@@ -1,9 +1,3 @@
-touchDevice = (typeof(window.ontouchstart) != 'undefined') ? true : false;
-detectDrag = touchDevice ? "touchmove" : "drag";
-detectDragEnd = touchDevice ? "touchend" : "dragend";
-detectDouble = touchDevice ? "dbltap" : "dblclick";
-detectClick = touchDevice ? "tap" : "click";
-
 # random things I've learned about Kinetic.js
 
 # * positive x is to the RIGHT, positive y is DOWN, 0,0 is the upper left corner
@@ -59,30 +53,32 @@ class GenericSprite extends Kinetic.Image
         tmpY = 0
         
         this.on 'dblclick dbltap', (event) =>
-        	if !programming
-        	  console.log "remember this", this.getAbsolutePosition().x, this.getAbsolutePosition().y
-        		# remember all my current info
-	          tmpX = this.getAbsolutePosition().x
-	          tmpY = this.getAbsolutePosition().y
-	          this.moveTo(rulesLayer)
-        	
-        	if programming
-            newRule = new Rule()
-            dx = this.getAbsolutePosition().x - tmpX
-            dy = this.getAbsolutePosition().y - tmpY
-            myTransform =
-              dx: dx
-              dy: dy
-            newRule.setTransform(myTransform)
-            this.addRule( newRule )
-            console.log "analyze diff", tmpX, this.getAbsolutePosition().x, tmpX - this.getAbsolutePosition().x
-            this.setPosition(tmpX, tmpY)
-            this.moveTo(layer)
+            event.stopPropagation()
+            event.preventDefault();
+              
+            if !programming
+                console.log "remember this", this.getAbsolutePosition().x, this.getAbsolutePosition().y
+                # remember all my current info
+                tmpX = this.getAbsolutePosition().x
+                tmpY = this.getAbsolutePosition().y
+                this.moveTo(rulesLayer)
+            else
+                newRule = new Rule()
+                dx = this.getAbsolutePosition().x - tmpX
+                dy = this.getAbsolutePosition().y - tmpY
+                myTransform =
+                    dx: dx
+                    dy: dy
+                newRule.setTransform(myTransform)
+                this.addRule( newRule )
+                console.log "analyze diff", tmpX, this.getAbsolutePosition().x, tmpX - this.getAbsolutePosition().x
+                this.setPosition(tmpX, tmpY)
+                this.moveTo(layer)
             
-          rulesLayer.draw()
-        	
-        	programming = !programming
-        	console.log programming
+            rulesLayer.draw()
+            
+            programming = !programming
+            console.log programming
 
     applyRules: (environment) ->
         for rule in @_rules
@@ -172,6 +168,12 @@ window.spriteList = []
 window.spriteTypeList = []
 
 window.tick = ->
+    if programming 
+        programming = false
+        for child in rulesLayer.getChildren()
+            child.moveTo(layer)
+        rulesLayer.draw()
+        
     for sprite in window.spriteList
         sprite.applyRules()
     window.layer.draw()
@@ -183,58 +185,57 @@ window.loadSpriteTypes = ->
         spriteTypeList.push( SpriteFactory( $(sprite).attr("data-frame-id") , $(sprite).attr("data-frame-id") ) )
         
         $(sprite).bind 'dragend', (e) ->
+            e.preventDefault();
             console.log "sprite ", $(sprite).attr("data-frame-id"),  " added"
             # this should be ok now because they've been pished in the right order? hmm...
             newSprite = new spriteTypeList[i] 
-            console.log "dropped", e.originalEvent.clientX , e.originalEvent.clientY
+            console.log "dropped dragend", e.originalEvent.clientX , e.originalEvent.clientY
             newSprite.setPosition(e.originalEvent.clientX, e.originalEvent.clientY)
             layer.add( newSprite )
             spriteList.push( newSprite )
             layer.draw()
-            e.stopPropagation();
-            e.preventDefault();
         
         $(sprite).bind 'touchend', (e) ->
             console.log "sprite ", $(sprite).attr("data-frame-id"),  " added"
             # this should be ok now because they've been pished in the right order? hmm...
-            newSprite = new spriteTypeList[i] 
-            console.log "dropped", e.originalEvent.clientX , e.originalEvent.clientY
-            newSprite.setPosition(e.originalEvent.clientX, e.originalEvent.clientY)
+            newSprite = new spriteTypeList[i]
+            dropX = e.originalEvent.changedTouches[0].pageX
+            dropY = e.originalEvent.changedTouches[0].pageY
+            alert dropX
+            alert dropY
+            newSprite.setPosition( dropX , dropY )
             layer.add( newSprite )
             spriteList.push( newSprite )
-            layer.draw()
-            e.stopPropagation()
-            e.preventDefault();
-            alert e.targetTouches[0].pageX
-               
+            layer.draw()            alert newSprite.getX()
+            tick();
+            #e.stopPropagation()
+            #e.preventDefault();
+        
+        ### I think we don't need these anymore, but just in case
         $(sprite).bind 'dbltap', (e) -> 
-            console.log "sprite ", $(sprite).attr("data-frame-id"),  " added"
+            alert "sprite ", $(sprite).attr("data-frame-id"),  " added dbltap"
             # this should be ok now because they've been pished in the right order? hmm...
             newSprite = new spriteTypeList[i] 
             layer.add( newSprite )
             spriteList.push( newSprite )
             layer.draw()
-            e.stopPropagation()
+            #e.stopPropagation()
             e.preventDefault();
             
         $(sprite).bind 'dblclick', (e) -> 
-            console.log "sprite ", $(sprite).attr("data-frame-id"),  " added"
+            console.log "sprite ", $(sprite).attr("data-frame-id"),  " added dblclick"
             # this should be ok now because they've been pished in the right order? hmm...
             newSprite = new spriteTypeList[i] 
             layer.add( newSprite )
             spriteList.push( newSprite )
             layer.draw()
-            e.stopPropagation()
+            #e.stopPropagation()
             e.preventDefault();
-        
+        ###
+
         $(sprite).bind 'touchmove', (e) -> 
-            e.stopPropagation()
+            #e.stopPropagation()
             e.preventDefault();
-        
-        $(sprite).bind 'touchstart', (e) -> 
-            e.stopPropagation()
-            e.preventDefault();
-            
 
 #################
 
