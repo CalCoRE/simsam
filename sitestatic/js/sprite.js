@@ -124,9 +124,7 @@
   };
 
   Rule = (function() {
-    var defaultTransform;
-
-    defaultTransform = {
+    Rule.prototype.defaultTransform = {
       dx: 0,
       dy: 0,
       dr: 0,

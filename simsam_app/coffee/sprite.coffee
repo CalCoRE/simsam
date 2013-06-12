@@ -124,7 +124,7 @@ SpriteFactory = (spriteType, imageId) ->
 
 # simple transform applied all the time, ignores environment
 class Rule
-    defaultTransform =
+    defaultTransform:
             dx: 0
             dy: 0
             dr: 0
