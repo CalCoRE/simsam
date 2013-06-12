@@ -63,14 +63,10 @@ class GenericSprite extends Kinetic.Image
                 tmpY = this.getAbsolutePosition().y
                 this.moveTo(rulesLayer)
             else
-                newRule = new Rule()
-                dx = this.getAbsolutePosition().x - tmpX
-                dy = this.getAbsolutePosition().y - tmpY
                 myTransform =
-                    dx: dx
-                    dy: dy
-                newRule.setTransform(myTransform)
-                this.addRule( newRule )
+                    dx: this.getAbsolutePosition().x - tmpX
+                    dy: this.getAbsolutePosition().y - tmpY
+                this.addRule(new Rule(myTransform))
                 console.log "analyze diff", tmpX, this.getAbsolutePosition().x, tmpX - this.getAbsolutePosition().x
                 this.setPosition(tmpX, tmpY)
                 this.moveTo(layer)
@@ -118,24 +114,26 @@ SpriteFactory = (spriteType, imageId) ->
         # String, the hash id of the jpg
         imageId: imageId
 
-        # The underscore here indicates private, you aren't supposed to modify
-        # the rules of a single sprite instance, although you could.
-        # Use SpriteFoo::addRule() and SpriteFoo::setRule() instead.    
+        # The underscore here indicates private; you aren't supposed to modify
+        # the list directly. Use mySpriteInstance.addRule() instead.
+        # Because the list is in the Sprite prototype, rules will apply to all
+        # instances of that Sprite.
         _rules: []
 
     return Sprite
 
 # simple transform applied all the time, ignores environment
 class Rule
-    setTransform: (transform) ->
-        # fill in any missing values with intelligent defaults
-        defaultTransform =
+    defaultTransform =
             dx: 0
             dy: 0
             dr: 0
             dxScale: 1
             dyScale: 1
-        for p, v of defaultTransform
+
+    constructor: (transform) ->
+        # fill in any missing values with intelligent defaults
+        for p, v of @defaultTransform
             if p not of transform
                 transform[p] = v
         @transform = transform
@@ -249,18 +247,14 @@ window.init = ->
 
     stage.add(layer)
 
-    moveRight = new Rule()
-    moveRight.setTransform({dx: 10})
-    #Star::addRule(moveRight)
+    moveRight = new Rule({dx: 10})
+    starA.addRule(moveRight)
 
-    moveDown = new Rule()
-    moveDown.setTransform({dy: 10})
-    #Star::addRule(moveDown)
+    moveDown = new Rule({dy: 10})
+    starA.addRule(moveDown)
 
-    spin = new Rule()
-    spin.setTransform({dr: Math.PI/6})
-    #Star::addRule(spin)
+    spin = new Rule({dr: Math.PI/6})
+    starA.addRule(spin)
 
-    stretchy = new Rule()
-    stretchy.setTransform({dyScale: 1.1})
+    stretchy = new Rule({dyScale: 1.1})
     starA.addRule(stretchy)

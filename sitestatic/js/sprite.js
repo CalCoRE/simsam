@@ -7,10 +7,9 @@
   GenericSprite = (function(_super) {
     __extends(GenericSprite, _super);
 
-    GenericSprite.prototype._rules = [];
-
     function GenericSprite(spriteId) {
-      var hOff, imHeight, img, imgHeight, imgWidth, shapeParams, wOff;
+      var hOff, imHeight, img, imgHeight, imgWidth, programming, shapeParams, tmpX, tmpY, wOff,
+        _this = this;
       this.spriteId = spriteId;
       img = new Image();
       img.src = 'http://' + window.location.host + '/media/sprites/' + this.imageId + '.jpg';
@@ -37,6 +36,32 @@
         offset: [wOff, hOff]
       };
       Kinetic.Image.call(this, shapeParams);
+      programming = false;
+      tmpX = 0;
+      tmpY = 0;
+      this.on('dblclick dbltap', function(event) {
+        var myTransform;
+        event.stopPropagation();
+        event.preventDefault();
+        if (!programming) {
+          console.log("remember this", _this.getAbsolutePosition().x, _this.getAbsolutePosition().y);
+          tmpX = _this.getAbsolutePosition().x;
+          tmpY = _this.getAbsolutePosition().y;
+          _this.moveTo(rulesLayer);
+        } else {
+          myTransform = {
+            dx: _this.getAbsolutePosition().x - tmpX,
+            dy: _this.getAbsolutePosition().y - tmpY
+          };
+          _this.addRule(new Rule(myTransform));
+          console.log("analyze diff", tmpX, _this.getAbsolutePosition().x, tmpX - _this.getAbsolutePosition().x);
+          _this.setPosition(tmpX, tmpY);
+          _this.moveTo(layer);
+        }
+        rulesLayer.draw();
+        programming = !programming;
+        return console.log(programming);
+      });
     }
 
     GenericSprite.prototype.applyRules = function(environment) {
@@ -90,6 +115,8 @@
 
       Sprite.prototype.imageId = imageId;
 
+      Sprite.prototype._rules = [];
+
       return Sprite;
 
     })(GenericSprite);
@@ -97,25 +124,27 @@
   };
 
   Rule = (function() {
-    function Rule() {}
+    var defaultTransform;
 
-    Rule.prototype.setTransform = function(transform) {
-      var defaultTransform, p, v;
-      defaultTransform = {
-        dx: 0,
-        dy: 0,
-        dr: 0,
-        dxScale: 1,
-        dyScale: 1
-      };
-      for (p in defaultTransform) {
-        v = defaultTransform[p];
+    defaultTransform = {
+      dx: 0,
+      dy: 0,
+      dr: 0,
+      dxScale: 1,
+      dyScale: 1
+    };
+
+    function Rule(transform) {
+      var p, v, _ref;
+      _ref = this.defaultTransform;
+      for (p in _ref) {
+        v = _ref[p];
         if (!(p in transform)) {
           transform[p] = v;
         }
       }
-      return this.transform = transform;
-    };
+      this.transform = transform;
+    }
 
     Rule.prototype.act = function(sprite, environment) {
       return sprite.applyTransform(this.transform);
@@ -163,13 +192,22 @@
   window.spriteTypeList = [];
 
   window.tick = function() {
-    var sprite, _i, _len, _ref1;
-    _ref1 = window.spriteList;
-    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-      sprite = _ref1[_i];
+    var child, programming, sprite, _i, _j, _len, _len1, _ref1, _ref2;
+    if (programming) {
+      programming = false;
+      _ref1 = rulesLayer.getChildren();
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        child = _ref1[_i];
+        child.moveTo(layer);
+      }
+      rulesLayer.draw();
+    }
+    _ref2 = window.spriteList;
+    for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+      sprite = _ref2[_j];
       sprite.applyRules();
     }
-    return window.layer.draw();
+    return stage.draw();
   };
 
   window.loadSpriteTypes = function() {
@@ -178,14 +216,56 @@
     spriteTypeList = [];
     return $("#sprite_drawer *").each(function(i, sprite) {
       spriteTypeList.push(SpriteFactory($(sprite).attr("data-frame-id"), $(sprite).attr("data-frame-id")));
-      return $(sprite).dblclick(function() {
+      $(sprite).bind('dragend', function(e) {
         var newSprite;
+        e.preventDefault();
         console.log("sprite ", $(sprite).attr("data-frame-id"), " added");
         newSprite = new spriteTypeList[i];
+        console.log("dropped dragend", e.originalEvent.clientX, e.originalEvent.clientY);
+        newSprite.setPosition(e.originalEvent.clientX, e.originalEvent.clientY);
         layer.add(newSprite);
         spriteList.push(newSprite);
-        return layer.draw();
+        return stage.draw();
       });
+      $(sprite).bind('touchstart', function(e) {
+        return e.preventDefault();
+      });
+      $(sprite).bind('touchmove', function(e) {
+        return e.preventDefault();
+      });
+      return $(sprite).bind('touchend', function(e) {
+        var dropX, dropY, newSprite;
+        console.log("sprite ", $(sprite).attr("data-frame-id"), " added");
+        newSprite = new spriteTypeList[i];
+        dropX = e.originalEvent.changedTouches[0].pageX;
+        dropY = e.originalEvent.changedTouches[0].pageY;
+        newSprite.setPosition(dropX, dropY);
+        layer.add(newSprite);
+        spriteList.push(newSprite);
+        return stage.draw();
+      });
+      /* I think we don't need these anymore, but just in case
+      $(sprite).bind 'dbltap', (e) -> 
+          alert "sprite ", $(sprite).attr("data-frame-id"),  " added dbltap"
+          # this should be ok now because they've been pished in the right order? hmm...
+          newSprite = new spriteTypeList[i] 
+          layer.add( newSprite )
+          spriteList.push( newSprite )
+          layer.draw()
+          #e.stopPropagation()
+          e.preventDefault();
+          
+      $(sprite).bind 'dblclick', (e) -> 
+          console.log "sprite ", $(sprite).attr("data-frame-id"),  " added dblclick"
+          # this should be ok now because they've been pished in the right order? hmm...
+          newSprite = new spriteTypeList[i] 
+          layer.add( newSprite )
+          spriteList.push( newSprite )
+          layer.draw()
+          #e.stopPropagation()
+          e.preventDefault();
+      */
+
     });
   };
 
@@ -196,23 +276,22 @@
     window.spriteList.push(starA);
     layer.add(starA);
     stage.add(layer);
-    moveRight = new Rule();
-    moveRight.setTransform({
+    moveRight = new Rule({
       dx: 10
     });
-    moveDown = new Rule();
-    moveDown.setTransform({
+    starA.addRule(moveRight);
+    moveDown = new Rule({
       dy: 10
     });
-    spin = new Rule();
-    spin.setTransform({
+    starA.addRule(moveDown);
+    spin = new Rule({
       dr: Math.PI / 6
     });
-    stretchy = new Rule();
-    stretchy.setTransform({
+    starA.addRule(spin);
+    stretchy = new Rule({
       dyScale: 1.1
     });
-    return Star.prototype.addRule(stretchy);
+    return starA.addRule(stretchy);
   };
 
 }).call(this);

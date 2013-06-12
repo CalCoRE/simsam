@@ -79,19 +79,6 @@ STATICFILES_DIRS = (
     ("js", os.path.join(SITE_ROOT, '../simsam_app/js')),
     ("css", os.path.join(SITE_ROOT, '../simsam_app/css')),
     ("images", os.path.join(SITE_ROOT, '../simsam_app/images')),
-    #("js", os.path.join(SITE_ROOT, '../samlite/js')),
-    #("css", os.path.join(SITE_ROOT, '../samlite/css')),
-    #("images", os.path.join(SITE_ROOT, '../samlite/images')),
-    #("js", os.path.join(SITE_ROOT, '../simlite/js')),
-    #("css", os.path.join(SITE_ROOT, '../simlite/css')),
-    #("images", os.path.join(SITE_ROOT, '../simlite/images')),
-    # ("sam_frames", os.path.join(SITE_ROOT, '../sitestatic/sam_frames')),
-    # ("sprites", os.path.join(SITE_ROOT, '../sitestatic/sprites')),
-
-    # we don't use these, marked for removal
-    os.path.join(SITE_ROOT, '../simsam_app/static'),
-    #os.path.join(SITE_ROOT, '../samlite/static'),
-    #os.path.join(SITE_ROOT, '../simlite/static'),
 )
 
 # List of finder classes that know how to find static files in

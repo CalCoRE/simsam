@@ -40,7 +40,7 @@
       tmpX = 0;
       tmpY = 0;
       this.on('dblclick dbltap', function(event) {
-        var dx, dy, myTransform, newRule;
+        var myTransform;
         event.stopPropagation();
         event.preventDefault();
         if (!programming) {
@@ -49,15 +49,11 @@
           tmpY = _this.getAbsolutePosition().y;
           _this.moveTo(rulesLayer);
         } else {
-          newRule = new Rule();
-          dx = _this.getAbsolutePosition().x - tmpX;
-          dy = _this.getAbsolutePosition().y - tmpY;
           myTransform = {
-            dx: dx,
-            dy: dy
+            dx: _this.getAbsolutePosition().x - tmpX,
+            dy: _this.getAbsolutePosition().y - tmpY
           };
-          newRule.setTransform(myTransform);
-          _this.addRule(newRule);
+          _this.addRule(new Rule(myTransform));
           console.log("analyze diff", tmpX, _this.getAbsolutePosition().x, tmpX - _this.getAbsolutePosition().x);
           _this.setPosition(tmpX, tmpY);
           _this.moveTo(layer);
@@ -128,25 +124,27 @@
   };
 
   Rule = (function() {
-    function Rule() {}
+    var defaultTransform;
 
-    Rule.prototype.setTransform = function(transform) {
-      var defaultTransform, p, v;
-      defaultTransform = {
-        dx: 0,
-        dy: 0,
-        dr: 0,
-        dxScale: 1,
-        dyScale: 1
-      };
-      for (p in defaultTransform) {
-        v = defaultTransform[p];
+    defaultTransform = {
+      dx: 0,
+      dy: 0,
+      dr: 0,
+      dxScale: 1,
+      dyScale: 1
+    };
+
+    function Rule(transform) {
+      var p, v, _ref;
+      _ref = this.defaultTransform;
+      for (p in _ref) {
+        v = _ref[p];
         if (!(p in transform)) {
           transform[p] = v;
         }
       }
-      return this.transform = transform;
-    };
+      this.transform = transform;
+    }
 
     Rule.prototype.act = function(sprite, environment) {
       return sprite.applyTransform(this.transform);
@@ -278,20 +276,19 @@
     window.spriteList.push(starA);
     layer.add(starA);
     stage.add(layer);
-    moveRight = new Rule();
-    moveRight.setTransform({
+    moveRight = new Rule({
       dx: 10
     });
-    moveDown = new Rule();
-    moveDown.setTransform({
+    starA.addRule(moveRight);
+    moveDown = new Rule({
       dy: 10
     });
-    spin = new Rule();
-    spin.setTransform({
+    starA.addRule(moveDown);
+    spin = new Rule({
       dr: Math.PI / 6
     });
-    stretchy = new Rule();
-    stretchy.setTransform({
+    starA.addRule(spin);
+    stretchy = new Rule({
       dyScale: 1.1
     });
     return starA.addRule(stretchy);

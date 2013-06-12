@@ -10,11 +10,12 @@ overlayClass = "overlay-frame"
 playbackClass = "playback-frame"
 window.isPlaying = false
 window.playbackIndex = 0
+window.playbackInterval = 200   # milliseconds between frames
 window.debug = true             # turns on console logging
-menu = false # side menu
-recording = true #starts out in record mode
-cameraState = 1
-anyCamera = true
+menu = false                    # side menu
+recording = true                # starts out in record mode
+cameraState = 1                 # someone please comment: what is this?
+anyCamera = true                # false when browser can't use webcam
 
 # sprite collection wasn't initialized for a new animation and were
 # creating an error when they were first used
@@ -24,7 +25,8 @@ window.spritecollection = []
 
 $(document).ready ->
     # hide elements of sim
-    $('#sambutton').hide()
+    $('#switch_to_sam_button').hide()
+    $('#sim_buttons').hide()
     $('#container').hide()
     $('#output').hide()
     $('#right_frame').hide()
@@ -37,15 +39,11 @@ $(document).ready ->
     window.camera = $("#camera").get 0
 
     # clicking on the screen is the same as clicking on the active mode button
-    $("#replay").click ->
-        if (recording)
-            shoot()
-        else
-            play()
+    $("#replay").click -> if recording then shoot() else play()
     
     # wire up buttons
-    $("#simbutton").click startSimlite
-    $("#sambutton").click startSamlite
+    $("#switch_to_sim_button").click switchToSim
+    $("#switch_to_sam_button").click switchToSam
     #MHWJ
     $("#right_menu_button").click toggleMenu
     $("#play_mode").click play
@@ -92,9 +90,6 @@ $(document).ready ->
         switchToPlaybackMode()
         $("#record_mode").css('display', 'none')
         alert "Your browser will not allow SiMSAM to use the webcam. Related functions will be disabled."
-
-    # always start in record mode
-    #switchToRecordMode()
 
 loadSprites = (sprite) ->
     output = $("#sprite_drawer").get(0) 
@@ -380,6 +375,12 @@ rescanThumbnails = ->
             placeFrame index, (if recording then overlayClass else playbackClass)
             window.playbackIndex = index
 
+    # if there are no frames available, do not allow cropping
+    if playbackFrames.length == 0
+        $('#startcropping').hide()
+    else
+        $('#startcropping').show()
+
 # Called by the "trash" (really a sortable list linked with the thumbnail
 # list) when a thumbnail is dropped in. Deletes the thumbnail and resyncs.
             
@@ -429,7 +430,6 @@ window.play = ->
         window.playbackIndex = 0
     window.isPlaying = true
     container = $("#video_frame")
-    interval = 1 / $("#fps").val() * 1000
     beginningIndex = window.playbackIndex
     
     for frame, index in playbackFrames when index >= window.playbackIndex
@@ -446,7 +446,7 @@ window.play = ->
                     window.playbackIndex = index + 1
             # we want playback to start right away even if the current
             # index is high
-            delay = interval * (index - beginningIndex)
+            delay = window.playbackInterval * (index - beginningIndex)
             playbackTimeouts[index] = setTimeout callback, delay
             if window.debug then console.log "play loop, index:", index, "delay:", delay
             
@@ -491,32 +491,33 @@ frameEnd = ->
         placeBlankFrame()
     
 # functions to switch between sam and sim
-startSimlite = ->
+switchToSim = ->
     # hide samlite containers
     #$('#controls_container').hide()
     $('#replay').hide()
     $('#video_frame').hide()
     $('#bottom_frame').hide()
-    $('#simbutton').hide()
     $('#crop_buttons').hide()
+    $('#switch_to_sim_button').hide()
     # show simlite containers
+    $('#sim_buttons').show()
     $('#container').show()
     $('#output').show()
-    $('#sambutton').show()
+    $('#switch_to_sam_button').show()
     window.loadSpriteTypes()
-
-startSamlite = ->
+switchToSam = ->
     # show SAM containers
     $('#controls_container').show()
     $('#replay').show()
     $('#video_frame').show()
-    $('#simbutton').show()
     $('#crop_buttons').show()
     $('#bottom_frame').show()
+    $('#switch_to_sim_button').show()
     # hide SiM containers
+    $('#sim_buttons').hide()
     $('#container').hide()
     $('#output').hide()
-    $('#sambutton').hide()
+    $('#switch_to_sam_button').hide()
     
     #MHWJ
 toggleMenu = ->
