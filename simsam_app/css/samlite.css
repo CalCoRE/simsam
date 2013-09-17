@@ -249,7 +249,7 @@
 	font-family: Helvetica, Verdana, Arial, sans-serif;
 }
 
-#sprite_drawer canvas {
+.sprite {
   display: block;
   margin: 10px auto 10px auto;
   border: 1px solid #444;
@@ -268,4 +268,8 @@
     height: 95%;
     width: 95%;
     position: relative;
+}
+
+.upper-canvas {
+    display: block !important;
 }

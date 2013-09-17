@@ -8,39 +8,64 @@
     __extends(GenericSprite, _super);
 
     function GenericSprite(spriteId) {
-      var hOff, imHeight, img, imgHeight, imgWidth, programming, shapeParams, tmpX, tmpY, wOff,
-        _this = this;
+      var sWidth, shapeParams;
       this.spriteId = spriteId;
-      img = new Image();
-      img.src = 'http://' + window.location.host + '/media/sprites/' + this.imageId + '.jpg';
-      if (this.imageId !== void 0) {
-        imgWidth = img.width;
-        imHeight = img.height;
-        wOff = img.width / 2;
-        hOff = img.height / 2;
-      } else {
-        imgWidth = 100;
-        imgHeight = 50;
-        wOff = 50;
-        hOff = 25;
-      }
+      sWidth = this.spriteType * 5;
       shapeParams = {
-        x: 50,
-        y: 50,
-        width: imgWidth,
-        height: imgHeight,
-        fill: 'black',
-        image: img,
-        strokeWidth: 0,
-        draggable: true,
-        offset: [wOff, hOff]
+        height: 100,
+        width: 100,
+        strokeWidth: sWidth,
+        fill: "rgb(0,255,0)",
+        stroke: "rgb(0,0,0)",
+        cornerSize: 20
       };
+<<<<<<< HEAD
+      fabric.Rect.call(this, shapeParams);
+      /*
+      programming = false
+      tmpX = 0
+      tmpY = 0
+      */
+
+      /*
+          event.stopPropagation()
+          event.preventDefault();
+            
+          if !programming
+              console.log "remember this", this.getAbsolutePosition().x, this.getAbsolutePosition().y
+              # remember all my current info
+              tmpX = this.getAbsolutePosition().x
+              tmpY = this.getAbsolutePosition().y
+              this.moveTo(rulesLayer)
+          else
+              newRule = new Rule()
+              dx = this.getAbsolutePosition().x - tmpX
+              dy = this.getAbsolutePosition().y - tmpY
+              myTransform =
+                  dx: dx
+                  dy: dy
+              newRule.setTransform(myTransform)
+              this.addRule( newRule )
+              console.log "analyze diff", tmpX, this.getAbsolutePosition().x, tmpX - this.getAbsolutePosition().x
+              this.setPosition(tmpX, tmpY)
+              this.moveTo(layer)
+          
+          rulesLayer.draw()
+          
+          programming = !programming
+          console.log programming
+      
+      #this.on 'touchmove', (e) ->
+      #    alert e
+      */
+
+=======
       Kinetic.Image.call(this, shapeParams);
       programming = false;
       tmpX = 0;
       tmpY = 0;
       this.on('dblclick dbltap', function(event) {
-        var dx, dy, myTransform, newRule;
+        var myTransform;
         event.stopPropagation();
         event.preventDefault();
         if (!programming) {
@@ -49,15 +74,11 @@
           tmpY = _this.getAbsolutePosition().y;
           _this.moveTo(rulesLayer);
         } else {
-          newRule = new Rule();
-          dx = _this.getAbsolutePosition().x - tmpX;
-          dy = _this.getAbsolutePosition().y - tmpY;
           myTransform = {
-            dx: dx,
-            dy: dy
+            dx: _this.getAbsolutePosition().x - tmpX,
+            dy: _this.getAbsolutePosition().y - tmpY
           };
-          newRule.setTransform(myTransform);
-          _this.addRule(newRule);
+          _this.addRule(new Rule(myTransform));
           console.log("analyze diff", tmpX, _this.getAbsolutePosition().x, tmpX - _this.getAbsolutePosition().x);
           _this.setPosition(tmpX, tmpY);
           _this.moveTo(layer);
@@ -66,6 +87,7 @@
         programming = !programming;
         return console.log(programming);
       });
+>>>>>>> 3be1a2edb45438d0edc13e15aaf4dae678a573c6
     }
 
     GenericSprite.prototype.applyRules = function(environment) {
@@ -92,21 +114,49 @@
       }
     };
 
+    GenericSprite.prototype.addTransform = function(transform) {
+      var myRule;
+      myRule = new Rule();
+      myRule.setTransform(transform);
+      return this.addRule(myRule);
+    };
+
     GenericSprite.prototype.applyTransform = function(transform) {
-      var scale;
-      this.setX(this.getX() + transform.dx);
-      this.setY(this.getY() + transform.dy);
-      this.rotate(transform.dr);
-      scale = this.getScale();
-      return this.setScale(scale.x * transform.dxScale, scale.y * transform.dyScale);
+      console.log("apply transform");
+      return this.set({
+        left: this.getLeft() + transform.dx,
+        top: this.getTop() + transform.dy,
+        angle: this.getAngle() + transform.dr,
+        width: this.getWidth() + transform.dxScale,
+        height: this.getHeight() + transform.dyScale
+      });
+    };
+
+    GenericSprite.prototype.showLearning = function() {
+      console.log("showLearning");
+      this.set({
+        borderColor: "red",
+        cornerColor: "red"
+      });
+      return canvas.renderAll();
+    };
+
+    GenericSprite.prototype.showNormal = function() {
+      console.log("showNoraml");
+      this.set({
+        borderColor: "rgb(210,210,255)",
+        cornerColor: "rgb(210,210,255)"
+      });
+      return canvas.renderAll();
     };
 
     return GenericSprite;
 
-  })(Kinetic.Image);
+  })(fabric.Rect);
 
-  SpriteFactory = function(spriteType, imageId) {
+  SpriteFactory = function(spriteType, imageObj) {
     var Sprite, _ref;
+    console.log("sprite factory" + spriteType + imageObj);
     Sprite = (function(_super) {
       __extends(Sprite, _super);
 
@@ -115,9 +165,11 @@
         return _ref;
       }
 
+      console.log("class sprite");
+
       Sprite.prototype.spriteType = spriteType;
 
-      Sprite.prototype.imageId = imageId;
+      Sprite.prototype.imageObj = imageObj;
 
       Sprite.prototype._rules = [];
 
@@ -128,25 +180,25 @@
   };
 
   Rule = (function() {
-    function Rule() {}
+    Rule.prototype.defaultTransform = {
+      dx: 0,
+      dy: 0,
+      dr: 0,
+      dxScale: 1,
+      dyScale: 1
+    };
 
-    Rule.prototype.setTransform = function(transform) {
-      var defaultTransform, p, v;
-      defaultTransform = {
-        dx: 0,
-        dy: 0,
-        dr: 0,
-        dxScale: 1,
-        dyScale: 1
-      };
-      for (p in defaultTransform) {
-        v = defaultTransform[p];
+    function Rule(transform) {
+      var p, v, _ref;
+      _ref = this.defaultTransform;
+      for (p in _ref) {
+        v = _ref[p];
         if (!(p in transform)) {
           transform[p] = v;
         }
       }
-      return this.transform = transform;
-    };
+      this.transform = transform;
+    }
 
     Rule.prototype.act = function(sprite, environment) {
       return sprite.applyTransform(this.transform);
@@ -194,59 +246,77 @@
   window.spriteTypeList = [];
 
   window.tick = function() {
-    var child, programming, sprite, _i, _j, _len, _len1, _ref1, _ref2;
-    if (programming) {
-      programming = false;
-      _ref1 = rulesLayer.getChildren();
-      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-        child = _ref1[_i];
-        child.moveTo(layer);
-      }
-      rulesLayer.draw();
-    }
-    _ref2 = window.spriteList;
-    for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-      sprite = _ref2[_j];
+    var sprite, _i, _len;
+    for (_i = 0, _len = spriteList.length; _i < _len; _i++) {
+      sprite = spriteList[_i];
       sprite.applyRules();
     }
-    return stage.draw();
+    return canvas.renderAll();
   };
+
+  /*
+      if programming 
+          programming = false
+          for child in rulesLayer.getChildren()
+              child.moveTo(layer)
+          rulesLayer.draw()
+  */
+
 
   window.loadSpriteTypes = function() {
     var spriteTypeList;
     console.log("loading sprite types");
     spriteTypeList = [];
-    return $("#sprite_drawer *").each(function(i, sprite) {
-      spriteTypeList.push(SpriteFactory($(sprite).attr("data-frame-id"), $(sprite).attr("data-frame-id")));
-      $(sprite).bind('dragend', function(e) {
-        var newSprite;
-        e.preventDefault();
-        console.log("sprite ", $(sprite).attr("data-frame-id"), " added");
-        newSprite = new spriteTypeList[i];
-        console.log("dropped dragend", e.originalEvent.clientX, e.originalEvent.clientY);
-        newSprite.setPosition(e.originalEvent.clientX, e.originalEvent.clientY);
-        layer.add(newSprite);
-        spriteList.push(newSprite);
-        return stage.draw();
+    return $("img").each(function(i, sprite) {
+      console.log("loading sprite type" + i);
+      window.spriteTypeList.push(SpriteFactory(i, sprite));
+      return $(sprite).draggable({
+        revert: false,
+        helper: "clone",
+        stop: function(ev) {
+          var newSprite;
+          console.log(i);
+          newSprite = new window.spriteTypeList[i];
+          spriteList.push(newSprite);
+          newSprite.setTop(ev.clientY);
+          newSprite.setLeft(ev.clientX);
+          canvas.add(newSprite);
+          return canvas.renderAll();
+        }
       });
-      $(sprite).bind('touchstart', function(e) {
-        return e.preventDefault();
-      });
-      $(sprite).bind('touchmove', function(e) {
-        return e.preventDefault();
-      });
-      return $(sprite).bind('touchend', function(e) {
-        var dropX, dropY, newSprite;
-        console.log("sprite ", $(sprite).attr("data-frame-id"), " added");
-        newSprite = new spriteTypeList[i];
-        dropX = e.originalEvent.changedTouches[0].pageX;
-        dropY = e.originalEvent.changedTouches[0].pageY;
-        newSprite.setPosition(dropX, dropY);
-        layer.add(newSprite);
-        spriteList.push(newSprite);
-        return stage.draw();
-      });
-      /* I think we don't need these anymore, but just in case
+      /*
+      $(sprite).bind 'dragend', (e) ->
+          e.preventDefault();
+          console.log "sprite ", $(sprite).attr("data-frame-id"),  " added"
+          # this should be ok now because they've been pished in the right order? hmm...
+          newSprite = new spriteTypeList[i] 
+          console.log "dropped dragend", e.originalEvent.clientX , e.originalEvent.clientY
+          newSprite.setPosition(e.originalEvent.clientX, e.originalEvent.clientY)
+          layer.add( newSprite )
+          spriteList.push( newSprite )
+          stage.draw()
+      
+      
+      $(sprite).bind 'touchstart', (e) ->
+          e.preventDefault();
+      
+      $(sprite).bind 'touchmove', (e) ->
+          e.preventDefault();
+      
+      $(sprite).bind 'touchend', (e) ->
+          console.log "sprite ", $(sprite).attr("data-frame-id"),  " added"
+          # this should be ok now because they've been pished in the right order? hmm...
+          newSprite = new spriteTypeList[i]
+          dropX = e.originalEvent.changedTouches[0].pageX
+          dropY = e.originalEvent.changedTouches[0].pageY
+          newSprite.setPosition( dropX , dropY )
+          layer.add( newSprite )
+          spriteList.push( newSprite )
+          stage.draw()
+          #e.stopPropagation()
+          #e.preventDefault();
+      
+      # I think we don't need these anymore, but just in case
       $(sprite).bind 'dbltap', (e) -> 
           alert "sprite ", $(sprite).attr("data-frame-id"),  " added dbltap"
           # this should be ok now because they've been pished in the right order? hmm...
@@ -278,20 +348,19 @@
     window.spriteList.push(starA);
     layer.add(starA);
     stage.add(layer);
-    moveRight = new Rule();
-    moveRight.setTransform({
+    moveRight = new Rule({
       dx: 10
     });
-    moveDown = new Rule();
-    moveDown.setTransform({
+    starA.addRule(moveRight);
+    moveDown = new Rule({
       dy: 10
     });
-    spin = new Rule();
-    spin.setTransform({
+    starA.addRule(moveDown);
+    spin = new Rule({
       dr: Math.PI / 6
     });
-    stretchy = new Rule();
-    stretchy.setTransform({
+    starA.addRule(spin);
+    stretchy = new Rule({
       dyScale: 1.1
     });
     return starA.addRule(stretchy);
