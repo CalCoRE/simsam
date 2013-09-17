@@ -25,28 +25,28 @@
     <link rel="stylesheet" href="{{ STATIC_URL }}css/iphone-style-checkboxes.css">
 
     <script type="text/javascript">
-        window.onload = function () {
-            window.animationId = {{ animation_id }};
-			window.framesequence = [{% for frame in frame_sequence %}"{{ frame|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}];
-			window.projectId = {{ project_id }};
-			window.spritecollection = [{% for sprite in sprite_collection %}"{{ sprite|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}];
+      window.onload = function () {
+        window.animationId = {{ animation_id }};
+  			window.framesequence = [{% for frame in frame_sequence %}"{{ frame|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}];
+  			window.projectId = {{ project_id }};
+  			window.spritecollection = [{% for sprite in sprite_collection %}"{{ sprite|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}];
 			
-			var cameraMode = true;
-            initSam();
-            initSim();
-        };
+  			var cameraMode = true;
+        initSam();
+        initSim();
+      };
         
-        var simRunning = false;
+      var simRunning = false;
         
-        toggleSim = function() {
-            if( !simRunning ) {
-                if( interval = setInterval('tick()',1000) ) { simRunning = true; }
-            } else {
-                clearInterval(interval);
-                simRunning = false;
-            }
+      toggleSim = function() {
+        if( !simRunning ) {
+          if( interval = setInterval('tick()',1000) ) { simRunning = true; }
+        } else {
+          clearInterval(interval);
+          simRunning = false;
         }
-        </script>
+      }
+    </script>
     
 
 </head>

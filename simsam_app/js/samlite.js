@@ -19,7 +19,7 @@
     window.spritecollection = [];
     window.initSam = function() {
       var element, failure, success, _i, _j, _len, _len1, _ref, _ref1;
-      $('#sambutton').hide();
+      $('#switch_to_sam_button').hide();
       $('#container').hide();
       $('#output').hide();
       $('#right_frame').hide();
@@ -33,8 +33,8 @@
           return play();
         }
       });
-      $("#simbutton").click(startSimlite);
-      $("#sambutton").click(startSamlite);
+      $("#switch_to_sim_button").click(startSimlite);
+      $("#switch_to_sam_button").click(startSamlite);
       $("#right_menu_button").click(toggleMenu);
       $("#play_mode").click(play);
       $("#record_mode").click(toggleMode);
@@ -463,23 +463,23 @@
       $('#replay').hide();
       $('#video_frame').hide();
       $('#bottom_frame').hide();
-      $('#simbutton').hide();
+      $('#switch_to_sim_button').hide();
       $('#crop_buttons').hide();
       $('#container').show();
       $('#output').show();
-      $('#sambutton').show();
+      $('#switch_to_sam_button').show();
       return window.loadSpriteTypes();
     };
     startSamlite = function() {
       $('#controls_container').show();
       $('#replay').show();
       $('#video_frame').show();
-      $('#simbutton').show();
+      $('#switch_to_sim_button').show();
       $('#crop_buttons').show();
       $('#bottom_frame').show();
       $('#container').hide();
       $('#output').hide();
-      return $('#sambutton').hide();
+      return $('#switch_to_sam_button').hide();
     };
     toggleMenu = function() {
       if (menu) {

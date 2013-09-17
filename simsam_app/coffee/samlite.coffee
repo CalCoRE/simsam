@@ -25,7 +25,7 @@ $ ->
     
     window.initSam = ->
         # hide elements of sim
-        $('#sambutton').hide()
+        $('#switch_to_sam_button').hide()
         $('#container').hide()
         $('#output').hide()
         $('#right_frame').hide()
@@ -45,8 +45,8 @@ $ ->
                 play()
         
         # wire up buttons
-        $("#simbutton").click startSimlite
-        $("#sambutton").click startSamlite
+        $("#switch_to_sim_button").click startSimlite
+        $("#switch_to_sam_button").click startSamlite
         #MHWJ
         $("#right_menu_button").click toggleMenu
         $("#play_mode").click play
@@ -498,12 +498,12 @@ $ ->
         $('#replay').hide()
         $('#video_frame').hide()
         $('#bottom_frame').hide()
-        $('#simbutton').hide()
+        $('#switch_to_sim_button').hide()
         $('#crop_buttons').hide()
         # show simlite containers
         $('#container').show()
         $('#output').show()
-        $('#sambutton').show()
+        $('#switch_to_sam_button').show()
         window.loadSpriteTypes()
     
     startSamlite = ->
@@ -511,13 +511,13 @@ $ ->
         $('#controls_container').show()
         $('#replay').show()
         $('#video_frame').show()
-        $('#simbutton').show()
+        $('#switch_to_sim_button').show()
         $('#crop_buttons').show()
         $('#bottom_frame').show()
         # hide SiM containers
         $('#container').hide()
         $('#output').hide()
-        $('#sambutton').hide()
+        $('#switch_to_sam_button').hide()
         
         #MHWJ
     toggleMenu = ->
