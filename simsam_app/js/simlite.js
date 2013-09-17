@@ -55,6 +55,6 @@ getD = function(init , end) {
         dyScale: end.height - init.height,
         dx: end.left - init.left,
         dy: end.top - init.top,
-        dr: end.angle - init.angle,
+        dr: end.angle - init.angle
     }
 }

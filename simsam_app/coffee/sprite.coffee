@@ -11,7 +11,7 @@
 #   see anything on the screen.
 
 # A prototypical sprite
-class GenericSprite extends fabric.Rect
+class GenericSprite extends fabric.Image
     # These properties will be in the prototype of the Sprite
     # and thus appear as properties of all instances of that sprite
     # Variables prefixed with @ will be properties of individual sprite
@@ -20,16 +20,14 @@ class GenericSprite extends fabric.Rect
         # Kinetic.Rect isn't a coffeescript class, so we can't just call
         # super, unfortunately. This is almost as good.
         sWidth = this.spriteType * 5
-        
+                
         shapeParams =
-            height: 100, 
-            width: 100, 
-            strokeWidth: sWidth, 
+            height: this.imageObj.clientHeight, 
+            width: this.imageObj.clientWidth, 
             fill: "rgb(0,255,0)", 
             stroke: "rgb(0,0,0)",
             cornerSize: 20
-        
-        fabric.Rect.call(this, shapeParams)
+        super(this.imageObj, shapeParams)
         
     applyRules: (environment) ->
         for rule in @_rules
@@ -51,12 +49,12 @@ class GenericSprite extends fabric.Rect
             throw Error("The rule index #{index} doesn't exist.")
 
     addTransform: (transform) ->
-        myRule = new Rule();
-        myRule.setTransform(transform);
+        myRule = new Rule(transform);
+        #myRule.setTransform(transform);
         this.addRule(myRule);
 
     applyTransform: (transform) ->
-        console.log("apply transform")
+        console.log("apply transform " , transform)
         this.set({
             left: this.getLeft() + transform.dx
             top: this.getTop() + transform.dy
@@ -94,7 +92,7 @@ SpriteFactory = (spriteType, imageObj) ->
         spriteType: spriteType
 
         # String, the hash id of the jpg
-        # mhewj - changed this to the image object
+        # mhewj - changed this to the image elt
         imageObj: imageObj
 
         # The underscore here indicates private; you aren't supposed to modify
@@ -107,10 +105,7 @@ SpriteFactory = (spriteType, imageObj) ->
 
 # simple transform applied all the time, ignores environment
 class Rule
-    setTransform: (transform) ->
-    
-        # fill in any missing values with intelligent defaults
-        defaultTransform =
+    defaultTransform:
             dx: 0
             dy: 0
             dr: 0
@@ -123,7 +118,7 @@ class Rule
             if p not of transform
                 transform[p] = v
         @transform = transform
-
+    
     act: (sprite, environment) ->
     
         # this isn't an interaction, so just apply the rule without checking

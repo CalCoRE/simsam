@@ -12,14 +12,13 @@
       this.spriteId = spriteId;
       sWidth = this.spriteType * 5;
       shapeParams = {
-        height: 100,
-        width: 100,
-        strokeWidth: sWidth,
+        height: this.imageObj.clientHeight,
+        width: this.imageObj.clientWidth,
         fill: "rgb(0,255,0)",
         stroke: "rgb(0,0,0)",
         cornerSize: 20
       };
-      fabric.Rect.call(this, shapeParams);
+      GenericSprite.__super__.constructor.call(this, this.imageObj, shapeParams);
     }
 
     GenericSprite.prototype.applyRules = function(environment) {
@@ -48,13 +47,12 @@
 
     GenericSprite.prototype.addTransform = function(transform) {
       var myRule;
-      myRule = new Rule();
-      myRule.setTransform(transform);
+      myRule = new Rule(transform);
       return this.addRule(myRule);
     };
 
     GenericSprite.prototype.applyTransform = function(transform) {
-      console.log("apply transform");
+      console.log("apply transform ", transform);
       return this.set({
         left: this.getLeft() + transform.dx,
         top: this.getTop() + transform.dy,
@@ -84,7 +82,7 @@
 
     return GenericSprite;
 
-  })(fabric.Rect);
+  })(fabric.Image);
 
   SpriteFactory = function(spriteType, imageObj) {
     var Sprite, _ref;
@@ -112,15 +110,12 @@
   };
 
   Rule = (function() {
-    Rule.prototype.setTransform = function(transform) {
-      var defaultTransform;
-      return defaultTransform = {
-        dx: 0,
-        dy: 0,
-        dr: 0,
-        dxScale: 1,
-        dyScale: 1
-      };
+    Rule.prototype.defaultTransform = {
+      dx: 0,
+      dy: 0,
+      dr: 0,
+      dxScale: 1,
+      dyScale: 1
     };
 
     function Rule(transform) {
