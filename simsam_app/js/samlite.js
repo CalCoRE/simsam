@@ -2,6 +2,7 @@
 (function() {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   $(function() {
     var anyCamera, cameraOff, cameraOn, cameraState, cameraSwitch, capture, clearPlayback, frameBack, frameBeginning, frameEnd, frameForward, frameRegistry, getRandomId, loadFrames, loadSprites, makeUnselectable, menu, overlayClass, pause, placeBlankFrame, placeFrame, playbackClass, playbackTimeouts, recording, rescanThumbnails, saveCanvas, saveFrameSequence, startSamlite, startSimlite, thumbnailScaleFactor, toggleCamera, toggleMenu, toggleMode, trash;
     thumbnailScaleFactor = 0.25;
@@ -80,6 +81,8 @@
       } else {
         anyCamera = false;
 =======
+=======
+>>>>>>> 3be1a2edb45438d0edc13e15aaf4dae678a573c6
 =======
 >>>>>>> 3be1a2edb45438d0edc13e15aaf4dae678a573c6
   var anyCamera, cameraOff, cameraOn, cameraState, cameraSwitch, capture, clearPlayback, frameBack, frameBeginning, frameEnd, frameForward, frameRegistry, getRandomId, loadFrames, loadSprites, makeUnselectable, menu, overlayClass, pause, placeBlankFrame, placeFrame, playbackClass, playbackTimeouts, recording, rescanThumbnails, saveCanvas, saveFrameSequence, switchToSam, switchToSim, thumbnailScaleFactor, toggleCamera, toggleMenu, toggleMode, trash;
