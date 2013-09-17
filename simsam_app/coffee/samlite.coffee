@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 $ ->
     # globals
     thumbnailScaleFactor = 0.25;
@@ -235,7 +234,6 @@ $ ->
         console.log("shot frame")
         console.log(frame)
         
-<<<<<<< HEAD
         if playbackFrames.length == 0
             # add the frame at the beginning, first frame
             playbackFrames[0] = frame
@@ -404,7 +402,6 @@ $ ->
                 else
                     clearPlayback()
             else
-<<<<<<< HEAD
                 # in playback mode, if there are any frames, display the last one
                 if window.playbackFrames.length > 0
                     placeFrame max, playbackClass
@@ -479,7 +476,6 @@ $ ->
         else window.playbackIndex += 1
         placeFrame window.playbackIndex, playbackClass
         
-<<<<<<< HEAD
     frameBeginning = ->
         pause()
         window.playbackIndex = 0
