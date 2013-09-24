@@ -202,8 +202,7 @@ def chooseproject(request):
     project_id = request.REQUEST.get('projectId')
     #project = Project.objects.get(name=project_name, owner=simsam_user)
     project = Project.objects.get(id=project_id)
-    anim1 = project.name + "-anim0"
-    animation = project.animations.get(name=anim1)
+    animation = project.animations.get(project=project_id)
     return HttpResponseRedirect("/app?project={}&animation={}".format(
         project.id, animation.id))
 
