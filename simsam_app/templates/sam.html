@@ -7,14 +7,16 @@
 
     <script src="{{ STATIC_URL }}js/jquery.js"></script>
     <script src="{{ STATIC_URL }}js/jquery-ui.js"></script>
+    <script src="{{ STATIC_URL }}js/jquery.ui.touch.js"></script>
     <script src="{{ STATIC_URL }}js/html5sortable.js"></script>
     <script src="{{ STATIC_URL }}js/html5support.js"></script>
     <script src="{{ STATIC_URL }}js/hammer.min.js"></script>
 
-    <!--<script src="{{ STATIC_URL }}js/simlite.js"></script>-->
-    <script src="{{ STATIC_URL }}js/kinetic.js"></script>
+    <!--<script src="{{ STATIC_URL }}js/kinetic.js"></script>-->
     <script src="{{ STATIC_URL }}js/cropTool.js"></script>
+    <script src="{{ STATIC_URL }}js/Fabric.js"></script>
     <script src="{{ STATIC_URL }}js/sprite.js"></script>
+    <script src="{{ STATIC_URL }}js/simlite.js"></script>
     <script src="{{ STATIC_URL }}js/samlite.js"></script>
     
 
@@ -23,38 +25,28 @@
     <link rel="stylesheet" href="{{ STATIC_URL }}css/iphone-style-checkboxes.css">
 
     <script type="text/javascript">
+      window.onload = function () {
         window.animationId = {{ animation_id }};
-				window.framesequence = [{% for frame in frame_sequence %}"{{ frame|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}];
-				window.projectId = {{ project_id }};
-				window.spritecollection = [{% for sprite in sprite_collection %}"{{ sprite|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}];
-				
-				var cameraMode = true;
-				/*
-				function changeMode() {
-					if( cameraMode ) {
-						
-					}
-					else {
-					
-					}
-				}
-				*/
-				
-    			window.onload = function() {
-            stage = new Kinetic.Stage({
-                container: 'container',
-                width: 1000,
-                height: 1400
-            });
-            layer = new Kinetic.Layer();
-            rulesLayer = new Kinetic.Layer();
-            rulesLayer.setOpacity(.5);
-            stage.add(layer);
-            stage.add(rulesLayer);
-            //init();
-            //tick();
-          };
-        </script>
+  			window.framesequence = [{% for frame in frame_sequence %}"{{ frame|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}];
+  			window.projectId = {{ project_id }};
+  			window.spritecollection = [{% for sprite in sprite_collection %}"{{ sprite|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}];
+			
+  			var cameraMode = true;
+        initSam();
+        initSim();
+      };
+        
+      var simRunning = false;
+        
+      toggleSim = function() {
+        if( !simRunning ) {
+          if( interval = setInterval('tick()',1000) ) { simRunning = true; }
+        } else {
+          clearInterval(interval);
+          simRunning = false;
+        }
+      }
+    </script>
     
 
 </head>
@@ -67,7 +59,7 @@
 <div id="wholescreen">
   <!-- INTERFACE PANELS HERE -->
   <div id="construction_frame">
-  	<div id="container" ondrop="" ondragenter="return false" ondragover="return false"></div>
+  	<canvas id="container"></canvas>
   	<div id="video_frame">
   		<video id="camera"></video>
   		<div id="replay"></div>
@@ -95,6 +87,7 @@
     	</div>
     	<div id="sim_buttons">
     		<div class="menu_button" onclick="tick()">Play Once</div>
+    		<div class="menu_button" onclick="toggleSim()">Run</div>
     	</div>
   	</div>
   	<div id="sprite_drawer"></div>
