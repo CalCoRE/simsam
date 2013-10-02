@@ -163,7 +163,7 @@ function getResults() {
     cropFrameRegistry[frameId] = temp_canvas; //add to cropped elements by id
 
     sprite_drawer.appendChild(temp_canvas); //display in drawer
-    $("#sprite_drawer").sortable("refresh"); 
+    $("#sprite_drawer").sortable("refresh");
 
     saveCropCanvas(temp_canvas, frameId); //save the cropped image
 
