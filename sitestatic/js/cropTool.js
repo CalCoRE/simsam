@@ -1,5 +1,5 @@
 // variables for cropping tool
-var canvas, ctx, image, theSelection;
+var canvas, thisctx, image, theSelection;
 var iMouseX, iMouseY = 1;
 
 var cropFrames = []; //cropped elements in order
@@ -50,15 +50,15 @@ function drawScene() {
  	console.log("drawScene");
 	// code from http://www.script-tutorials.com/html5-image-crop-tool/ 
 	
-	ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); //clear canvas
+	thisctx.clearRect(0, 0, thisctx.canvas.width, thisctx.canvas.height); //clear canvas
 	
 	//draw source image
-	ctx.drawImage(image, 0, 0, ctx.canvas.width, ctx.canvas.height);
+	thisctx.drawImage(image, 0, 0, thisctx.canvas.width, thisctx.canvas.height);
 	
 	//make source image darker for outside crop box
-	ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-	ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
- 	console.log(ctx);
+	thisctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+	thisctx.fillRect(0, 0, thisctx.canvas.width, thisctx.canvas.height);
+ 	console.log(thisctx);
 	
 	//draw selection
 	theSelection.draw();
@@ -66,10 +66,10 @@ function drawScene() {
 
 function deleteRect() {
 	//delete the cropping rectangle on the canvas
-	ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+	thisctx.clearRect(0, 0, thisctx.canvas.width, thisctx.canvas.height);
 	
 	//draw the image
-	ctx.drawImage(image, 0, 0, ctx.canvas.width, ctx.canvas.height);
+	thisctx.drawImage(image, 0, 0, thisctx.canvas.width, thisctx.canvas.height);
 	
 	//unbind mousemove event
 	//canvas.click(screenClick());
@@ -175,17 +175,17 @@ function getResults() {
 Selection.prototype.draw = function() {
   // code from http://www.script-tutorials.com/html5-image-crop-tool/
 
-  ctx.strokeStyle = '#fff';
-  ctx.lineWidth = 2;
-  ctx.strokeRect(this.x, this.y, this.w, this.h);
+  thisctx.strokeStyle = '#fff';
+  thisctx.lineWidth = 2;
+  thisctx.strokeRect(this.x, this.y, this.w, this.h);
 
   //draw part of the original image
   if (this.w > 0 && this.h > 0) {
-		ctx.drawImage(image, this.x, this.y, this.w, this.h, this.x, this.y, this.w, this.h);
+		thisctx.drawImage(image, this.x, this.y, this.w, this.h, this.x, this.y, this.w, this.h);
   }
 
   //draw the resize corner cubes
-  ctx.fillStyle = '#fff';
+  thisctx.fillStyle = '#fff';
   /*ctx.fillRect(this.x - this.iCSize[0], 
   						 this.y - this.iCSize[0], 
   						 this.iCSize[0] * 2, 
@@ -194,7 +194,7 @@ Selection.prototype.draw = function() {
   						 this.y - this.iCSize[1], 
   						 this.iCSize[1] * 2, 
   						 this.iCSize[1] * 2);*/
-  ctx.fillRect(this.x + this.w - this.iCSize[2], 
+  thisctx.fillRect(this.x + this.w - this.iCSize[2], 
   						 this.y + this.h - this.iCSize[2], 
   						 this.iCSize[2] * 3, 
   						 this.iCSize[2] * 3);
@@ -218,7 +218,7 @@ function cropCanvas() {
   
   canvas = $(".playback-frame").get(0);
   
-  ctx = canvas.getContext('2d');
+  thisctx = canvas.getContext('2d');
   image = new Image();
   image.onload = function() {};
   image.src = canvas.toDataURL();
