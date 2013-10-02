@@ -160,86 +160,10 @@ function getResults() {
     var imageObj = new Image();
     imageObj.src = vData;
 
-/* old simsam
-    //when double-clicking on crop in drawer, add cropped image to sim stage ///MHWJ
-    temp_canvas.addEventListener('dblclick', function(){ 
-        addObject(imageObj);
-    });
-    Hammer(temp_canvas).on("doubletap", function(e){
-    	//e.preventDefault();
-    
-        var obj = new Kinetic.Image({
-      	  x: 100,
-          y: 100,
-	  image: imageObj,
-	  //draggable: true,
-	  startScale: 1,
-	  offset: [imageObj.width / 2, imageObj.height / 2]
-	});
-        
-	// when double clicking on the object that's been placed on the screen, give it rules.
-	// mhwj - eventually this needs to be converted to object types etc.
-	// maybe count how many are there.
-	Hammer(obj).on("doubletap", function(){
-	  
-	    this.moveToTop();
-	    if( this.getLayer() === simLayer ) {
-	    	this.moveTo(rulesLayer);
-	    	updateInitials(this);
-				rulesLayer.draw();
-	    } else {
-		    if (rulesMoved == true) {
-			  	rulesMoved = false;
-					this.r_x = this.getX() - this.i_x;
-					this.r_y = this.getY() - this.i_y;
-					this.r_s = this.getScale().x / this.i_s;
-					this.r_r = this.getRotation() - this.i_r;
-						
-			        output.innerHTML = this.r_x + ", " 
-			    			+ this.r_y + ", " 
-			    			+ this.r_s + ", "
-			  	 		+ this.r_r + "<br>"
-			    			+ output.innerHTML;
-						
-					this.setPosition(this.i_x, this.i_y);
-					this.setScale(this.i_s);
-					this.setRotation(this.i_r);
-						
-					clearInitials(this);
-						
-		    }
-	    
-		    this.moveTo(simLayer);
-		    rulesLayer.draw();
-		    simLayer.draw();
-            }
-	});
-		  
-	Hammer(obj).on("dragstart", function(){
-		// reset manip info
-	   	this.lastX = undefined;
-		this.lastY = undefined;
-		this.lastSlope = undefined;
-           	this.startDistance = undefined;
-          	this.startScale = this.getScale().x;
-		
-		targetShape = this;
-		this.moveToTop();
-	});
-		  
-	simLayer.add(obj);
-	simLayer.draw();
-	sprites.push(obj);
-		/*var objLayer = new Kinetic.Layer();
-		objLayer.add(obj);
-		stage.add(objLayer);
-    });
-    */
-
     cropFrameRegistry[frameId] = temp_canvas; //add to cropped elements by id
 
     sprite_drawer.appendChild(temp_canvas); //display in drawer
-    $("#sprite_drawer").sortable("refresh"); 
+    $("#sprite_drawer").sortable("refresh");
 
     saveCropCanvas(temp_canvas, frameId); //save the cropped image
 

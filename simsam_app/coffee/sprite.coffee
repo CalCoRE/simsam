@@ -1,15 +1,3 @@
-# random things I've learned about Kinetic.js
-
-# * positive x is to the RIGHT, positive y is DOWN, 0,0 is the upper left corner
-# * The "center" of the shape is initially it's upper left corner. We want to
-#   define it as half the width to the right and half the height down from there
-#   with the offset property. This allows rotation to happen about the true 
-#   center of the shape.
-# * You have to set the offset property when the shape is defined, you 
-#   apparently can't do it later (I might be wrong about this).
-# * You have to call layer.draw() after making changes to shapes in order to
-#   see anything on the screen.
-
 # A prototypical sprite
 class GenericSprite extends fabric.Image
     # These properties will be in the prototype of the Sprite
@@ -17,8 +5,6 @@ class GenericSprite extends fabric.Image
     # Variables prefixed with @ will be properties of individual sprite
     # instances.
     constructor: (@spriteId) ->
-        # Kinetic.Rect isn't a coffeescript class, so we can't just call
-        # super, unfortunately. This is almost as good.
         sWidth = this.spriteType * 5
                 
         shapeParams =
@@ -27,6 +13,7 @@ class GenericSprite extends fabric.Image
             fill: "rgb(0,255,0)", 
             stroke: "rgb(0,0,0)",
             cornerSize: 20
+        # Call fabric.Image's constructor so it can do its magic.
         super(this.imageObj, shapeParams)
         
     applyRules: (environment) ->
