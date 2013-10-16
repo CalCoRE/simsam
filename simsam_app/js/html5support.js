@@ -11,12 +11,21 @@
         return false;
       }
     },
-    getUserMedia: function() {
-      if (navigator.getUserMedia) {
-        return true;
-      } else {
-        return false;
+    getUserMedia: function(options, successCallback, errorCallback) {
+      var f, wrappedSuccessCallback;
+      f = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+      if (options === void 0) {
+        return Boolean(f);
       }
+      wrappedSuccessCallback = function(stream) {
+        var url;
+        url = window.URL || window.webkitURL;
+        if (url) {
+          stream = url.createObjectURL(stream);
+        }
+        return successCallback(stream);
+      };
+      return f.call(window.navigator, options, wrappedSuccessCallback, errorCallback);
     }
   };
 

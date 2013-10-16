@@ -86,7 +86,7 @@ $ ->
                 #if not available, start in playback mode
                 window.playbackIndex = 0
                 switchToPlaybackMode()
-            navigator.getUserMedia {audio:true, video:true}, success, failure
+            html5support.getUserMedia {video:true}, success, failure
         else
             anyCamera = false
             window.playbackIndex = 0
