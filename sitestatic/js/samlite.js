@@ -71,8 +71,7 @@
           window.playbackIndex = 0;
           return switchToPlaybackMode();
         };
-        return navigator.getUserMedia({
-          audio: true,
+        return html5support.getUserMedia({
           video: true
         }, success, failure);
       } else {
