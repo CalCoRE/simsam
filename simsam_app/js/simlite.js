@@ -5,6 +5,7 @@ window.initSim = (function(){
      */
     console.log("in simlite.js");
     canvas = new fabric.Canvas('container');
+	canvas.on({'object:modified': simObjectModified});
     
     //HACK - this should be something like css' max-height = 100% etc.
     // maybe not possible because resizing after setting stretches the canvas img.
@@ -18,6 +19,12 @@ window.initSim = (function(){
     // listen for a doubleclick. 
     fabric.util.addListener(fabric.document, 'dblclick', toggleRecord);
     function toggleRecord(ev) {
+		// Assert we're at least clicking on the canvas
+		loc = canvas.getPointer(ev);
+		width = canvas.getWidth();
+		height = canvas.getHeight();
+		if (loc.x > width || loc.y > height) return;
+		console.log('toggleRecord');
         selectedObject = canvas.getActiveObject();
         if( selectedObject !== null ) { // if one object is selected this fires
             if( recording !== selectedObject ) {
@@ -29,8 +36,12 @@ window.initSim = (function(){
                 endState = getObjectState(selectedObject);
                 console.log(endState);
                 selectedObject.showNormal();
-                console.log(getD(initState, endState));
-                selectedObject.addTransform(getD(initState, endState));
+                console.log(getD(initState, endState) + ' stype: ' + selectedObject.spriteType);
+				r = new Rule(selectedObject.spriteType);
+				r.setActionType('transform');
+                r.addTransform(initState, endState);
+				selectedObject.addRule(r);
+                //selectedObject.addTransform(getD(initState, endState), initState, endState);
                 recording = [];
             }
         }
@@ -57,4 +68,21 @@ getD = function(init , end) {
         dy: end.top - init.top,
         dr: end.angle - init.angle
     }
+}
+
+simObjectModified = function(options) {
+	if (options.target) {
+		target = options.target;
+		intersetObj = null;
+		// Don't think we need to assert SIM mode b/c we trigger 'modified'
+		// Maybe also assert that we're in recording mode
+		canvas.forEachObject(function(obj) {
+			if (obj === target) return;
+			if (obj.intersectsWithObject(target)) {
+				if (typeof(target.interactionEvent) != "undefined") {
+					target.interactionEvent(obj);
+				}
+			}
+		});
+	}
 }

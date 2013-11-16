@@ -6,7 +6,7 @@ class GenericSprite extends fabric.Image
     # instances.
     constructor: (@spriteId) ->
         sWidth = this.spriteType * 5
-                
+
         shapeParams =
             height: this.imageObj.clientHeight, 
             width: this.imageObj.clientWidth, 
@@ -15,11 +15,28 @@ class GenericSprite extends fabric.Image
             cornerSize: 20
         # Call fabric.Image's constructor so it can do its magic.
         super(this.imageObj, shapeParams)
-        
+
+    # Whatever UI event we decide creates an interaction has occurred
+    interactionEvent: (obj) ->
+        console.log('Received interaction between ' + this + ' and ' + obj)
+        intact = new OverlapInteraction
+        addIRule(intact)
+        # Because 'this' is special, forEachObject will get the wrong 'this'
+        #myImg = this
+        #canvas.forEachObject (obj) ->
+        #if obj == myImg
+        #return
+        #if myImg.intersectsWithObject(obj)
+        #console.log('Intersect!')
+
     applyRules: (environment) ->
         for rule in @_rules
             # call each rule's act method, supplying this sprite and
             # information about other sprites in its environment
+            console.log('applying rule' + rule)
+            rule.act(this, environment)
+        for rule in @_irules
+            console.log('Applying an iRule')
             rule.act(this, environment)
 
     # returns the index of the new rule
@@ -35,23 +52,10 @@ class GenericSprite extends fabric.Image
         else
             throw Error("The rule index #{index} doesn't exist.")
 
-    addTransform: (transform) ->
-        myRule = new Rule(transform);
-        #myRule.setTransform(transform);
-        this.addRule(myRule);
+    addIRule: (rule) ->
+        @_irules.push(rule)
+        return @_irules.length - 1
 
-    applyTransform: (transform) ->
-        console.log("apply transform " , transform)
-        this.set({
-            left: this.getLeft() + transform.dx
-            top: this.getTop() + transform.dy
-            angle: this.getAngle() + transform.dr
-            #width: this.getWidth() * transform.dxScale
-            width: this.getWidth() + transform.dxScale
-            #height: this.getHeight * transform.dyScale
-            height: this.getHeight() + transform.dyScale
-        })
-    
     showLearning: ->
         console.log("showLearning")
         this.set({
@@ -88,29 +92,43 @@ SpriteFactory = (spriteType, imageObj) ->
         # instances of that Sprite.
         _rules: []
 
+        # We need to apply interaction rules AFTER the regular rules so that
+        # after any transform, interaction can be detected.
+        # N.B. If you find yourself adding another one of these for any
+        # reason, you should probably change rules to take a rule and a
+        # priority.  Seemed overly complex for now.
+        _irules: []
+
     return Sprite
 
 # simple transform applied all the time, ignores environment
-class Rule
-    defaultTransform:
-            dx: 0
-            dy: 0
-            dr: 0
-            dxScale: 1
-            dyScale: 1
+class window.Rule
 
-    constructor: (transform) ->
-        # fill in any missing values with intelligent defaults
-        for p, v of @defaultTransform
-            if p not of transform
-                transform[p] = v
-        @transform = transform
+    constructor: (@spriteType) ->
     
     act: (sprite, environment) ->
-    
+        console.log('Rule[' + @name + '].act: ' + sprite.spriteType)
+        if @action != null
+            @action.act(sprite)
         # this isn't an interaction, so just apply the rule without checking
         # anything
-        sprite.applyTransform(@transform)
+
+    # Allowable types are, well in the case statement
+    setActionType: (type) ->
+        @type = type
+        actClass = switch type
+            when 'transform' then TransformAction
+            # Later we add 'Delete' and 'Clone' at least
+        @action = new actClass()
+
+    addTransform: (start, end) ->
+        console.log('addTransform')
+        if @type != 'transform'
+            console.log('Error: addTransform called on other type of Rule')
+
+        @action = new TransformAction()
+        @action.setTransformDelta(start, end)
+
         
 # a transform which is conditional on the environment of the sprite
 class Interaction extends Rule
@@ -135,10 +153,58 @@ class Interaction extends Rule
         if shouldAct
             sprite.applyTransform(@transform)
 
+class OverlapInteraction extends Rule
+    # This might just replace Interaction, but for now it's separate because
+    # I wasn't sure if Interaction is used.  I think it is not.
+
+    setEnvironment: (@requiredEnvironment) ->
+
+    act: (sprite, environment) ->
+        console.log("applying OverlapIntersection")
+        shouldAct = false
+
+        canvas.forEachObject (obj) ->
+            console.log('Interaction checking: ' + obj)
+
+class Action
+
+    # Override this function to do, well, whatever you're doing
+    act: ->
+        console.log("Action is an abstract class, don't use it.")
+
+class TransformAction extends Action
+
+    constructor: ->
+        @transform = {dx:0, dy:0, dr:0, dxScale:1, dyScale: 1}
+        console.log('Constructor on Sprite: ')
+        super()
+
+    # Takes a start and end state as returned by getObjectState
+    setTransformDelta: (start, end) ->
+        @transform.dxScale  = end.width - start.width
+        @transform.dyScale  = end.height - start.height
+        @transform.dx       = end.left - start.left
+        @transform.dy       = end.top - start.top
+        @transform.dr       = end.angle - start.angle
+
+    act: (sprite) ->
+        console.log('TransformAction calling act on ' + @sprite)
+        sprite.set({
+            left: sprite.getLeft() + @transform.dx
+            top: sprite.getTop() + @transform.dy
+            angle: sprite.getAngle() + @transform.dr
+            #width: @sprite.getWidth() * transform.dxScale
+            width: sprite.getWidth() + @transform.dxScale
+            #height: @sprite.getHeight * transform.dyScale
+            height: sprite.getHeight() + @transform.dyScale
+        })
+
+
 window.spriteList = []
 window.spriteTypeList = []
 
 window.tick = ->
+    console.log('tick')
     for sprite in spriteList
         sprite.applyRules()
     canvas.renderAll()
