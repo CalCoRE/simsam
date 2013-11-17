@@ -25,22 +25,28 @@
     GenericSprite.prototype.interactionEvent = function(obj) {
       var intact;
       console.log('Received interaction between ' + this + ' and ' + obj);
-      intact = new OverlapInteraction;
-      return addIRule(intact);
+      intact = new OverlapInteraction(obj);
+      return this.addIRule(intact);
     };
 
     GenericSprite.prototype.applyRules = function(environment) {
-      var rule, _i, _j, _len, _len1, _ref, _ref1, _results;
+      var rule, _i, _len, _ref, _results;
       _ref = this._rules;
+      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         rule = _ref[_i];
         console.log('applying rule' + rule);
-        rule.act(this, environment);
+        _results.push(rule.act(this, environment));
       }
-      _ref1 = this._irules;
+      return _results;
+    };
+
+    GenericSprite.prototype.applyIRules = function(environment) {
+      var rule, _i, _len, _ref, _results;
+      _ref = this._irules;
       _results = [];
-      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-        rule = _ref1[_j];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        rule = _ref[_i];
         console.log('Applying an iRule');
         _results.push(rule.act(this, environment));
       }
@@ -156,8 +162,9 @@
 
     __extends(Interaction, _super);
 
-    function Interaction() {
-      return Interaction.__super__.constructor.apply(this, arguments);
+    function Interaction(target) {
+      console.log('Interaction: New ' + target.spriteType);
+      this.targetType = target.spriteType;
     }
 
     Interaction.prototype.setEnvironment = function(requiredEnvironment) {
@@ -197,18 +204,41 @@
       this.requiredEnvironment = requiredEnvironment;
     };
 
+    OverlapInteraction.prototype.actOn = function(sprite) {
+      var obj, objects, _i, _len;
+      objects = canvas.getObjects();
+      for (_i = 0, _len = objects.length; _i < _len; _i++) {
+        obj = objects[_i];
+        console.log('checking int on ' + obj.getLeft() + ' with ' + sprite.getLeft());
+        if (obj === sprite) {
+          continue;
+        }
+        if (!(obj instanceof GenericSprite)) {
+          continue;
+        }
+        if (obj.spriteType !== this.targetType) {
+          continue;
+        }
+        if (obj.intersectsWithObject(sprite)) {
+          return obj;
+        }
+      }
+      return false;
+    };
+
     OverlapInteraction.prototype.act = function(sprite, environment) {
-      var shouldAct;
+      var obj;
+      obj = this.actOn(sprite);
+      if (obj === false) {
+        return false;
+      }
       console.log("applying OverlapIntersection");
-      shouldAct = false;
-      return canvas.forEachObject(function(obj) {
-        return console.log('Interaction checking: ' + obj);
-      });
+      return canvas.remove(sprite);
     };
 
     return OverlapInteraction;
 
-  })(Rule);
+  })(Interaction);
 
   Action = (function() {
 
@@ -234,8 +264,6 @@
         dxScale: 1,
         dyScale: 1
       };
-      console.log('Constructor on Sprite: ');
-      TransformAction.__super__.constructor.call(this);
     }
 
     TransformAction.prototype.setTransformDelta = function(start, end) {
@@ -247,14 +275,15 @@
     };
 
     TransformAction.prototype.act = function(sprite) {
-      console.log('TransformAction calling act on ' + this.sprite);
-      return sprite.set({
+      console.log('TransformAction calling act on ' + sprite);
+      sprite.set({
         left: sprite.getLeft() + this.transform.dx,
         top: sprite.getTop() + this.transform.dy,
         angle: sprite.getAngle() + this.transform.dr,
         width: sprite.getWidth() + this.transform.dxScale,
         height: sprite.getHeight() + this.transform.dyScale
       });
+      return sprite.setCoords();
     };
 
     return TransformAction;
@@ -266,12 +295,17 @@
   window.spriteTypeList = [];
 
   window.tick = function() {
-    var sprite, _i, _len;
+    var sprite, _i, _j, _len, _len1;
     console.log('tick');
     for (_i = 0, _len = spriteList.length; _i < _len; _i++) {
       sprite = spriteList[_i];
       sprite.applyRules();
     }
+    for (_j = 0, _len1 = spriteList.length; _j < _len1; _j++) {
+      sprite = spriteList[_j];
+      sprite.applyIRules();
+    }
+    canvas.renderAll.bind(canvas);
     return canvas.renderAll();
   };
 

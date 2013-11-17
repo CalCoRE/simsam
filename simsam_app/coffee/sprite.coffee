@@ -16,18 +16,11 @@ class GenericSprite extends fabric.Image
         # Call fabric.Image's constructor so it can do its magic.
         super(this.imageObj, shapeParams)
 
-    # Whatever UI event we decide creates an interaction has occurred
+    # Whatever UI event we decide should create an interaction, has occurred
     interactionEvent: (obj) ->
         console.log('Received interaction between ' + this + ' and ' + obj)
-        intact = new OverlapInteraction
-        addIRule(intact)
-        # Because 'this' is special, forEachObject will get the wrong 'this'
-        #myImg = this
-        #canvas.forEachObject (obj) ->
-        #if obj == myImg
-        #return
-        #if myImg.intersectsWithObject(obj)
-        #console.log('Intersect!')
+        intact = new OverlapInteraction(obj)
+        this.addIRule(intact)
 
     applyRules: (environment) ->
         for rule in @_rules
@@ -35,6 +28,8 @@ class GenericSprite extends fabric.Image
             # information about other sprites in its environment
             console.log('applying rule' + rule)
             rule.act(this, environment)
+
+    applyIRules: (environment) ->
         for rule in @_irules
             console.log('Applying an iRule')
             rule.act(this, environment)
@@ -101,6 +96,10 @@ SpriteFactory = (spriteType, imageObj) ->
 
     return Sprite
 
+#
+#
+# Rules
+#
 # simple transform applied all the time, ignores environment
 class window.Rule
 
@@ -132,6 +131,10 @@ class window.Rule
         
 # a transform which is conditional on the environment of the sprite
 class Interaction extends Rule
+    constructor: (target) ->
+        console.log('Interaction: New ' + target.spriteType)
+        @targetType = target.spriteType
+        # The type of Sprite with which we interact
     # I imagine an environment as a object with properties corresponding to
     # spriteTypes, where the value of each is an integer indicating how many
     # sprites of that type are in the environment, e.g.
@@ -153,31 +156,48 @@ class Interaction extends Rule
         if shouldAct
             sprite.applyTransform(@transform)
 
-class OverlapInteraction extends Rule
+class OverlapInteraction extends Interaction
     # This might just replace Interaction, but for now it's separate because
     # I wasn't sure if Interaction is used.  I think it is not.
 
     setEnvironment: (@requiredEnvironment) ->
 
+    # Returns sprite that we interact with or false if none
+    actOn: (sprite) ->
+        objects = canvas.getObjects()
+        for obj in objects
+            console.log('checking int on ' + obj.getLeft() + ' with ' + sprite.getLeft())
+            if obj == sprite
+                continue
+            if obj not instanceof GenericSprite
+                continue
+            if obj.spriteType != @targetType
+                continue
+            if obj.intersectsWithObject(sprite)
+                return obj
+        # We didn't find anything
+        return false
+
     act: (sprite, environment) ->
+        obj = this.actOn(sprite)
+        if obj == false
+            return false
         console.log("applying OverlapIntersection")
-        shouldAct = false
+        canvas.remove(sprite)
 
-        canvas.forEachObject (obj) ->
-            console.log('Interaction checking: ' + obj)
-
+#
+#
+# Actions - Transform, Delete, Clone, Random Transform, etc.
+#     Actions handle the "what" and Rules handle the "When"
+#
 class Action
-
     # Override this function to do, well, whatever you're doing
     act: ->
         console.log("Action is an abstract class, don't use it.")
 
 class TransformAction extends Action
-
     constructor: ->
         @transform = {dx:0, dy:0, dr:0, dxScale:1, dyScale: 1}
-        console.log('Constructor on Sprite: ')
-        super()
 
     # Takes a start and end state as returned by getObjectState
     setTransformDelta: (start, end) ->
@@ -188,7 +208,7 @@ class TransformAction extends Action
         @transform.dr       = end.angle - start.angle
 
     act: (sprite) ->
-        console.log('TransformAction calling act on ' + @sprite)
+        console.log('TransformAction calling act on ' + sprite)
         sprite.set({
             left: sprite.getLeft() + @transform.dx
             top: sprite.getTop() + @transform.dy
@@ -199,6 +219,9 @@ class TransformAction extends Action
             height: sprite.getHeight() + @transform.dyScale
         })
 
+        # Tell the sprite to update its internal state for intersect checks
+        sprite.setCoords()
+
 
 window.spriteList = []
 window.spriteTypeList = []
@@ -207,6 +230,9 @@ window.tick = ->
     console.log('tick')
     for sprite in spriteList
         sprite.applyRules()
+    for sprite in spriteList
+        sprite.applyIRules()
+    canvas.renderAll.bind(canvas)
     canvas.renderAll()
 
 

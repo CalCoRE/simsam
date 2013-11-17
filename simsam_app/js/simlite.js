@@ -73,6 +73,10 @@ getD = function(init , end) {
 simObjectModified = function(options) {
 	if (options.target) {
 		target = options.target;
+		if (recording !== options.target) {
+			console.log("Our target isn't being edited");
+			return;
+		}
 		intersetObj = null;
 		// Don't think we need to assert SIM mode b/c we trigger 'modified'
 		// Maybe also assert that we're in recording mode
@@ -80,6 +84,8 @@ simObjectModified = function(options) {
 			if (obj === target) return;
 			if (obj.intersectsWithObject(target)) {
 				if (typeof(target.interactionEvent) != "undefined") {
+					// XXX Now add a UI and add the interactionEvent after
+					// the user selects which type of action to take
 					target.interactionEvent(obj);
 				}
 			}
