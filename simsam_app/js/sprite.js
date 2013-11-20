@@ -14,6 +14,7 @@
       this.stateTranspose = false;
       this.stateRecording = false;
       this.ruleTempObject = null;
+      this.prepObj = null;
       sWidth = this.spriteType * 5;
       shapeParams = {
         height: this.imageObj.clientHeight,
@@ -28,7 +29,7 @@
     GenericSprite.prototype.interactionEvent = function(obj) {
       var surviveObj;
       if (this.stateTranspose) {
-        console.log("I didn't think this was possible");
+        console.log("Error: interactionEvent called during Transpose");
         return;
       }
       console.log('Received interaction between ' + this + ' and ' + obj);
@@ -58,6 +59,20 @@
         rule = _ref[_i];
         console.log('applying rule' + rule);
         _results.push(rule.act(this, environment));
+      }
+      return _results;
+    };
+
+    GenericSprite.prototype.prepIRules = function(environment) {
+      var rule, _i, _len, _ref, _results;
+      _ref = this._irules;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        rule = _ref[_i];
+        if (rule === void 0) {
+          continue;
+        }
+        _results.push(this.prepObj = rule.prep(this, environment));
       }
       return _results;
     };
@@ -185,6 +200,8 @@
       }
     };
 
+    Rule.prototype.prep = function(sprite, environment) {};
+
     Rule.prototype.setActionType = function(type) {
       var actClass;
       this.type = type;
@@ -256,6 +273,10 @@
       this.requiredEnvironment = requiredEnvironment;
     };
 
+    OverlapInteraction.prototype.prep = function(sprite, environment) {
+      return this.actOn(sprite);
+    };
+
     OverlapInteraction.prototype.actOn = function(sprite) {
       var obj, objects, _i, _len;
       objects = canvas.getObjects();
@@ -279,12 +300,13 @@
 
     OverlapInteraction.prototype.act = function(sprite, environment) {
       var obj;
-      obj = this.actOn(sprite);
+      obj = sprite.prepObj;
       if (obj === false) {
         return false;
       }
-      console.log("applying OverlapIntersection");
-      return this.action.act(sprite);
+      console.log("applying OverlapIntersection on " + sprite);
+      this.action.act(sprite);
+      return sprite.prepObj = null;
     };
 
     return OverlapInteraction;
@@ -346,13 +368,17 @@
   window.spriteTypeList = [];
 
   window.tick = function() {
-    var sprite, _i, _j, _len, _len1;
+    var sprite, _i, _j, _k, _len, _len1, _len2;
     for (_i = 0, _len = spriteList.length; _i < _len; _i++) {
       sprite = spriteList[_i];
       sprite.applyRules();
     }
     for (_j = 0, _len1 = spriteList.length; _j < _len1; _j++) {
       sprite = spriteList[_j];
+      sprite.prepIRules();
+    }
+    for (_k = 0, _len2 = spriteList.length; _k < _len2; _k++) {
+      sprite = spriteList[_k];
       sprite.applyIRules();
     }
     canvas.renderAll.bind(canvas);

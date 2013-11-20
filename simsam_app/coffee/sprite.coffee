@@ -8,6 +8,7 @@ class GenericSprite extends fabric.Image
         @stateTranspose = false
         @stateRecording = false
         @ruleTempObject = null
+        @prepObj = null
         sWidth = this.spriteType * 5
 
         shapeParams =
@@ -23,7 +24,7 @@ class GenericSprite extends fabric.Image
     interactionEvent: (obj) ->
         # Don't create another event if we're recording a transpose
         if @stateTranspose
-            console.log("I didn't think this was possible")
+            console.log("Error: interactionEvent called during Transpose")
             return
         console.log('Received interaction between ' + this + ' and ' + obj)
         # Clear recording if we thought that's what we were doing
@@ -49,6 +50,12 @@ class GenericSprite extends fabric.Image
             # information about other sprites in its environment
             console.log('applying rule' + rule)
             rule.act(this, environment)
+
+    prepIRules: (environment) ->
+        for rule in @_irules
+            if rule == undefined
+                continue
+            @prepObj = rule.prep(this, environment)
 
     applyIRules: (environment) ->
         console.log('--Interaction Rules')
@@ -152,7 +159,6 @@ SpriteFactory = (spriteType, imageObj) ->
 #
 # simple transform applied all the time, ignores environment
 class Rule
-
     constructor: (@spriteType) ->
     
     act: (sprite, environment) ->
@@ -161,6 +167,9 @@ class Rule
             @action.act(sprite)
         # this isn't an interaction, so just apply the rule without checking
         # anything
+
+    prep: (sprite, environment) ->
+        return
 
     # Allowable types are, well in the case statement
     setActionType: (type) ->
@@ -212,6 +221,9 @@ class OverlapInteraction extends Interaction
 
     setEnvironment: (@requiredEnvironment) ->
 
+    prep: (sprite, environment) ->
+        return this.actOn(sprite)
+
     # Returns sprite that we interact with or false if none
     actOn: (sprite) ->
         objects = canvas.getObjects()
@@ -228,11 +240,11 @@ class OverlapInteraction extends Interaction
         return false
 
     act: (sprite, environment) ->
-        obj = this.actOn(sprite)
+        obj = sprite.prepObj
         if obj == false
             return false
-        console.log("applying OverlapIntersection")
         @action.act(sprite)
+        sprite.prepObj = null
 
 #
 #
@@ -257,7 +269,6 @@ class TransformAction extends Action
         @transform.dr       = end.angle - start.angle
 
     act: (sprite) ->
-        console.log('TransformAction calling act on ' + sprite)
         sprite.set({
             left: sprite.getLeft() + @transform.dx
             top: sprite.getTop() + @transform.dy
@@ -275,9 +286,15 @@ class TransformAction extends Action
 window.spriteList = []
 window.spriteTypeList = []
 
+# Take another simulation step
+#  First, apply simple rules
+#  Second, pass to check for interactions from simple rule application
+#  Third, Apply interaction rules matched by #2.
 window.tick = ->
     for sprite in spriteList
         sprite.applyRules()
+    for sprite in spriteList
+        sprite.prepIRules()
     for sprite in spriteList
         sprite.applyIRules()
     canvas.renderAll.bind(canvas)
