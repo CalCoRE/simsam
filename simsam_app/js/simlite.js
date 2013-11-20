@@ -12,10 +12,6 @@ window.initSim = (function(){
     canvas.setHeight(1000);
     canvas.setWidth(1000);
     
-    recording = [];
-    initState = {};
-    endState = {};
-    
     // listen for a doubleclick. 
     fabric.util.addListener(fabric.document, 'dblclick', toggleRecord);
     function toggleRecord(ev) {
@@ -27,23 +23,7 @@ window.initSim = (function(){
 		console.log('toggleRecord');
         selectedObject = canvas.getActiveObject();
         if( selectedObject !== null ) { // if one object is selected this fires
-            if( recording !== selectedObject ) {
-                initState = getObjectState(selectedObject);
-                console.log(initState);
-                selectedObject.showLearning();
-                recording = selectedObject;
-            } else {
-                endState = getObjectState(selectedObject);
-                console.log(endState);
-                selectedObject.showNormal();
-                console.log(getD(initState, endState) + ' stype: ' + selectedObject.spriteType);
-				r = new Rule(selectedObject.spriteType);
-				r.setActionType('transform');
-                r.addTransform(initState, endState);
-				selectedObject.addRule(r);
-                //selectedObject.addTransform(getD(initState, endState), initState, endState);
-                recording = [];
-            }
+			selectedObject.learningToggle();
         }
     }
 });
@@ -70,16 +50,20 @@ getD = function(init , end) {
     }
 }
 
+// Called every time a sim object has finished moving so we can see if it
+// is interacting, etc.
 simObjectModified = function(options) {
 	if (options.target) {
 		target = options.target;
-		if (recording !== options.target) {
+		if (!target.hasOwnProperty('stateRecording') || 
+				!target.stateRecording) {
 			console.log("Our target isn't being edited");
 			return;
 		}
 		intersetObj = null;
 		// Don't think we need to assert SIM mode b/c we trigger 'modified'
-		// Maybe also assert that we're in recording mode
+		// If we're in recording mode and we are dropped on another object,
+		//   then begin the creation of an interaction rule.
 		canvas.forEachObject(function(obj) {
 			if (obj === target) return;
 			if (obj.intersectsWithObject(target)) {
@@ -92,3 +76,39 @@ simObjectModified = function(options) {
 		});
 	}
 }
+
+/* User Interface code for Sprite InteractionRule */
+uiInteractionCB = null;
+
+uiInteractionChoose = function(sprite, callback) {
+	console.log('uiInteractionChoose');
+	uiInteractionCB = callback;
+	posLeft = sprite.getLeft();
+	width = sprite.getWidth();
+	posTop = sprite.getTop();
+	height = sprite.getHeight();
+	// Right now we're using centered positions.  Adjust.
+	posLeft += width / 2 + 15; // +15 padding
+	posTop -= height;
+	$('#interactions').css("top", posTop);
+	$('#interactions').css("left", posLeft);
+	$('#interactions').show();
+}
+
+$(document).ready(function() {
+	interMap = { 'uich_trans': 'transpose',
+		'uich_clone': 'clone',
+		'uich_delete': 'delete',
+	};
+	$('.uich').click(function () {
+		$('.simui').hide();
+		action = interMap[$(this).attr('id')];
+		if (action === undefined) {
+			console.log('Error: You have included a UI element with no action');
+			return false;
+		}
+		uiInteractionCB(action);
+		return false;
+	});
+
+});

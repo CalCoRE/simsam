@@ -5,6 +5,9 @@ class GenericSprite extends fabric.Image
     # Variables prefixed with @ will be properties of individual sprite
     # instances.
     constructor: (@spriteId) ->
+        @stateTranspose = false
+        @stateRecording = false
+        @ruleTempObject = null
         sWidth = this.spriteType * 5
 
         shapeParams =
@@ -18,11 +21,29 @@ class GenericSprite extends fabric.Image
 
     # Whatever UI event we decide should create an interaction, has occurred
     interactionEvent: (obj) ->
+        # Don't create another event if we're recording a transpose
+        if @stateTranspose
+            console.log("I didn't think this was possible")
+            return
         console.log('Received interaction between ' + this + ' and ' + obj)
-        intact = new OverlapInteraction(obj)
-        this.addIRule(intact)
+        # Clear recording if we thought that's what we were doing
+        @stateRecording = false
+        @ruleTempObject = obj
+        surviveObj = this
+        uiInteractionChoose(this, (choice) ->
+            surviveObj.interactionCallback(choice)
+        )
+
+    # User selected the type of interaction via UI widget
+    interactionCallback: (choice) ->
+        console.log('Received interaction callback ' + choice)
+        if choice == 'transpose'
+            @stateTranspose = true
+            @initState = getObjectState(this)
+            @stateRecording = false
 
     applyRules: (environment) ->
+        console.log('--Regular Rules')
         for rule in @_rules
             # call each rule's act method, supplying this sprite and
             # information about other sprites in its environment
@@ -30,8 +51,12 @@ class GenericSprite extends fabric.Image
             rule.act(this, environment)
 
     applyIRules: (environment) ->
+        console.log('--Interaction Rules')
         for rule in @_irules
             console.log('Applying an iRule')
+            # CoffeeScript design flaw requires this
+            if (rule == undefined)
+                continue
             rule.act(this, environment)
 
     # returns the index of the new rule
@@ -47,9 +72,34 @@ class GenericSprite extends fabric.Image
         else
             throw Error("The rule index #{index} doesn't exist.")
 
-    addIRule: (rule) ->
-        @_irules.push(rule)
+    # index of the irule so we overwrite duplicates
+    addIRule: (rule, index) ->
+        @_irules[index] = rule
         return @_irules.length - 1
+
+    learningToggle: ->
+        if @stateTranspose
+            @stateTranspose = false
+            this.showNormal()
+            # Here we should record the movement as a transpose
+            endState = getObjectState(this)
+            r = new OverlapInteraction(@ruleTempObject)
+            r.setActionType('transform')
+            r.addTransform(@initState, endState)
+            this.addIRule(r, @ruleTempObject.spriteType)
+            return
+        if not @stateRecording
+            @initState = getObjectState(this)
+            this.showLearning()
+            @stateRecording = true
+        else
+            endState = getObjectState(this)
+            this.showNormal()
+            r = new Rule(this.spriteType)
+            r.setActionType('transform')
+            r.addTransform(@initState, endState)
+            this.addRule(r)
+            @stateRecording = false
 
     showLearning: ->
         console.log("showLearning")
@@ -101,7 +151,7 @@ SpriteFactory = (spriteType, imageObj) ->
 # Rules
 #
 # simple transform applied all the time, ignores environment
-class window.Rule
+class Rule
 
     constructor: (@spriteType) ->
     
@@ -166,7 +216,6 @@ class OverlapInteraction extends Interaction
     actOn: (sprite) ->
         objects = canvas.getObjects()
         for obj in objects
-            console.log('checking int on ' + obj.getLeft() + ' with ' + sprite.getLeft())
             if obj == sprite
                 continue
             if obj not instanceof GenericSprite
@@ -183,7 +232,7 @@ class OverlapInteraction extends Interaction
         if obj == false
             return false
         console.log("applying OverlapIntersection")
-        canvas.remove(sprite)
+        @action.act(sprite)
 
 #
 #
@@ -227,7 +276,6 @@ window.spriteList = []
 window.spriteTypeList = []
 
 window.tick = ->
-    console.log('tick')
     for sprite in spriteList
         sprite.applyRules()
     for sprite in spriteList
