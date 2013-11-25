@@ -156,6 +156,20 @@
       return canvas.renderAll();
     };
 
+    GenericSprite.prototype.trueIntersectsWithObject = function(obj) {
+      console.log('trueIntersectsWithObject');
+      if (this.intersectsWithObject(obj)) {
+        return true;
+      }
+      if (this.isContainedWithinObject(obj)) {
+        return true;
+      }
+      if (obj.isContainedWithinObject(this)) {
+        return true;
+      }
+      return false;
+    };
+
     return GenericSprite;
 
   })(fabric.Image);
@@ -291,7 +305,7 @@
         if (obj.spriteType !== this.targetType) {
           continue;
         }
-        if (obj.intersectsWithObject(sprite)) {
+        if (obj.trueIntersectsWithObject(sprite)) {
           return obj;
         }
       }
@@ -304,7 +318,6 @@
       if (obj === false) {
         return false;
       }
-      console.log("applying OverlapIntersection on " + sprite);
       this.action.act(sprite);
       return sprite.prepObj = null;
     };
@@ -348,7 +361,6 @@
     };
 
     TransformAction.prototype.act = function(sprite) {
-      console.log('TransformAction calling act on ' + sprite);
       sprite.set({
         left: sprite.getLeft() + this.transform.dx,
         top: sprite.getTop() + this.transform.dy,

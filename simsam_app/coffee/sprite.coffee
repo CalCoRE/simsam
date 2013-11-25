@@ -12,9 +12,9 @@ class GenericSprite extends fabric.Image
         sWidth = this.spriteType * 5
 
         shapeParams =
-            height: this.imageObj.clientHeight, 
-            width: this.imageObj.clientWidth, 
-            fill: "rgb(0,255,0)", 
+            height: this.imageObj.clientHeight,
+            width: this.imageObj.clientWidth,
+            fill: "rgb(0,255,0)",
             stroke: "rgb(0,0,0)",
             cornerSize: 20
         # Call fabric.Image's constructor so it can do its magic.
@@ -123,6 +123,17 @@ class GenericSprite extends fabric.Image
             cornerColor: "rgb(210,210,255)",
         })
         canvas.renderAll();
+        
+    # Intersects OR contains OR is contained
+    trueIntersectsWithObject: (obj) ->
+        if this.intersectsWithObject(obj)
+            return true
+        if this.isContainedWithinObject(obj)
+            return true
+        if obj.isContainedWithinObject(this)
+            return true
+        return false
+
 
 # makes classes for different types of sprites
 SpriteFactory = (spriteType, imageObj) ->
@@ -234,7 +245,7 @@ class OverlapInteraction extends Interaction
                 continue
             if obj.spriteType != @targetType
                 continue
-            if obj.intersectsWithObject(sprite)
+            if obj.trueIntersectsWithObject(sprite)
                 return obj
         # We didn't find anything
         return false

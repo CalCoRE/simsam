@@ -66,7 +66,7 @@ simObjectModified = function(options) {
 		//   then begin the creation of an interaction rule.
 		canvas.forEachObject(function(obj) {
 			if (obj === target) return;
-			if (obj.intersectsWithObject(target)) {
+			if (obj.trueIntersectsWithObject(target)) {
 				if (typeof(target.interactionEvent) != "undefined") {
 					// XXX Now add a UI and add the interactionEvent after
 					// the user selects which type of action to take
