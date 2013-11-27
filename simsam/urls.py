@@ -29,6 +29,7 @@ urlpatterns = patterns('',
     url(r"^chooseanim/?$", simsam_app.views.chooseanim),
     url(r"^app/?$", simsam_app.views.app),
     url(r"^save_image/?$", simsam_app.views.save_image),
+    url(r"^delete_image/?$", simsam_app.views.delete_image),
     url(r"^save_frame_sequence/?$", simsam_app.views.save_frame_sequence),
 
     # Uncomment the admin/doc line below to enable admin documentation:

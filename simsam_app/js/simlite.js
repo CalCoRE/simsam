@@ -6,6 +6,8 @@ window.initSim = (function(){
     console.log("in simlite.js");
     canvas = new fabric.Canvas('container');
 	canvas.on({'object:modified': simObjectModified});
+	canvas.on({'object:selected': simObjectSelected});
+	canvas.on({'selection:cleared': simObjectCleared});
     
     //HACK - this should be something like css' max-height = 100% etc.
     // maybe not possible because resizing after setting stretches the canvas img.
@@ -24,9 +26,28 @@ window.initSim = (function(){
         selectedObject = canvas.getActiveObject();
         if( selectedObject !== null ) { // if one object is selected this fires
 			selectedObject.learningToggle();
-        }
+			if (selectedObject.stateRecording) {
+				$('#modifying').show(250);
+			} else {
+				$('#modifying').hide(250);
+			}
+		}
     }
 });
+
+// Utility Functions
+pointWithinElement = function(x, y, element) {
+
+	x1 = $(element).position().left;
+	y1 = $(element).position().top;
+	x2 = $(element).outerWidth() + x1;
+	y2 = $(element).outerHeight() + y1;
+
+	if (x < x1 || x > x2) return false;
+	if (y < y1 || y > y2) return false;
+
+	return true;
+}
 
 getObjectState = function(object) {
     return {
@@ -48,6 +69,29 @@ getD = function(init , end) {
         dy: end.top - init.top,
         dr: end.angle - init.angle
     }
+}
+
+simObjectSelected = function(options) {
+	$('#selected').show(250);
+}
+
+simObjectCleared = function(options) {
+	$('#selected').hide(250);
+}
+
+
+//
+// django functions
+//
+djangoDeleteImage = function(image_hash) {
+	$.ajax({
+		url: 'delete_image',
+		type: 'POST',
+		data: {
+			image_hash: image_hash
+		},
+	dataType: 'json'
+	});
 }
 
 // Called every time a sim object has finished moving so we can see if it
@@ -77,11 +121,92 @@ simObjectModified = function(options) {
 	}
 }
 
+//
+// User Interface for Modifying Objects
+//
+deleteImageInternal = function(messageInfo, onSuccess) {
+	buttons = {};
+	buttons[messageInfo.button] =  function() {
+		if (onSuccess !== undefined) {
+			onSuccess();
+		}
+		$(this).dialog('close');
+	};
+	buttons['Cancel'] = function() {
+		$(this).dialog('close');
+	};
+
+	$('#message-text').text(messageInfo.message);
+	$('#dialog-confirm').dialog({
+		resizable: false,
+		height: 240,
+		modal: true,
+		title: messageInfo.title,
+		buttons: buttons,
+		// We have to do this manually to use a variable as a key
+
+	});
+}
+
+// Remove only the individual object
+deleteImageSingle = function(obj) {
+	messageInfo = {
+		message: 'This item will be permanantly deleted.  Are you sure?',
+		title: 'Delete this object?',
+		button: 'Delete',
+	};
+	onSuccess = function() {
+		obj.remove();
+	}
+	deleteImageInternal(messageInfo, onSuccess);
+}
+
+// Remove all instances of the image from the sim/screen only
+deleteImageClass = function(spriteType, classImage) {
+
+	messageInfo = {
+		message: 'All items of this type will be permanantly deleted.  Are you sure?',
+		title: 'Delete all objects of this type?',
+		button: 'Delete All',
+	};
+	onSuccess = function() {
+		canvas.forEachObject(function (iterObj) {
+			if (iterObj.spriteType == spriteType) {
+				iterObj.remove();
+				delete iterObj;
+			}
+		});
+		$(classImage).remove();
+	}
+	deleteImageInternal(messageInfo, onSuccess);
+}
+
+// Remove all iamges from the screen/sim and from the db and all animations
+deleteImageFully = function(spriteType, classImage) {
+	messageInfo = {
+		message: 'This sprite and all instances will be permanently deleted. ' +
+			'Are you sure?',
+		title: 'Delete this image fully?',
+		button: 'Delete All',
+	};
+	onSuccess = function() {
+		canvas.forEachObject(function (iterObj) {
+			if (iterObj.spriteType == spriteType) {
+				iterObj.remove();
+				delete iterObj;
+			}
+		});
+		image_hash = $(classImage).attr('data-hash');
+		$(classImage).remove();
+		djangoDeleteImage(image_hash);
+	}
+	deleteImageInternal(messageInfo, onSuccess);
+}
+
 /* User Interface code for Sprite InteractionRule */
 uiInteractionCB = null;
 
 uiInteractionChoose = function(sprite, callback) {
-	console.log('uiInteractionChoose');
 	uiInteractionCB = callback;
 	posLeft = sprite.getLeft();
 	width = sprite.getWidth();
@@ -95,6 +220,7 @@ uiInteractionChoose = function(sprite, callback) {
 	$('#interactions').show();
 }
 
+// UI Setup for events
 $(document).ready(function() {
 	interMap = { 'uich_trans': 'transpose',
 		'uich_clone': 'clone',
@@ -109,6 +235,17 @@ $(document).ready(function() {
 		}
 		uiInteractionCB(action);
 		return false;
+	});
+
+	$('#uise_del').click(function() {
+        obj = canvas.getActiveObject();
+
+		deleteImageSingle(obj);
+	});
+
+	$('#uise_delall').click(function() {
+		obj = canvas.getActiveObject();
+		deleteImageClass(obj.spriteType);
 	});
 
 });

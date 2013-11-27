@@ -157,7 +157,6 @@
     };
 
     GenericSprite.prototype.trueIntersectsWithObject = function(obj) {
-      console.log('trueIntersectsWithObject');
       if (this.intersectsWithObject(obj)) {
         return true;
       }
@@ -409,6 +408,10 @@
         helper: "clone",
         stop: function(ev) {
           var newSprite;
+          if (pointWithinElement(ev.pageX, ev.pageY, $('#trash_menu_button'))) {
+            deleteImageFully(i, this);
+            return;
+          }
           console.log(i);
           newSprite = new window.spriteTypeList[i];
           spriteList.push(newSprite);

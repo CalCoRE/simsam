@@ -89,6 +89,7 @@
       img = new Image();
       img.src = 'http://' + window.location.host + '/media/sprites/' + sprite + '.jpg';
       img.className = "sprite";
+      img.setAttribute('data-hash', sprite);
       return output.appendChild(img);
     };
     loadFrames = function(frame) {
@@ -468,6 +469,7 @@
       $('#container').show();
       $('#output').show();
       $('#switch_to_sam_button').show();
+      $('#trash_menu_button').show();
       return window.loadSpriteTypes();
     };
     startSamlite = function() {
@@ -479,7 +481,8 @@
       $('#bottom_frame').show();
       $('#container').hide();
       $('#output').hide();
-      return $('#switch_to_sam_button').hide();
+      $('#switch_to_sam_button').hide();
+      return $('#trash_menu_button').hide();
     };
     toggleMenu = function() {
       if (menu) {

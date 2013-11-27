@@ -311,7 +311,6 @@ window.tick = ->
     canvas.renderAll.bind(canvas)
     canvas.renderAll()
 
-
 window.loadSpriteTypes = ->
     console.log "loading sprite types"
     spriteTypeList = [] # re-init. hmm, this could get messy TODO
@@ -323,7 +322,10 @@ window.loadSpriteTypes = ->
             revert: false, # dont bounce back after drop
             helper: "clone", # make a copy when pulled off the dragsource
             stop: (ev) -> # when dropped
-                #self = this;
+                if (pointWithinElement(ev.pageX, ev.pageY, 
+                        $('#trash_menu_button')))
+                    deleteImageFully(i, this)
+                    return
                 console.log(i); # tell me which one you are
                 newSprite = new window.spriteTypeList[i]  # make one
                 spriteList.push( newSprite )

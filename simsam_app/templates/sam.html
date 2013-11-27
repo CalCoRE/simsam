@@ -22,7 +22,7 @@
     
 
     <link rel="stylesheet" href="{{ STATIC_URL }}css/samlite.css">
-    <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.0/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
     <link rel="stylesheet" href="{{ STATIC_URL }}css/iphone-style-checkboxes.css">
 
     <script type="text/javascript">
@@ -47,6 +47,10 @@
           simRunning = false;
         }
       }
+// Fix for Fabric.js 1.2.9 - Issue #781
+$('#wholescreen').scroll(function(){
+	canvas.calcOffset();
+});
     </script>
     
 
@@ -86,12 +90,24 @@
 				<div class="menu_button" id="savecrop" onclick="getResults()">Save Crop</div>
 				<div class="menu_button" id="cancelcrop" onclick="deleteRect()">Cancel Crop</div>
     	</div>
+
     	<div id="sim_buttons">
     		<div class="menu_button" onclick="tick()">Play Once</div>
     		<div class="menu_button" onclick="toggleSim()">Run</div>
     	</div>
+	  <!-- Selected Chooser -->
+	  <div id="selected" >
+		  <h3>Modify Sprite</h3>
+		  <div id="uise_del" class="menu_button">Delete</div>
+		  <div id="uise_delall" class="menu_button">Delete All</div>
+	  </div>
+	  <!-- Modifying Chooser -->
+	  <div id="modifying" >
+		  <div id="uimod_rand" class="menu_button">Randomize</div>
+	  </div>
   	</div>
   	<div id="sprite_drawer"></div>
+	<div id="trash_menu_button" class="floating_button right-button"></div>
   </div>
 
   <!-- Interaction Chooser -->
@@ -103,13 +119,18 @@
 		  <li><a id="uich_delete" class="uich" href="#">Delete</a></li>
 	  </ul>
   </div>
+
+  <div id="dialog-confirm" title="Delete this object?">
+	  <p><span class="ui-icon ui-icon-alert" style="float: left; margin:0 7px 20px 0;"></span><span id="message-text">This item will be permanantly deleted.  Are you sure?</span></p>
+  </div>
+
   <!-- END INTERFACE PANELS -->
   
   <!-- PERSISTENT FLOATING ICONS HERE -->
   <form action="openproject" method="post">
 	<input type="submit" value="" id="home_button" class="floating_button" />
   </form>
-  <div id="right_menu_button" class="floating_button"></div>
+  <div id="right_menu_button" class="floating_button right-button"></div>
   <!-- END FLOATING ICONS -->
 </div>
 
