@@ -415,8 +415,8 @@
           console.log(i);
           newSprite = new window.spriteTypeList[i];
           spriteList.push(newSprite);
-          newSprite.setTop(ev.clientY);
-          newSprite.setLeft(ev.clientX);
+          newSprite.setTop(ev.pageY - ev.offsetY);
+          newSprite.setLeft(ev.pageX - ev.offsetX);
           canvas.add(newSprite);
           return canvas.renderAll();
         }

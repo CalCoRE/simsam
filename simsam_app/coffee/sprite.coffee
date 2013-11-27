@@ -329,7 +329,7 @@ window.loadSpriteTypes = ->
                 console.log(i); # tell me which one you are
                 newSprite = new window.spriteTypeList[i]  # make one
                 spriteList.push( newSprite )
-                newSprite.setTop(ev.clientY)
-                newSprite.setLeft(ev.clientX)
+                newSprite.setTop(ev.pageY - ev.offsetY)
+                newSprite.setLeft(ev.pageX - ev.offsetX)
                 canvas.add(newSprite)
                 canvas.renderAll();
