@@ -194,6 +194,10 @@
 	cursor: auto;
 }
 
+.ui-draggable-helper {
+	display: auto !important;
+}
+
 .floating_button {
 	background-repeat: no-repeat;
 	top: 5px;

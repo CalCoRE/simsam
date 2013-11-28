@@ -406,17 +406,25 @@
       return $(sprite).draggable({
         revert: false,
         helper: "clone",
-        stop: function(ev) {
-          var newSprite;
-          if (pointWithinElement(ev.pageX, ev.pageY, $('#trash_menu_button'))) {
+        cursorAt: {
+          top: 0,
+          left: 0
+        },
+        start: function(e, ui) {
+          return $(ui.helper).addClass("ui-draggable-helper");
+        },
+        stop: function(ev, ui) {
+          var newSprite, pos;
+          if (pointWithinElement(ev.pageX, ev.pageY, $('#trash_menu_button')) || pointWithinElement(ev.pageX, ev.pageY, $('#trash'))) {
             deleteImageFully(i, this);
             return;
           }
           console.log(i);
           newSprite = new window.spriteTypeList[i];
           spriteList.push(newSprite);
-          newSprite.setTop(ev.pageY - ev.offsetY);
-          newSprite.setLeft(ev.pageX - ev.offsetX);
+          pos = $(this).position();
+          newSprite.setTop(ev.pageY);
+          newSprite.setLeft(ev.pageX);
           canvas.add(newSprite);
           return canvas.renderAll();
         }

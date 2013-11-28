@@ -321,15 +321,22 @@ window.loadSpriteTypes = ->
         $(sprite).draggable # this sprite is draggable
             revert: false, # dont bounce back after drop
             helper: "clone", # make a copy when pulled off the dragsource
-            stop: (ev) -> # when dropped
-                if (pointWithinElement(ev.pageX, ev.pageY, 
-                        $('#trash_menu_button')))
+            cursorAt:
+                top: 0
+                left: 0
+            start: (e, ui) ->
+                $(ui.helper).addClass("ui-draggable-helper")
+            stop: (ev, ui) -> # when dropped
+                if (pointWithinElement(ev.pageX, ev.pageY,
+                        $('#trash_menu_button')) ||
+                        pointWithinElement(ev.pageX, ev.pageY, $('#trash')) )
                     deleteImageFully(i, this)
                     return
                 console.log(i); # tell me which one you are
                 newSprite = new window.spriteTypeList[i]  # make one
                 spriteList.push( newSprite )
-                newSprite.setTop(ev.pageY - ev.offsetY)
-                newSprite.setLeft(ev.pageX - ev.offsetX)
+                pos = $(this).position()
+                newSprite.setTop(ev.pageY)
+                newSprite.setLeft(ev.pageX)
                 canvas.add(newSprite)
                 canvas.renderAll();
