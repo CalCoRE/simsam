@@ -280,14 +280,17 @@ class TransformAction extends Action
         @transform.dr       = end.angle - start.angle
 
     act: (sprite) ->
+        theta = sprite.getAngle() * Math.PI / 180
+        dx = @transform.dx * Math.cos(theta) - @transform.dy * Math.sin(theta)
+        dy = @transform.dx * Math.sin(theta) + @transform.dy * Math.cos(theta)
         sprite.set({
-            left: sprite.getLeft() + @transform.dx
-            top: sprite.getTop() + @transform.dy
-            angle: sprite.getAngle() + @transform.dr
+            left: sprite.getLeft() + dx
+            top: sprite.getTop() + dy
+            angle: sprite.getAngle() - @transform.dr
             #width: @sprite.getWidth() * transform.dxScale
-            width: sprite.getWidth() + @transform.dxScale
+            width: sprite.width + @transform.dxScale
             #height: @sprite.getHeight * transform.dyScale
-            height: sprite.getHeight() + @transform.dyScale
+            height: sprite.height + @transform.dyScale
         })
 
         # Tell the sprite to update its internal state for intersect checks

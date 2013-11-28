@@ -360,12 +360,16 @@
     };
 
     TransformAction.prototype.act = function(sprite) {
+      var dx, dy, theta;
+      theta = sprite.getAngle() * Math.PI / 180;
+      dx = this.transform.dx * Math.cos(theta) - this.transform.dy * Math.sin(theta);
+      dy = this.transform.dx * Math.sin(theta) + this.transform.dy * Math.cos(theta);
       sprite.set({
-        left: sprite.getLeft() + this.transform.dx,
-        top: sprite.getTop() + this.transform.dy,
-        angle: sprite.getAngle() + this.transform.dr,
-        width: sprite.getWidth() + this.transform.dxScale,
-        height: sprite.getHeight() + this.transform.dyScale
+        left: sprite.getLeft() + dx,
+        top: sprite.getTop() + dy,
+        angle: sprite.getAngle() - this.transform.dr,
+        width: sprite.width + this.transform.dxScale,
+        height: sprite.height + this.transform.dyScale
       });
       return sprite.setCoords();
     };
