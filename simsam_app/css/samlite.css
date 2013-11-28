@@ -194,8 +194,8 @@
 	cursor: auto;
 }
 
-.ui-draggable-helper {
-	display: auto !important;
+.ui-draggable-helper.sprite {
+	 display: inline;
 }
 
 .floating_button {
