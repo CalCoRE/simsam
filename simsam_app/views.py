@@ -86,6 +86,25 @@ def logout_user(request):
     logout(request)
     return HttpResponseRedirect('/')
 
+@login_required
+def delete_image(request):
+    """Deletes an image"""
+    image_hash = request.REQUEST.get('image_hash')
+    image_obj = Sprite()
+    image_obj.image_hash = image_hash
+    image_obj.delete()
+
+    # Now walk through all animations and remove this instance
+    animations = Animation.objects.all()
+    for animation in animations:
+        animList = animation.sprite_collection
+        if image_hash in animList:
+            animList.remove(image_hash)
+        animation.save()
+    return HttpResponse(json.dumps({
+        'success': True,
+        'message': ''
+    }))
 
 @login_required
 def save_image(request):

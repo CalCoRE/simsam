@@ -108,6 +108,7 @@ $ ->
         #    ctx.drawImage(img, 0, 0, img.width, img.height)
         img.src = 'http://' + window.location.host + '/media/sprites/' + sprite + '.jpg'
         img.className = "sprite"
+        img.setAttribute('data-hash', sprite)
         #$(canvas).attr("data-frame-id", sprite)
         #$(canvas).attr("draggable", true);
         #$(canvas).attr("dropzone", $('container'))
@@ -504,6 +505,7 @@ $ ->
         $('#container').show()
         $('#output').show()
         $('#switch_to_sam_button').show()
+        $('#trash_menu_button').show()
         window.loadSpriteTypes()
     
     startSamlite = ->
@@ -518,6 +520,7 @@ $ ->
         $('#container').hide()
         $('#output').hide()
         $('#switch_to_sam_button').hide()
+        $('#trash_menu_button').hide()
         
         #MHWJ
     toggleMenu = ->

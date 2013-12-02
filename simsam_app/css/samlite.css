@@ -182,6 +182,22 @@
         height: 31px;
 }
 
+#trash_menu_button {
+	display:none;
+	background: url('../images/trash.png') no-repeat center;
+	background-size: contain;
+	top: auto;
+	right: 5px;
+	bottom: 5px;
+	width: 31px;
+	height: 31px;
+	cursor: auto;
+}
+
+.ui-draggable-helper.sprite {
+	 display: inline;
+}
+
 .floating_button {
 	background-repeat: no-repeat;
 	top: 5px;
@@ -273,3 +289,71 @@
 .upper-canvas {
     display: block !important;
 }
+
+/* Behavior UI components */
+.simui {
+	display: none;
+	margin: 5px;
+	padding-right: 16px;
+	background-opacity: 0;
+	background: #eee;
+	color: #5d5d5d;
+}
+
+#interactions {
+	position: fixed;
+	top: 100px;
+	left: 100px;
+	box-shadow: 2px 2px 4px;
+}
+
+#selected {
+	display: none;
+	text-align: center;
+}
+
+#modifying {
+	display: none;
+	text-align: center;
+}
+
+#dialog-confirm {
+	display: none;
+}
+
+.simui h3 {
+	text-align: center;
+	font-size: 120%;
+	font-weight: 700;
+	margin: 5px 8px;
+}
+.simui ul {
+	padding: 0;
+	margin: 0;
+}
+.simui ul li:hover {
+	background-color: white;
+}
+.simui ul li {
+	border-top-color: white;
+	border-top-width: 1px;
+	border-bottom-color: #d3d3d3;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-left-style: none;
+	border-right-style: none;
+	border-top-style: solid;
+	padding: 5px 8px 5px 8px;
+	text-align: center;
+	width: 100%;
+	cursor:pointer;
+	background-opacity: 0;
+	font-size: 14px;
+	list-style-type: none;
+}
+
+.simui a {
+	color: #444;
+	text-decoration: none;
+}
+
