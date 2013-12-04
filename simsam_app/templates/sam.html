@@ -42,17 +42,17 @@
       toggleSim = function() {
         if( !simRunning ) {
           if( interval = setInterval('tick()',1000) ) { simRunning = true; }
+		  $('#run').html('Stop');
         } else {
           clearInterval(interval);
           simRunning = false;
+		  $('#run').html('Run');
         }
       }
 // Fix for Fabric.js 1.2.9 - Issue #781
-/*
 $('#wholescreen').scroll(function(){
 	canvas.calcOffset();
 });
-*/
     </script>
     
 
@@ -95,7 +95,7 @@ $('#wholescreen').scroll(function(){
 
     	<div id="sim_buttons">
     		<div class="menu_button" onclick="tick()">Play Once</div>
-    		<div class="menu_button" onclick="toggleSim()">Run</div>
+    		<div id="run" class="menu_button" onclick="toggleSim()">Run</div>
     	</div>
 	  <!-- Selected Chooser -->
 	  <div id="selected" >
@@ -120,6 +120,15 @@ $('#wholescreen').scroll(function(){
 		  <li><a id="uich_clone" class="uich" href="#">Clone</a></li>
 		  <li><a id="uich_delete" class="uich" href="#">Delete</a></li>
 	  </ul>
+  </div>
+
+  <!-- Random Range Slider -->
+  <div id="random-range">
+	  <h3>Range</h3>
+  <div id="randomslider"> </div>
+  </div>
+  <div id="random-ui">
+	  <canvas id="random-arc"></canvas>
   </div>
 
   <div id="dialog-confirm" title="Delete this object?">

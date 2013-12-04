@@ -13,6 +13,8 @@
       this.spriteId = spriteId;
       this.stateTranspose = false;
       this.stateRecording = false;
+      this.stateRandom = false;
+      this.randomRange = 15;
       this.ruleTempObject = null;
       this.prepObj = null;
       sWidth = this.spriteType * 5;
@@ -25,6 +27,32 @@
       };
       GenericSprite.__super__.constructor.call(this, this.imageObj, shapeParams);
     }
+
+    GenericSprite.prototype.isRandom = function() {
+      var action;
+      if (this._rules.length) {
+        action = this._rules[0].action;
+        return action.stateRandom;
+      }
+      return this.stateRandom;
+    };
+
+    GenericSprite.prototype.setRandom = function(value) {
+      var action;
+      this.stateRandom = value;
+      if (this._rules.length) {
+        action = this._rules[0].action;
+        return action.stateRandom = value;
+      }
+    };
+
+    GenericSprite.prototype.setRandomRange = function(range) {
+      return this.randomRange = range;
+    };
+
+    GenericSprite.prototype.isEditing = function() {
+      return this.stateRecording;
+    };
 
     GenericSprite.prototype.interactionEvent = function(obj) {
       var surviveObj;
@@ -94,7 +122,8 @@
     };
 
     GenericSprite.prototype.addRule = function(rule) {
-      this._rules.push(rule);
+      this._rules[0] = rule;
+      rule.action.stateRandom = this.stateRandom;
       return this._rules.length - 1;
     };
 
@@ -133,6 +162,9 @@
         r = new Rule(this.spriteType);
         r.setActionType('transform');
         r.addTransform(this.initState, endState);
+        if (this.isRandom()) {
+          r.addRandom(this.randomRange);
+        }
         this.addRule(r);
         return this.stateRecording = false;
       }
@@ -234,6 +266,11 @@
       }
       this.action = new TransformAction();
       return this.action.setTransformDelta(start, end);
+    };
+
+    Rule.prototype.addRandom = function(range) {
+      this.action.randomRange = range;
+      return this.action.stateRandom = true;
     };
 
     return Rule;
@@ -349,6 +386,8 @@
         dxScale: 1,
         dyScale: 1
       };
+      this.stateRandom = false;
+      this.randomRange = 15;
     }
 
     TransformAction.prototype.setTransformDelta = function(start, end) {
@@ -360,8 +399,13 @@
     };
 
     TransformAction.prototype.act = function(sprite) {
-      var dx, dy, theta;
-      theta = sprite.getAngle() * Math.PI / 180;
+      var dx, dy, range, theta;
+      if (this.stateRandom) {
+        range = this.randomRange / 180;
+        theta = sprite.getAngle() * Math.PI / 180 + (Math.random() * range - range / 2) * (2 * Math.PI);
+      } else {
+        theta = sprite.getAngle() * Math.PI / 180;
+      }
       dx = this.transform.dx * Math.cos(theta) - this.transform.dy * Math.sin(theta);
       dy = this.transform.dx * Math.sin(theta) + this.transform.dy * Math.cos(theta);
       sprite.set({
@@ -371,6 +415,7 @@
         width: sprite.width + this.transform.dxScale,
         height: sprite.height + this.transform.dyScale
       });
+      sprite.setAngle(theta * 180 / Math.PI);
       return sprite.setCoords();
     };
 

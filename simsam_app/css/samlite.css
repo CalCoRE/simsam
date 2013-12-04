@@ -256,6 +256,10 @@
 	color: black;
 }
 
+.menu_button.highlight {
+	background-color: #ffff88;
+}
+
 .frame {
 	background: #eee;
 	box-shadow: inset 10px 0px 40px #ccc;
@@ -310,6 +314,22 @@
 #selected {
 	display: none;
 	text-align: center;
+}
+
+#random-range {
+	display: none;
+	position: absolute;
+	text-align: center;
+}
+
+#randomslider {
+	width: 150px;
+}
+#random-ui {
+	opacity: 0.4;
+	position: absolute;
+	top: 50px;
+	left: 50px;
 }
 
 #modifying {

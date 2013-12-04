@@ -7,6 +7,8 @@ class GenericSprite extends fabric.Image
     constructor: (@spriteId) ->
         @stateTranspose = false
         @stateRecording = false
+        @stateRandom    = false
+        @randomRange    = 15
         @ruleTempObject = null
         @prepObj = null
         sWidth = this.spriteType * 5
@@ -19,6 +21,24 @@ class GenericSprite extends fabric.Image
             cornerSize: 20
         # Call fabric.Image's constructor so it can do its magic.
         super(this.imageObj, shapeParams)
+
+    isRandom: ->
+        if @_rules.length
+            action = @_rules[0].action
+            return action.stateRandom
+        return @stateRandom
+
+    setRandom: (value) ->
+        @stateRandom = value
+        if @_rules.length
+            action = @_rules[0].action
+            action.stateRandom = value
+
+    setRandomRange: (range) ->
+        @randomRange = range
+
+    isEditing: ->
+        return @stateRecording
 
     # Whatever UI event we decide should create an interaction, has occurred
     interactionEvent: (obj) ->
@@ -68,7 +88,9 @@ class GenericSprite extends fabric.Image
 
     # returns the index of the new rule
     addRule: (rule) ->
-        @_rules.push(rule)
+        # Try switching to a single interaction rule XXX
+        @_rules[0] = rule
+        rule.action.stateRandom = @stateRandom
         return @_rules.length - 1
 
     # will complain if given a bad index
@@ -105,6 +127,8 @@ class GenericSprite extends fabric.Image
             r = new Rule(this.spriteType)
             r.setActionType('transform')
             r.addTransform(@initState, endState)
+            if this.isRandom()
+                r.addRandom(@randomRange)
             this.addRule(r)
             @stateRecording = false
 
@@ -198,6 +222,10 @@ class Rule
         @action = new TransformAction()
         @action.setTransformDelta(start, end)
 
+    addRandom: (range) ->
+        @action.randomRange = range
+        @action.stateRandom = true
+
         
 # a transform which is conditional on the environment of the sprite
 class Interaction extends Rule
@@ -270,6 +298,8 @@ class Action
 class TransformAction extends Action
     constructor: ->
         @transform = {dx:0, dy:0, dr:0, dxScale:1, dyScale: 1}
+        @stateRandom = false
+        @randomRange = 15
 
     # Takes a start and end state as returned by getObjectState
     setTransformDelta: (start, end) ->
@@ -280,7 +310,12 @@ class TransformAction extends Action
         @transform.dr       = end.angle - start.angle
 
     act: (sprite) ->
-        theta = sprite.getAngle() * Math.PI / 180
+        if @stateRandom
+            range = @randomRange / 180
+            theta = sprite.getAngle() * Math.PI / 180 +
+                (Math.random() * range - range / 2) * (2 * Math.PI)
+        else
+            theta = sprite.getAngle() * Math.PI / 180
         dx = @transform.dx * Math.cos(theta) - @transform.dy * Math.sin(theta)
         dy = @transform.dx * Math.sin(theta) + @transform.dy * Math.cos(theta)
         sprite.set({
@@ -292,6 +327,8 @@ class TransformAction extends Action
             #height: @sprite.getHeight * transform.dyScale
             height: sprite.height + @transform.dyScale
         })
+        # Remove this if you don't want objects to rotate visually
+        sprite.setAngle(theta * 180 / Math.PI)
 
         # Tell the sprite to update its internal state for intersect checks
         sprite.setCoords()

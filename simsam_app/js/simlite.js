@@ -28,8 +28,12 @@ window.initSim = (function(){
 			selectedObject.learningToggle();
 			if (selectedObject.stateRecording) {
 				$('#modifying').show(250);
+				if (selectedObject.isRandom()) {
+					$('#uimod_rand').addClass('highlight');
+					randomSliderShow(selectedObject);
+				}
 			} else {
-				$('#modifying').hide(250);
+				modifyingHide(selectedObject);
 			}
 		}
     }
@@ -72,11 +76,14 @@ getD = function(init , end) {
 }
 
 simObjectSelected = function(options) {
+	currentSimObject = canvas.getActiveObject();
 	$('#selected').show(250);
 }
 
 simObjectCleared = function(options) {
 	$('#selected').hide(250);
+	modifyingHide(currentSimObject);
+	currentSimObject = null;
 }
 
 
@@ -203,6 +210,111 @@ deleteImageFully = function(spriteType, classImage) {
 	deleteImageInternal(messageInfo, onSuccess);
 }
 
+//
+// Random Slider Handlers
+//
+
+randomDrawArc = function(ang) {
+	rarc = $('#random-arc');
+	width = $(rarc).attr('width');
+	height = $(rarc).attr('height');
+	ctx = $(rarc)[0].getContext('2d');
+	ctx.clearRect(0,0, width, height);
+
+	//pct = 80;
+	lineWidth = 4;
+	pm = (ang/180.1) * Math.PI; // extra .1 keeps arc a circle at 100%
+	max = (Math.PI*1.5) + pm;
+	max = max % (Math.PI*2);
+	min = (Math.PI*1.5) - pm;
+	radius = Math.max(width/2, height/2) - lineWidth / 2;
+	ctx.moveTo(width/2, height/2);
+	ctx.beginPath();
+	ctx.strokeStyle = 'black';
+	ctx.lineWidth = lineWidth;
+	ctx.arc(width/2, height/2, radius, min, max, false);
+	//ctx.arc(50, 50, 25, 0, Math.PI, false);
+	ctx.lineTo(width/2, height/2);
+	//ctx.lineTo(width/2 + radius * Math.cos(min), height/2 + radius * Math.sin(min));
+	ctx.fill();
+	ctx.stroke();
+	ctx.closePath();
+
+}
+
+randomSliderPosition = function(obj) {
+	leftPos = obj.getLeft();
+	topPos = obj.getTop();
+	width = obj.getWidth();
+	height = obj.getHeight();
+	sliderWidth = 150; // from CSS
+
+	posEl = $('#random-range');
+
+	// + width/2 if left-aligned object
+	cpos = leftPos - sliderWidth/2;
+	tpos = topPos - height - 60;
+	if (tpos < 0) tpos = 0;
+	$(posEl).css({ top: tpos, left: cpos });
+
+	arcWidth = 150; // or = width
+	arcHeight = 150; // or = height
+	arcTop = topPos - height/2 - 40; // 40 is padding
+	arcLeft = leftPos - arcWidth/2;
+	arcObj = $('#random-ui');
+	console.log('Setting width ' +width + ' height: ' + height);
+	arcObj.width(arcWidth);
+	arcObj.height(arcHeight);
+	arcObj.css({left: arcLeft, top: arcTop});
+	$('#random-arc').attr('width', arcWidth);
+	$('#random-arc').attr('height', arcHeight);
+
+	randomDrawArc(obj.randomRange);
+}
+
+// de-randomize (close, or randomize un-selected, etc.)
+randomSliderRelease = function(obj) {
+	if (obj && obj.savedAngle !== undefined) {
+		obj.setAngle(obj.savedAngle);
+		delete obj.savedAngle;
+		canvas.renderAll();
+	}
+}
+
+randomSliderShow = function(obj) {
+	randomSliderPosition(obj);
+	$('#random-range').show();
+	console.log("randomRange: " + obj.randomRange);
+	$('#randomslider').slider('value', obj.randomRange);
+	$('#random-ui').show();
+	randomDrawArc(obj.randomRange);
+	obj.savedAngle = obj.getAngle();
+	obj.setAngle(0);
+	obj.setCoords();
+	canvas.renderAll();
+}
+
+randomSliderHide = function(obj) {
+	$('#random-range').hide();
+	$('#random-ui').hide();
+	randomSliderRelease(obj);
+}
+
+modifyingHide = function(p_obj) {
+	var obj = p_obj;
+	if (obj == null) {
+		obj = canvas.getActiveObject();
+	}
+	$('#modifying').hide(250);
+	$('#uimod_rand').removeClass('highlight');
+	randomSliderHide(obj);
+	// Clear recording if we're in the middle of it.
+	if (obj.stateRecording) {
+		// if we should abort recording, just clear stateRecording
+		obj.learningToggle();
+	}
+}
+
 /* User Interface code for Sprite InteractionRule */
 uiInteractionCB = null;
 
@@ -237,6 +349,7 @@ $(document).ready(function() {
 		return false;
 	});
 
+	// Functions for UI when Selected
 	$('#uise_del').click(function() {
         obj = canvas.getActiveObject();
 
@@ -246,6 +359,35 @@ $(document).ready(function() {
 	$('#uise_delall').click(function() {
 		obj = canvas.getActiveObject();
 		deleteImageClass(obj.spriteType);
+	});
+
+	// Functions for UI when Modifying
+	$('#uimod_rand').click(function() {
+		obj = canvas.getActiveObject();
+		if (!obj.isEditing) return;
+		random = obj.isRandom();
+		// Toggle the random value
+		obj.setRandom(!random);
+
+		if (obj.isRandom()) {
+			$(this).addClass('highlight');
+			randomSliderShow(obj);
+		} else {
+			$(this).removeClass('highlight');
+			randomSliderHide(obj);
+		}
+	});
+
+	$('#randomslider').slider({
+		min: 0,
+		max: 180,
+		slide: function(ev, ui) {
+			obj = canvas.getActiveObject();
+			if (obj !== undefined) {
+				obj.randomRange = ui.value;
+			}
+			randomDrawArc(ui.value); 
+		},
 	});
 
 });
