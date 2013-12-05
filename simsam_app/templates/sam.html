@@ -106,6 +106,7 @@ $('#wholescreen').scroll(function(){
 	  <!-- Modifying Chooser -->
 	  <div id="modifying" >
 		  <div id="uimod_rand" class="menu_button">Randomize</div>
+		  <div id="uimod_clone" class="menu_button">Clone</div>
 	  </div>
   	</div>
   	<div id="sprite_drawer"></div>
@@ -124,8 +125,11 @@ $('#wholescreen').scroll(function(){
 
   <!-- Random Range Slider -->
   <div id="random-range">
+	  <a href="#" onclick="randomSliderHide();">
+		  <img src="{{ STATIC_URL }}/images/close-24.png"/>
+	  </a>
 	  <h3>Range</h3>
-  <div id="randomslider"> </div>
+	  <div id="randomslider"> </div>
   </div>
   <div id="random-ui">
 	  <canvas id="random-arc"></canvas>

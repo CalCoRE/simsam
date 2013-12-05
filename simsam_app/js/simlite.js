@@ -54,13 +54,16 @@ pointWithinElement = function(x, y, element) {
 }
 
 getObjectState = function(object) {
-    return {
+    retObj = {
         width: object.getWidth(),
         height: object.getHeight(),
         left: object.getLeft(),
         top: object.getTop(),
         angle: object.getAngle()
     }
+
+    console.log ('top: ' + retObj.top + ' left: ' + retObj.left);
+    return retObj;
 }
 
 getD = function(init , end) {
@@ -251,7 +254,7 @@ randomSliderPosition = function(obj) {
 
     // + width/2 if left-aligned object
     cpos = leftPos - sliderWidth/2;
-    tpos = topPos - height - 60;
+    tpos = topPos - height - 80;
     if (tpos < 0) tpos = 0;
     $(posEl).css({ top: tpos, left: cpos });
 
@@ -293,6 +296,9 @@ randomSliderShow = function(obj) {
 }
 
 randomSliderHide = function(obj) {
+    if (obj == null) {
+        obj = canvas.getActiveObject();
+    }
     $('#random-range').hide();
     $('#random-ui').hide();
     randomSliderRelease(obj);

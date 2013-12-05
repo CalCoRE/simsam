@@ -322,6 +322,19 @@
 	text-align: center;
 }
 
+#random-range {
+	background: #eee;
+	/* box-shadow: inset 10px 0px 40px #ccc; */
+	box-shadow: 2px 2px 4px;
+	padding: 6px;
+}
+
+#random-range > a {
+	position: absolute;
+	top: 6px;
+	right: 6px;
+}
+
 #randomslider {
 	width: 150px;
 }
