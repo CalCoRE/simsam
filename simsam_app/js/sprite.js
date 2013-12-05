@@ -5,13 +5,8 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   GenericSprite = (function(_super) {
-    var cloneIdx, transIdx;
 
     __extends(GenericSprite, _super);
-
-    transIdx = 0;
-
-    cloneIdx = 1;
 
     function GenericSprite(spriteId) {
       var sWidth, shapeParams;
@@ -451,10 +446,17 @@
     }
 
     TransformAction.prototype.setTransformDelta = function(start, end) {
+      var dx, dy, rad, x, y;
+      dx = end.left - start.left;
+      dy = end.top - start.top;
+      rad = start.angle * Math.PI / 180;
+      x = dx * Math.cos(-rad) - dy * Math.sin(-rad);
+      y = -dx * Math.sin(rad) + dy * Math.cos(rad);
+      console.log('adjusted: x, y: ' + x + ',' + y);
       this.transform.dxScale = end.width - start.width;
       this.transform.dyScale = end.height - start.height;
-      this.transform.dx = end.left - start.left;
-      this.transform.dy = end.top - start.top;
+      this.transform.dx = x;
+      this.transform.dy = y;
       return this.transform.dr = end.angle - start.angle;
     };
 

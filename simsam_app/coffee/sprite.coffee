@@ -1,7 +1,5 @@
 # A prototypical sprite
 class GenericSprite extends fabric.Image
-    transIdx = 0
-    cloneIdx = 1
     # These properties will be in the prototype of the Sprite
     # and thus appear as properties of all instances of that sprite
     # Variables prefixed with @ will be properties of individual sprite
@@ -348,10 +346,16 @@ class TransformAction extends Action
 
     # Takes a start and end state as returned by getObjectState
     setTransformDelta: (start, end) ->
+        # N.B. These don't take angle shift into account, only starting angle
+        dx = end.left - start.left
+        dy = end.top - start.top
+        rad = start.angle * Math.PI / 180
+        x = dx * Math.cos(-rad) - dy * Math.sin(-rad)
+        y = -dx * Math.sin(rad) + dy * Math.cos(rad)
         @transform.dxScale  = end.width - start.width
         @transform.dyScale  = end.height - start.height
-        @transform.dx       = end.left - start.left
-        @transform.dy       = end.top - start.top
+        @transform.dx       = x
+        @transform.dy       = y
         @transform.dr       = end.angle - start.angle
 
     act: (sprite) ->
