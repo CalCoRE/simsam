@@ -1,5 +1,7 @@
 # A prototypical sprite
 class GenericSprite extends fabric.Image
+    transIdx = 0
+    cloneIdx = 1
     # These properties will be in the prototype of the Sprite
     # and thus appear as properties of all instances of that sprite
     # Variables prefixed with @ will be properties of individual sprite
@@ -23,7 +25,7 @@ class GenericSprite extends fabric.Image
         super(this.imageObj, shapeParams)
 
     isRandom: ->
-        if @_rules.length
+        if @_rules.length && @_rules[0] != undefined
             action = @_rules[0].action
             return action.stateRandom
         return @stateRandom
@@ -66,6 +68,8 @@ class GenericSprite extends fabric.Image
     applyRules: (environment) ->
         console.log('--Regular Rules')
         for rule in @_rules
+            if rule == undefined
+                continue
             # call each rule's act method, supplying this sprite and
             # information about other sprites in its environment
             console.log('applying rule' + rule)
@@ -88,23 +92,33 @@ class GenericSprite extends fabric.Image
 
     # returns the index of the new rule
     addRule: (rule) ->
-        # Try switching to a single interaction rule XXX
+        # Try switching to a single rule XXX
         @_rules[0] = rule
         rule.action.stateRandom = @stateRandom
         return @_rules.length - 1
 
     # will complain if given a bad index
     setRule: (index, rule) ->
-    
-        if @_rules[index] != undefined
-            @_rules[index] = rule
-        else
-            throw Error("The rule index #{index} doesn't exist.")
+        @_rules[index] = rule
 
     # index of the irule so we overwrite duplicates
     addIRule: (rule, index) ->
         @_irules[index] = rule
         return @_irules.length - 1
+
+    # This could go in simlite.js, but wanted to keep it with learningToggle
+    addSimpleClone: ->
+        r = new Rule()
+        r.setActionType('clone')
+        this.setRule(1, r)
+
+    removeClone: ->
+        delete this._rules[1]
+
+    isClone: ->
+        if @_rules[1] != undefined
+            return true
+        return false
 
     learningToggle: ->
         if @stateTranspose
@@ -186,6 +200,14 @@ SpriteFactory = (spriteType, imageObj) ->
         # priority.  Seemed overly complex for now.
         _irules: []
 
+        # Keep track of how many instances we have spawned.
+        _count: 0
+
+        constructor: (spriteType) ->
+            Sprite::_count = Sprite::_count + 1
+            console.log ('I have ' + @_count + ' children.')
+            super(spriteType)
+
     return Sprite
 
 #
@@ -211,6 +233,7 @@ class Rule
         @type = type
         actClass = switch type
             when 'transform' then TransformAction
+            when 'clone' then CloneAction
             # Later we add 'Delete' and 'Clone' at least
         @action = new actClass()
 
@@ -225,6 +248,9 @@ class Rule
     addRandom: (range) ->
         @action.randomRange = range
         @action.stateRandom = true
+
+    addClone: ->
+        @action = new CloneAction()
 
         
 # a transform which is conditional on the environment of the sprite
@@ -291,9 +317,28 @@ class OverlapInteraction extends Interaction
 #     Actions handle the "what" and Rules handle the "When"
 #
 class Action
+    constructor: ->
     # Override this function to do, well, whatever you're doing
-    act: ->
+    act: (sprite) ->
         console.log("Action is an abstract class, don't use it.")
+
+class CloneAction extends Action
+    constructor: ->
+        # On average, spawn every spawnWait ticks
+        @spawnWait = 2
+
+    act: (sprite) ->
+        # only act 1 out of ever @spawnWait times
+        if (Math.random() * @spawnWait) > 1
+            return
+        if window.spriteTypeList[sprite.spriteType]::_count >= window.maxSprites
+            return
+        newSprite = new window.spriteTypeList[sprite.spriteType]  # make one
+        spriteList.push( newSprite )
+        newSprite.setTop(sprite.getTop() + Math.random() * 20 - 10)
+        newSprite.setLeft(sprite.getLeft() + Math.random() * 20 - 10)
+        canvas.add(newSprite)
+        canvas.renderAll()
 
 class TransformAction extends Action
     constructor: ->
@@ -352,6 +397,7 @@ window.tick = ->
     canvas.renderAll()
 
 window.loadSpriteTypes = ->
+    window.maxSprites = 25
     console.log "loading sprite types"
     spriteTypeList = [] # re-init. hmm, this could get messy TODO
     $("img").each (i, sprite) -> # for each sprite in the drawer
@@ -373,9 +419,11 @@ window.loadSpriteTypes = ->
                     deleteImageFully(i, this)
                     return
                 console.log(i); # tell me which one you are
+                if window.spriteTypeList[i]::_count >= maxSprites
+                    return
                 newSprite = new window.spriteTypeList[i]  # make one
                 spriteList.push( newSprite )
-                pos = $(this).position()
+                # pos = $(this).position()
                 newSprite.setTop(ev.pageY)
                 newSprite.setLeft(ev.pageX)
                 canvas.add(newSprite)

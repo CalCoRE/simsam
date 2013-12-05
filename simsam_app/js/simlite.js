@@ -382,6 +382,18 @@ $(document).ready(function() {
         }
     });
 
+    $('#uimod_clone').click(function() {
+        obj = canvas.getActiveObject();
+        if (!obj.isEditing) return;
+        if (obj.isClone()) {
+            obj.removeClone();
+            $(this).removeClass('highlight');
+        } else {
+            obj.addSimpleClone();
+            $(this).addClass('highlight');
+        }
+    });
+
     $('#randomslider').slider({
         min: 0,
         max: 180,
