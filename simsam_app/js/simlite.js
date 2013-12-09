@@ -27,6 +27,7 @@ window.initSim = (function(){
         if( selectedObject !== null ) { // if one object is selected this fires
             selectedObject.learningToggle();
             if (selectedObject.stateRecording) {
+                selectedObject.bringToFront();
                 $('#modifying').show(250);
                 if (selectedObject.isRandom()) {
                     $('#uimod_rand').addClass('highlight');
@@ -109,11 +110,12 @@ djangoDeleteImage = function(image_hash) {
 simObjectModified = function(options) {
     if (options.target) {
         target = options.target;
-        if (!target.hasOwnProperty('stateRecording') || 
-                !target.stateRecording) {
-                    console.log("Our target isn't being edited");
-                    return;
-                }
+        rec = target.hasOwnProperty('stateRecording') && target.stateRecording;
+        tran = target.hasOwnProperty('stateTranspose') && target.stateTranspose;
+        if (!rec & !tran) {
+            console.log("Our target isn't being edited");
+            return;
+        }
         intersetObj = null;
         // Don't think we need to assert SIM mode b/c we trigger 'modified'
         // If we're in recording mode and we are dropped on another object,
@@ -341,6 +343,7 @@ $(document).ready(function() {
     interMap = { 'uich_trans': 'transpose',
         'uich_clone': 'clone',
         'uich_delete': 'delete',
+        'uich_close': 'close',
     };
     $('.uich').click(function () {
         $('.simui').hide();

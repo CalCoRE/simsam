@@ -62,6 +62,24 @@ class GenericSprite extends fabric.Image
             @stateTranspose = true
             @initState = getObjectState(this)
             @stateRecording = false
+        else if choice == 'close'
+            @stateTranspose = false
+            @stateRecording = false
+            this.showNormal()
+        else if choice == 'clone'
+            r = new OverlapInteraction(@ruleTempObject)
+            r.addClone()
+            this.addIRule(r, @ruleTempObject.spriteType)
+            @stateTranspose = false
+            @stateRecording = false
+            this.showNormal()
+        else if choice == 'delete'
+            r = new OverlapInteraction(@ruleTempObject)
+            r.addDelete()
+            this.addIRule(r, @ruleTempObject.spriteType)
+            @stateRecording = false
+            @stateTranspose = false
+            this.showNormal()
 
     applyRules: (environment) ->
         console.log('--Regular Rules')
@@ -82,10 +100,10 @@ class GenericSprite extends fabric.Image
     applyIRules: (environment) ->
         console.log('--Interaction Rules')
         for rule in @_irules
-            console.log('Applying an iRule')
             # CoffeeScript design flaw requires this
             if (rule == undefined)
                 continue
+            console.log('Applying an iRule')
             rule.act(this, environment)
 
     # returns the index of the new rule
@@ -250,6 +268,9 @@ class Rule
     addClone: ->
         @action = new CloneAction()
 
+    addDelete: ->
+        @action = new DeleteAction()
+
         
 # a transform which is conditional on the environment of the sprite
 class Interaction extends Rule
@@ -309,6 +330,11 @@ class OverlapInteraction extends Interaction
         @action.act(sprite)
         sprite.prepObj = null
 
+    addClone: ->
+        super
+        # Since we're an interaction, clone each and every time
+        @action.spawnWait = 1
+
 #
 #
 # Actions - Transform, Delete, Clone, Random Transform, etc.
@@ -320,12 +346,19 @@ class Action
     act: (sprite) ->
         console.log("Action is an abstract class, don't use it.")
 
+class DeleteAction extends Action
+    act: (sprite) ->
+        console.log('DeleteAction: ' + sprite.spriteType)
+        sprite.remove()
+        canvas.renderAll()
+
 class CloneAction extends Action
     constructor: ->
         # On average, spawn every spawnWait ticks
         @spawnWait = 2
 
     act: (sprite) ->
+        console.log('CloneAction: ' + sprite.spriteType)
         # only act 1 out of ever @spawnWait times
         if (Math.random() * @spawnWait) > 1
             return
@@ -359,6 +392,7 @@ class TransformAction extends Action
         @transform.dr       = end.angle - start.angle
 
     act: (sprite) ->
+        console.log('TransformAction: ' + sprite.spriteType)
         if @stateRandom
             range = @randomRange / 180
             theta = sprite.getAngle() * Math.PI / 180 +
