@@ -167,6 +167,7 @@ deleteImageSingle = function(obj) {
         button: 'Delete',
     };
     onSuccess = function() {
+        obj.removeFromList();
         obj.remove();
     }
     deleteImageInternal(messageInfo, onSuccess);
@@ -183,6 +184,7 @@ deleteImageClass = function(spriteType, classImage) {
     onSuccess = function() {
         canvas.forEachObject(function (iterObj) {
             if (iterObj.spriteType == spriteType) {
+                iterObj.removeFromList();
                 iterObj.remove();
                 delete iterObj;
             }
@@ -203,6 +205,7 @@ deleteImageFully = function(spriteType, classImage) {
     onSuccess = function() {
         canvas.forEachObject(function (iterObj) {
             if (iterObj.spriteType == spriteType) {
+                iterObj.removeFromList();
                 iterObj.remove();
                 delete iterObj;
             }

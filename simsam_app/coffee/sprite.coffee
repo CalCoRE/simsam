@@ -163,7 +163,6 @@ class GenericSprite extends fabric.Image
             @stateRecording = false
 
     showLearning: ->
-        console.log("showLearning")
         this.set({
             borderColor: "red",
             cornerColor: "red",
@@ -171,7 +170,6 @@ class GenericSprite extends fabric.Image
         canvas.renderAll();
     
     showNormal: ->
-        console.log("showNoraml")
         this.set({
             borderColor: "rgb(210,210,255)",
             cornerColor: "rgb(210,210,255)",
@@ -188,6 +186,11 @@ class GenericSprite extends fabric.Image
             return true
         return false
 
+    removeFromList: ->
+        idx = spriteList.indexOf(this)
+        if idx >= 0
+            console.log('splicing ' + idx)
+            spriteList.splice(idx, 1)
 
 # makes classes for different types of sprites
 SpriteFactory = (spriteType, imageObj) ->
@@ -221,7 +224,6 @@ SpriteFactory = (spriteType, imageObj) ->
 
         constructor: (spriteType) ->
             Sprite::_count = Sprite::_count + 1
-            console.log ('I have ' + @_count + ' children.')
             super(spriteType)
 
     return Sprite
@@ -254,7 +256,6 @@ class Rule
         @action = new actClass()
 
     addTransform: (start, end) ->
-        console.log('addTransform')
         if @type != 'transform'
             console.log('Error: addTransform called on other type of Rule')
 
@@ -348,9 +349,8 @@ class Action
 
 class DeleteAction extends Action
     act: (sprite) ->
-        console.log('DeleteAction: ' + sprite.spriteType)
-        sprite.remove()
-        canvas.renderAll()
+        console.log('DeleteAction: act')
+        spriteDeleteList.push(sprite)
 
 class CloneAction extends Action
     constructor: ->
@@ -358,7 +358,7 @@ class CloneAction extends Action
         @spawnWait = 2
 
     act: (sprite) ->
-        console.log('CloneAction: ' + sprite.spriteType)
+        console.log('act: CloneAction (spawnWait: ' + @spawnWait + ')')
         # only act 1 out of ever @spawnWait times
         if (Math.random() * @spawnWait) > 1
             return
@@ -419,6 +419,7 @@ class TransformAction extends Action
 
 window.spriteList = []
 window.spriteTypeList = []
+window.spriteDeleteList = []
 
 # Take another simulation step
 #  First, apply simple rules
@@ -431,6 +432,10 @@ window.tick = ->
         sprite.prepIRules()
     for sprite in spriteList
         sprite.applyIRules()
+    # post-process removes so we don't kill the list while executing
+    for sprite in spriteDeleteList
+        sprite.removeFromList()
+        sprite.remove()
     canvas.renderAll.bind(canvas)
     canvas.renderAll()
 

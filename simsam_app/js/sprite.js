@@ -207,7 +207,6 @@
     };
 
     GenericSprite.prototype.showLearning = function() {
-      console.log("showLearning");
       this.set({
         borderColor: "red",
         cornerColor: "red"
@@ -216,7 +215,6 @@
     };
 
     GenericSprite.prototype.showNormal = function() {
-      console.log("showNoraml");
       this.set({
         borderColor: "rgb(210,210,255)",
         cornerColor: "rgb(210,210,255)"
@@ -235,6 +233,15 @@
         return true;
       }
       return false;
+    };
+
+    GenericSprite.prototype.removeFromList = function() {
+      var idx;
+      idx = spriteList.indexOf(this);
+      if (idx >= 0) {
+        console.log('splicing ' + idx);
+        return spriteList.splice(idx, 1);
+      }
     };
 
     return GenericSprite;
@@ -262,7 +269,6 @@
 
       function Sprite(spriteType) {
         Sprite.prototype._count = Sprite.prototype._count + 1;
-        console.log('I have ' + this._count + ' children.');
         Sprite.__super__.constructor.call(this, spriteType);
       }
 
@@ -302,7 +308,6 @@
     };
 
     Rule.prototype.addTransform = function(start, end) {
-      console.log('addTransform');
       if (this.type !== 'transform') {
         console.log('Error: addTransform called on other type of Rule');
       }
@@ -438,9 +443,8 @@
     }
 
     DeleteAction.prototype.act = function(sprite) {
-      console.log('DeleteAction: ' + sprite.spriteType);
-      sprite.remove();
-      return canvas.renderAll();
+      console.log('DeleteAction: act');
+      return spriteDeleteList.push(sprite);
     };
 
     return DeleteAction;
@@ -457,7 +461,7 @@
 
     CloneAction.prototype.act = function(sprite) {
       var newSprite;
-      console.log('CloneAction: ' + sprite.spriteType);
+      console.log('act: CloneAction (spawnWait: ' + this.spawnWait + ')');
       if ((Math.random() * this.spawnWait) > 1) {
         return;
       }
@@ -536,8 +540,10 @@
 
   window.spriteTypeList = [];
 
+  window.spriteDeleteList = [];
+
   window.tick = function() {
-    var sprite, _i, _j, _k, _len, _len1, _len2;
+    var sprite, _i, _j, _k, _l, _len, _len1, _len2, _len3;
     for (_i = 0, _len = spriteList.length; _i < _len; _i++) {
       sprite = spriteList[_i];
       sprite.applyRules();
@@ -549,6 +555,11 @@
     for (_k = 0, _len2 = spriteList.length; _k < _len2; _k++) {
       sprite = spriteList[_k];
       sprite.applyIRules();
+    }
+    for (_l = 0, _len3 = spriteDeleteList.length; _l < _len3; _l++) {
+      sprite = spriteDeleteList[_l];
+      sprite.removeFromList();
+      sprite.remove();
     }
     canvas.renderAll.bind(canvas);
     return canvas.renderAll();
