@@ -398,7 +398,7 @@ class TransformAction extends Action
             theta = sprite.getAngle() * Math.PI / 180 +
                 (Math.random() * range - range / 2) * (2 * Math.PI)
         else
-            theta = sprite.getAngle() * Math.PI / 180
+            theta = (sprite.getAngle() + @transform.dr) * Math.PI / 180
         dx = @transform.dx * Math.cos(theta) - @transform.dy * Math.sin(theta)
         dy = @transform.dx * Math.sin(theta) + @transform.dy * Math.cos(theta)
         sprite.set({

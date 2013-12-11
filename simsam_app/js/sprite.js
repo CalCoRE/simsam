@@ -517,7 +517,7 @@
         range = this.randomRange / 180;
         theta = sprite.getAngle() * Math.PI / 180 + (Math.random() * range - range / 2) * (2 * Math.PI);
       } else {
-        theta = sprite.getAngle() * Math.PI / 180;
+        theta = (sprite.getAngle() + this.transform.dr) * Math.PI / 180;
       }
       dx = this.transform.dx * Math.cos(theta) - this.transform.dy * Math.sin(theta);
       dy = this.transform.dx * Math.sin(theta) + this.transform.dy * Math.cos(theta);
