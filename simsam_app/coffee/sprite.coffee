@@ -10,6 +10,8 @@ class GenericSprite extends fabric.Image
         @stateRandom    = false
         @randomRange    = 15
         @ruleTempObject = null
+        @tempRandom     = false
+        @tempRandomRange = 15
         @prepObj = null
         sWidth = this.spriteType * 5
 
@@ -28,13 +30,27 @@ class GenericSprite extends fabric.Image
             return action.stateRandom
         return @stateRandom
 
+    showRandom: ->
+        if @stateTranspose
+            return @tempRandom
+        return this.isRandom()
+
     setRandom: (value) ->
+        # We got set to random while recording an interaction
+        if @stateTranspose
+            @tempRandom = value
+            return
         @stateRandom = value
         if @_rules.length
             action = @_rules[0].action
             action.stateRandom = value
 
     setRandomRange: (range) ->
+        # Interaction
+        if @stateTranspose
+            @tempRandomRange = range
+            return
+        # Normal Transpose
         @randomRange = range
 
     isEditing: ->
@@ -145,6 +161,9 @@ class GenericSprite extends fabric.Image
             r = new OverlapInteraction(@ruleTempObject)
             r.setActionType('transform')
             r.addTransform(@initState, endState)
+            if @tempRandom
+                r.addRandom(@tempRandomRange)
+                @tempRandom = false
             this.addIRule(r, @ruleTempObject.spriteType)
             return
         if not @stateRecording
@@ -393,12 +412,15 @@ class TransformAction extends Action
 
     act: (sprite) ->
         console.log('TransformAction: ' + sprite.spriteType)
+        rawAngle = sprite.getAngle()
         if @stateRandom
             range = @randomRange / 180
-            theta = sprite.getAngle() * Math.PI / 180 +
+            theta = (sprite.getAngle() + @transform.dr) * Math.PI / 180 +
                 (Math.random() * range - range / 2) * (2 * Math.PI)
         else
             theta = (sprite.getAngle() + @transform.dr) * Math.PI / 180
+        if isNaN(theta)
+            theta = 0
         dx = @transform.dx * Math.cos(theta) - @transform.dy * Math.sin(theta)
         dy = @transform.dx * Math.sin(theta) + @transform.dy * Math.cos(theta)
         sprite.set({

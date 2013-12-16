@@ -379,7 +379,7 @@ $(document).ready(function() {
         // Toggle the random value
         obj.setRandom(!random);
 
-        if (obj.isRandom()) {
+        if (obj.showRandom()) {
             $(this).addClass('highlight');
             randomSliderShow(obj);
         } else {

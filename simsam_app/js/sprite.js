@@ -16,6 +16,8 @@
       this.stateRandom = false;
       this.randomRange = 15;
       this.ruleTempObject = null;
+      this.tempRandom = false;
+      this.tempRandomRange = 15;
       this.prepObj = null;
       sWidth = this.spriteType * 5;
       shapeParams = {
@@ -37,8 +39,19 @@
       return this.stateRandom;
     };
 
+    GenericSprite.prototype.showRandom = function() {
+      if (this.stateTranspose) {
+        return this.tempRandom;
+      }
+      return this.isRandom();
+    };
+
     GenericSprite.prototype.setRandom = function(value) {
       var action;
+      if (this.stateTranspose) {
+        this.tempRandom = value;
+        return;
+      }
       this.stateRandom = value;
       if (this._rules.length) {
         action = this._rules[0].action;
@@ -47,6 +60,10 @@
     };
 
     GenericSprite.prototype.setRandomRange = function(range) {
+      if (this.stateTranspose) {
+        this.tempRandomRange = range;
+        return;
+      }
       return this.randomRange = range;
     };
 
@@ -185,6 +202,10 @@
         r = new OverlapInteraction(this.ruleTempObject);
         r.setActionType('transform');
         r.addTransform(this.initState, endState);
+        if (this.tempRandom) {
+          r.addRandom(this.tempRandomRange);
+          this.tempRandom = false;
+        }
         this.addIRule(r, this.ruleTempObject.spriteType);
         return;
       }
@@ -511,13 +532,17 @@
     };
 
     TransformAction.prototype.act = function(sprite) {
-      var dx, dy, range, theta;
+      var dx, dy, range, rawAngle, theta;
       console.log('TransformAction: ' + sprite.spriteType);
+      rawAngle = sprite.getAngle();
       if (this.stateRandom) {
         range = this.randomRange / 180;
-        theta = sprite.getAngle() * Math.PI / 180 + (Math.random() * range - range / 2) * (2 * Math.PI);
+        theta = (sprite.getAngle() + this.transform.dr) * Math.PI / 180 + (Math.random() * range - range / 2) * (2 * Math.PI);
       } else {
         theta = (sprite.getAngle() + this.transform.dr) * Math.PI / 180;
+      }
+      if (isNaN(theta)) {
+        theta = 0;
       }
       dx = this.transform.dx * Math.cos(theta) - this.transform.dy * Math.sin(theta);
       dy = this.transform.dx * Math.sin(theta) + this.transform.dy * Math.cos(theta);
