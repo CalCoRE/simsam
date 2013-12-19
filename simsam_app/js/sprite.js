@@ -116,6 +116,7 @@
 
     GenericSprite.prototype.applyRules = function(environment) {
       var rule, _i, _len, _ref, _results;
+      this.saveToJSON();
       console.log('--Regular Rules');
       _ref = this._rules;
       _results = [];
@@ -265,6 +266,36 @@
       }
     };
 
+    GenericSprite.prototype.saveToJSON = function() {
+      var fabricJSON, jsonObj;
+      jsonObj = {};
+      fabricJSON = JSON.stringify(this.toJSON());
+      jsonObj['fabric'] = fabricJSON;
+      jsonObj['stateTranspose'] = this.stateTranspose;
+      jsonObj['stateRecording'] = this.stateRecording;
+      jsonObj['stateRandom'] = this.stateRandom;
+      jsonObj['randomRange'] = this.randomRange;
+      jsonObj['ruleTempObject'] = 'XXX';
+      jsonObj['tempRandom'] = this.tempRandom;
+      jsonObj['tempRandomRange'] = this.tempRandomRange;
+      jsonObj['spriteType'] = this.spriteType;
+      this.ruleTempObject = null;
+      this.tempRandomRange = 15;
+      this.prepObj = null;
+      return console.log(jsonObj);
+    };
+
+    GenericSprite.prototype.restoreFromJSON = function(json) {
+      var jsonObj;
+      jsonObj = JSON.parse(json);
+      this.loadFromJSON(json['fabric']);
+      this.stateTranspose = false;
+      this.stateRecording = false;
+      this.stateRandom = jsonObj['stateRandom'];
+      this.randomRange = jsonObj['randomRange'];
+      return this.spriteType = jsonObj['spriteType'];
+    };
+
     return GenericSprite;
 
   })(fabric.Image);
@@ -303,6 +334,8 @@
 
     function Rule(spriteType) {
       this.spriteType = spriteType;
+      this.action = null;
+      this.type = '';
     }
 
     Rule.prototype.act = function(sprite, environment) {
@@ -349,6 +382,14 @@
       return this.action = new DeleteAction();
     };
 
+    Rule.prototype.toJSON = function() {
+      var object;
+      object = {};
+      object.type = this.type;
+      object.action = this.action.toJSON();
+      return object;
+    };
+
     return Rule;
 
   })();
@@ -381,6 +422,12 @@
       if (shouldAct) {
         return sprite.applyTransform(this.transform);
       }
+    };
+
+    Interaction.prototype.toJSON = function() {
+      var obj;
+      obj = Interaction.__super__.toJSON.apply(this, arguments);
+      return obj.targetType = this.targetType;
     };
 
     return Interaction;
@@ -468,6 +515,13 @@
       return spriteDeleteList.push(sprite);
     };
 
+    DeleteAction.prototype.toJSON = function() {
+      var object;
+      object = {};
+      object.type = 'delete';
+      return object;
+    };
+
     return DeleteAction;
 
   })(Action);
@@ -495,6 +549,13 @@
       newSprite.setLeft(sprite.getLeft() + Math.random() * 20 - 10);
       canvas.add(newSprite);
       return canvas.renderAll();
+    };
+
+    CloneAction.prototype.toJSON = function() {
+      var object;
+      object = {};
+      object.type = 'clone';
+      return object.spawnWait = this.spawnWait;
     };
 
     return CloneAction;
@@ -557,6 +618,16 @@
       return sprite.setCoords();
     };
 
+    TransformAction.prototype.toJSON = function() {
+      var object;
+      object = {};
+      object.type = 'transform';
+      object.stateRandom = this.stateRandom;
+      object.randomRange = this.randomRange;
+      object.transform = this.transform;
+      return object;
+    };
+
     return TransformAction;
 
   })(Action);
@@ -595,7 +666,7 @@
     window.maxSprites = 25;
     console.log("loading sprite types");
     spriteTypeList = [];
-    return $("img").each(function(i, sprite) {
+    return $("#sprite_drawer > img").each(function(i, sprite) {
       console.log("loading sprite type" + i);
       window.spriteTypeList.push(SpriteFactory(i, sprite));
       return $(sprite).draggable({
@@ -627,6 +698,41 @@
         }
       });
     });
+  };
+
+  window.saveSprites = function() {
+    var masterObj, oneType, rule, ruleJSON, type, typeObjects, _i, _j, _k, _len, _len1, _len2, _ref, _ref1;
+    masterObj = {};
+    typeObjects = [];
+    for (_i = 0, _len = spriteTypeList.length; _i < _len; _i++) {
+      type = spriteTypeList[_i];
+      oneType = {};
+      oneType.type = type.prototype.spriteType;
+      oneType.imageObj = type.prototype.imageObj.src;
+      oneType.count = type.prototype._count;
+      oneType.rules = [];
+      _ref = type.prototype._rules;
+      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+        rule = _ref[_j];
+        if (rule === void 0) {
+          continue;
+        }
+        ruleJSON = rule.toJSON();
+        oneType.rules.push(ruleJSON);
+      }
+      oneType.irules = [];
+      _ref1 = type.prototype._irules;
+      for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
+        rule = _ref1[_k];
+        if (rule === void 0) {
+          continue;
+        }
+        ruleJSON = rule.toJSON();
+        oneType.irules.push(ruleJSON);
+      }
+      typeObjects.push(oneType);
+    }
+    return console.log(typeObjects);
   };
 
 }).call(this);

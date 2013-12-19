@@ -412,4 +412,9 @@ $(document).ready(function() {
         },
     });
 
+    $('#save').click(function() {
+        console.log('Click');
+        saveSprites();
+    });
+
 });
