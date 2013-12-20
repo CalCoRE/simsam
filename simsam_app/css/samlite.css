@@ -175,11 +175,24 @@
 }
 
 #save {
-	margin-left: 80px;
+	margin-left: 60px;
 	z-index: 1000;
 	position: absolute;
 	top: 10px;
 	left: 20px;
+}
+
+#load {
+	margin-left: 100px;
+	z-index: 1000;
+	position: absolute;
+	top: 10px;
+	left: 20px;
+}
+
+#data {
+	z-index: 1000;
+	margin-top: 1024px;
 }
 
 #right_menu_button {

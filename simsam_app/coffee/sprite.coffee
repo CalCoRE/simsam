@@ -241,15 +241,20 @@ class GenericSprite extends fabric.Image
         @prepObj = null
         
         console.log(jsonObj)
+        console.log("L: " + this.getLeft() + " T: " + this.getTop())
+        return jsonObj
 
     restoreFromJSON: (json) ->
-        jsonObj = JSON.parse(json)
-        this.loadFromJSON(json['fabric'])
+        fabricObj = JSON.parse(json['fabric'])
+        this.constructor.fromObject(fabricObj)
+        this._initConfig(fabricObj)
+        canvas.add(this)
+        console.log("Rest L: " + this.getLeft() + " T: " + this.getTop())
         @stateTranspose = false
         @stateRecording = false
-        @stateRandom = jsonObj['stateRandom']
-        @randomRange = jsonObj['randomRange']
-        @spriteType = jsonObj['spriteType']
+        @stateRandom = json['stateRandom']
+        @randomRange = json['randomRange']
+        @spriteType = json['spriteType']
 
 # makes classes for different types of sprites
 SpriteFactory = (spriteType, imageObj) ->
@@ -313,7 +318,7 @@ class Rule
         actClass = switch type
             when 'transform' then TransformAction
             when 'clone' then CloneAction
-            # Later we add 'Delete' and 'Clone' at least
+            when 'delete' then DeleteAction
         @action = new actClass()
 
     addTransform: (start, end) ->
@@ -328,9 +333,11 @@ class Rule
         @action.stateRandom = true
 
     addClone: ->
+        @type = 'clone'
         @action = new CloneAction()
 
     addDelete: ->
+        @type = 'delete'
         @action = new DeleteAction()
 
     toJSON: ->
@@ -370,6 +377,7 @@ class Interaction extends Rule
     toJSON: ->
         obj = super
         obj.targetType = @targetType
+        return obj
 
 class OverlapInteraction extends Interaction
     # This might just replace Interaction, but for now it's separate because
@@ -581,9 +589,46 @@ window.saveSprites = ->
         for rule in type::_irules
             if rule == undefined
                 continue
+            console.log('adding irule to json')
             ruleJSON = rule.toJSON()
             oneType.irules.push(ruleJSON)
         typeObjects.push(oneType)
+    masterObj.classObjects = typeObjects
+
+    objects = []
+    for obj in spriteList
+        objects.push(obj.saveToJSON())
+    masterObj.objects = objects
+
+    string = JSON.stringify(masterObj)
+    $('#data').html(string)
 
     console.log(typeObjects)
 
+window.loadSprites = (dataString) ->
+    # Clear everything
+    tmpList = []
+    window.spriteTypeList = []
+    for sprite in window.spriteList
+        tmpList.push(sprite)
+    for sprite in tmpList
+        sprite.removeFromList()
+        sprite.remove()
+    canvas.renderAll()
+
+    inObject = JSON.parse(dataString)
+    imageObjects = []
+    $("#sprite_drawer > img").each (i, sprite) -> # all sprites in the drawer
+        imageObjects.push(this)
+    for typeObj in inObject.classObjects
+        imgSrc = typeObj.imageObj
+        for img in imageObjects
+            if imgSrc == img.src
+                typeObj.raw = img
+                break
+        window.spriteTypeList.push(SpriteFactory(typeObj.type, typeObj.raw))
+    for obj in inObject.objects
+        newSprite = new window.spriteTypeList[obj.spriteType]  # make one
+        newSprite.restoreFromJSON(obj)
+
+    canvas.renderAll()

@@ -413,8 +413,12 @@ $(document).ready(function() {
     });
 
     $('#save').click(function() {
-        console.log('Click');
         saveSprites();
+    });
+
+    $('#load').click(function() {
+        console.log('load');
+        loadSprites($('#data').html());
     });
 
 });

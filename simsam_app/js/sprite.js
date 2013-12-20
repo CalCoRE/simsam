@@ -282,18 +282,23 @@
       this.ruleTempObject = null;
       this.tempRandomRange = 15;
       this.prepObj = null;
-      return console.log(jsonObj);
+      console.log(jsonObj);
+      console.log("L: " + this.getLeft() + " T: " + this.getTop());
+      return jsonObj;
     };
 
     GenericSprite.prototype.restoreFromJSON = function(json) {
-      var jsonObj;
-      jsonObj = JSON.parse(json);
-      this.loadFromJSON(json['fabric']);
+      var fabricObj;
+      fabricObj = JSON.parse(json['fabric']);
+      this.constructor.fromObject(fabricObj);
+      this._initConfig(fabricObj);
+      canvas.add(this);
+      console.log("Rest L: " + this.getLeft() + " T: " + this.getTop());
       this.stateTranspose = false;
       this.stateRecording = false;
-      this.stateRandom = jsonObj['stateRandom'];
-      this.randomRange = jsonObj['randomRange'];
-      return this.spriteType = jsonObj['spriteType'];
+      this.stateRandom = json['stateRandom'];
+      this.randomRange = json['randomRange'];
+      return this.spriteType = json['spriteType'];
     };
 
     return GenericSprite;
@@ -356,6 +361,8 @@
             return TransformAction;
           case 'clone':
             return CloneAction;
+          case 'delete':
+            return DeleteAction;
         }
       })();
       return this.action = new actClass();
@@ -375,10 +382,12 @@
     };
 
     Rule.prototype.addClone = function() {
+      this.type = 'clone';
       return this.action = new CloneAction();
     };
 
     Rule.prototype.addDelete = function() {
+      this.type = 'delete';
       return this.action = new DeleteAction();
     };
 
@@ -427,7 +436,8 @@
     Interaction.prototype.toJSON = function() {
       var obj;
       obj = Interaction.__super__.toJSON.apply(this, arguments);
-      return obj.targetType = this.targetType;
+      obj.targetType = this.targetType;
+      return obj;
     };
 
     return Interaction;
@@ -701,7 +711,7 @@
   };
 
   window.saveSprites = function() {
-    var masterObj, oneType, rule, ruleJSON, type, typeObjects, _i, _j, _k, _len, _len1, _len2, _ref, _ref1;
+    var masterObj, obj, objects, oneType, rule, ruleJSON, string, type, typeObjects, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1;
     masterObj = {};
     typeObjects = [];
     for (_i = 0, _len = spriteTypeList.length; _i < _len; _i++) {
@@ -727,12 +737,64 @@
         if (rule === void 0) {
           continue;
         }
+        console.log('adding irule to json');
         ruleJSON = rule.toJSON();
         oneType.irules.push(ruleJSON);
       }
       typeObjects.push(oneType);
     }
+    masterObj.classObjects = typeObjects;
+    objects = [];
+    for (_l = 0, _len3 = spriteList.length; _l < _len3; _l++) {
+      obj = spriteList[_l];
+      objects.push(obj.saveToJSON());
+    }
+    masterObj.objects = objects;
+    string = JSON.stringify(masterObj);
+    $('#data').html(string);
     return console.log(typeObjects);
+  };
+
+  window.loadSprites = function(dataString) {
+    var imageObjects, img, imgSrc, inObject, newSprite, obj, sprite, tmpList, typeObj, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2;
+    tmpList = [];
+    window.spriteTypeList = [];
+    _ref = window.spriteList;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      sprite = _ref[_i];
+      tmpList.push(sprite);
+    }
+    for (_j = 0, _len1 = tmpList.length; _j < _len1; _j++) {
+      sprite = tmpList[_j];
+      sprite.removeFromList();
+      sprite.remove();
+    }
+    canvas.renderAll();
+    inObject = JSON.parse(dataString);
+    imageObjects = [];
+    $("#sprite_drawer > img").each(function(i, sprite) {
+      return imageObjects.push(this);
+    });
+    _ref1 = inObject.classObjects;
+    for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
+      typeObj = _ref1[_k];
+      imgSrc = typeObj.imageObj;
+      for (_l = 0, _len3 = imageObjects.length; _l < _len3; _l++) {
+        img = imageObjects[_l];
+        if (imgSrc === img.src) {
+          typeObj.raw = img;
+          break;
+        }
+      }
+      window.spriteTypeList.push(SpriteFactory(typeObj.type, typeObj.raw));
+    }
+    _ref2 = inObject.objects;
+    for (_m = 0, _len4 = _ref2.length; _m < _len4; _m++) {
+      obj = _ref2[_m];
+      newSprite = new window.spriteTypeList[obj.spriteType];
+      newSprite.restoreFromJSON(obj);
+    }
+    return canvas.renderAll();
   };
 
 }).call(this);
