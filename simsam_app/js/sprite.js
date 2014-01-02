@@ -329,6 +329,20 @@
         Sprite.__super__.constructor.call(this, spriteType);
       }
 
+      Sprite.addClassRule = function(rule, idx) {
+        if (idx === void 0) {
+          idx = 0;
+        }
+        return Sprite.prototype._rules[idx] = rule;
+      };
+
+      Sprite.addClassIRule = function(rule, idx) {
+        if (idx === void 0) {
+          idx = 0;
+        }
+        return Sprite.prototype._rules[idx] = rule;
+      };
+
       return Sprite;
 
     })(GenericSprite);
@@ -394,9 +408,44 @@
     Rule.prototype.toJSON = function() {
       var object;
       object = {};
-      object.type = this.type;
+      object.type = 'default';
       object.action = this.action.toJSON();
       return object;
+    };
+
+    Rule.createFromData = function(data) {
+      var act, actClass, actionObj, className, obj;
+      className = '';
+      className = (function() {
+        switch (data.type) {
+          case 'overlap':
+            return OverlapInteraction;
+          case 'interaction':
+            return Interaction;
+          case 'default':
+            return Rule;
+        }
+      })();
+      if (data.type === 'default') {
+        obj = new className;
+      } else {
+        obj = new className(data.targetType);
+      }
+      actionObj = data.action;
+      actClass = (function() {
+        switch (actionObj.type) {
+          case 'transform':
+            return TransformAction;
+          case 'clone':
+            return CloneAction;
+          case 'delete':
+            return DeleteAction;
+        }
+      })();
+      act = new actClass;
+      act.restoreFromJSON(actionObj);
+      obj.action = act;
+      return obj;
     };
 
     return Rule;
@@ -408,8 +457,12 @@
     __extends(Interaction, _super);
 
     function Interaction(target) {
-      console.log('Interaction: New ' + target.spriteType);
-      this.targetType = target.spriteType;
+      if (typeof target === 'object') {
+        console.log('Interaction: New ' + target.spriteType);
+        this.targetType = target.spriteType;
+      } else {
+        this.targetType = target;
+      }
     }
 
     Interaction.prototype.setEnvironment = function(requiredEnvironment) {
@@ -436,6 +489,7 @@
     Interaction.prototype.toJSON = function() {
       var obj;
       obj = Interaction.__super__.toJSON.apply(this, arguments);
+      obj.type = 'interaction';
       obj.targetType = this.targetType;
       return obj;
     };
@@ -496,6 +550,14 @@
       return this.action.spawnWait = 1;
     };
 
+    OverlapInteraction.prototype.toJSON = function() {
+      var obj;
+      obj = OverlapInteraction.__super__.toJSON.apply(this, arguments);
+      obj.type = 'overlap';
+      obj.targetType = this.targetType;
+      return obj;
+    };
+
     return OverlapInteraction;
 
   })(Interaction);
@@ -507,6 +569,8 @@
     Action.prototype.act = function(sprite) {
       return console.log("Action is an abstract class, don't use it.");
     };
+
+    Action.prototype.restoreFromJSON = function(data) {};
 
     return Action;
 
@@ -565,7 +629,8 @@
       var object;
       object = {};
       object.type = 'clone';
-      return object.spawnWait = this.spawnWait;
+      object.spawnWait = this.spawnWait;
+      return object;
     };
 
     return CloneAction;
@@ -636,6 +701,12 @@
       object.randomRange = this.randomRange;
       object.transform = this.transform;
       return object;
+    };
+
+    TransformAction.prototype.restoreFromJSON = function(data) {
+      this.stateRandom = data.stateRandom;
+      this.randomRange = data.randomRange;
+      return this.transform = data.transform;
     };
 
     return TransformAction;
@@ -756,7 +827,7 @@
   };
 
   window.loadSprites = function(dataString) {
-    var imageObjects, img, imgSrc, inObject, newSprite, obj, sprite, tmpList, typeObj, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2;
+    var imageObjects, img, imgSrc, inObject, iruleData, newSprite, obj, rule, ruleData, sprite, tmpList, typeFactory, typeObj, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _len5, _len6, _m, _n, _o, _ref, _ref1, _ref2, _ref3, _ref4;
     tmpList = [];
     window.spriteTypeList = [];
     _ref = window.spriteList;
@@ -786,13 +857,27 @@
           break;
         }
       }
-      window.spriteTypeList.push(SpriteFactory(typeObj.type, typeObj.raw));
+      typeFactory = SpriteFactory(typeObj.type, typeObj.raw);
+      _ref2 = typeObj.rules;
+      for (_m = 0, _len4 = _ref2.length; _m < _len4; _m++) {
+        ruleData = _ref2[_m];
+        rule = Rule.createFromData(ruleData);
+        typeFactory.addClassRule(rule);
+      }
+      _ref3 = typeObj.irules;
+      for (_n = 0, _len5 = _ref3.length; _n < _len5; _n++) {
+        iruleData = _ref3[_n];
+        rule = Rule.createFromData(iruleData);
+        typeFactory.addClassIRule(rule, iruleData.targetType);
+      }
+      window.spriteTypeList.push(typeFactory);
     }
-    _ref2 = inObject.objects;
-    for (_m = 0, _len4 = _ref2.length; _m < _len4; _m++) {
-      obj = _ref2[_m];
+    _ref4 = inObject.objects;
+    for (_o = 0, _len6 = _ref4.length; _o < _len6; _o++) {
+      obj = _ref4[_o];
       newSprite = new window.spriteTypeList[obj.spriteType];
       newSprite.restoreFromJSON(obj);
+      window.spriteList.push(newSprite);
     }
     return canvas.renderAll();
   };

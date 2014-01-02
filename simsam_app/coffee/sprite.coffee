@@ -290,6 +290,17 @@ SpriteFactory = (spriteType, imageObj) ->
             Sprite::_count = Sprite::_count + 1
             super(spriteType)
 
+        # These should only be used for loading objects from JSON
+        @addClassRule: (rule, idx) ->
+            if idx == undefined
+                idx = 0
+            Sprite::_rules[idx] = rule
+
+        @addClassIRule: (rule, idx) ->
+            if idx == undefined
+                idx = 0
+            Sprite::_rules[idx] = rule
+
     return Sprite
 
 #
@@ -342,17 +353,42 @@ class Rule
 
     toJSON: ->
         object = {}
-        object.type = @type
+        object.type = 'default'
         object.action = @action.toJSON()
         return object
+
+    @createFromData: (data) ->
+        className = ''
+        className = switch data.type
+            when 'overlap' then OverlapInteraction
+            when 'interaction' then Interaction
+            when 'default' then Rule
+        if (data.type == 'default')
+            obj = new className
+        else
+            obj = new className(data.targetType)
+
+        # Now build actions for this rule
+        actionObj = data.action
+        actClass = switch actionObj.type
+            when 'transform' then TransformAction
+            when 'clone' then CloneAction
+            when 'delete' then DeleteAction
+        act = new actClass
+        act.restoreFromJSON(actionObj)
+        obj.action = act
+        return obj
 
         
 # a transform which is conditional on the environment of the sprite
 class Interaction extends Rule
     constructor: (target) ->
-        console.log('Interaction: New ' + target.spriteType)
-        @targetType = target.spriteType
-        # The type of Sprite with which we interact
+        if typeof target == 'object'
+            console.log('Interaction: New ' + target.spriteType)
+            @targetType = target.spriteType
+        else
+            @targetType = target
+    # The type of Sprite with which we interact
     # I imagine an environment as a object with properties corresponding to
     # spriteTypes, where the value of each is an integer indicating how many
     # sprites of that type are in the environment, e.g.
@@ -376,6 +412,7 @@ class Interaction extends Rule
 
     toJSON: ->
         obj = super
+        obj.type = 'interaction'
         obj.targetType = @targetType
         return obj
 
@@ -415,6 +452,11 @@ class OverlapInteraction extends Interaction
         # Since we're an interaction, clone each and every time
         @action.spawnWait = 1
 
+    toJSON: ->
+        obj = super
+        obj.type = 'overlap'
+        obj.targetType = @targetType
+        return obj
 #
 #
 # Actions - Transform, Delete, Clone, Random Transform, etc.
@@ -425,6 +467,9 @@ class Action
     # Override this function to do, well, whatever you're doing
     act: (sprite) ->
         console.log("Action is an abstract class, don't use it.")
+
+    restoreFromJSON: (data) ->
+        # Everyone needs one, but it doesn't need to do anything
 
 class DeleteAction extends Action
     act: (sprite) ->
@@ -458,6 +503,7 @@ class CloneAction extends Action
         object = {}
         object.type = 'clone'
         object.spawnWait = @spawnWait
+        return object
 
 class TransformAction extends Action
     constructor: ->
@@ -514,6 +560,11 @@ class TransformAction extends Action
         object.randomRange = @randomRange
         object.transform   = @transform
         return object
+
+    restoreFromJSON: (data) ->
+        @stateRandom = data.stateRandom
+        @randomRange = data.randomRange
+        @transform = data.transform
 
 
 window.spriteList = []
@@ -626,9 +677,18 @@ window.loadSprites = (dataString) ->
             if imgSrc == img.src
                 typeObj.raw = img
                 break
-        window.spriteTypeList.push(SpriteFactory(typeObj.type, typeObj.raw))
+        typeFactory = SpriteFactory(typeObj.type, typeObj.raw)
+        for ruleData in typeObj.rules
+            rule = Rule.createFromData(ruleData)
+            typeFactory.addClassRule(rule)
+        for iruleData in typeObj.irules
+            rule = Rule.createFromData(iruleData)
+            typeFactory.addClassIRule(rule, iruleData.targetType)
+
+        window.spriteTypeList.push(typeFactory)
     for obj in inObject.objects
         newSprite = new window.spriteTypeList[obj.spriteType]  # make one
         newSprite.restoreFromJSON(obj)
+        window.spriteList.push(newSprite)
 
     canvas.renderAll()
