@@ -178,16 +178,24 @@
 	margin-left: 60px;
 	z-index: 1000;
 	position: absolute;
-	top: 10px;
-	left: 20px;
+	top: 8px;
+	left: 10px;
+	width: 41px;
+	height: 41px;
+	background-image: url(../images/save.png);
+	display: none;
 }
 
 #load {
 	margin-left: 100px;
 	z-index: 1000;
 	position: absolute;
-	top: 10px;
-	left: 20px;
+	top: 8px;
+	left: 30px;
+	width: 41px;
+	height: 41px;
+	background-image: url(../images/openfolder.png);
+	display: none;
 }
 
 #data {

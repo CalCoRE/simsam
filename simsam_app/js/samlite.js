@@ -470,6 +470,8 @@
       $('#output').show();
       $('#switch_to_sam_button').show();
       $('#trash_menu_button').show();
+      $('#save').show();
+      $('#load').show();
       return window.loadSpriteTypes();
     };
     startSamlite = function() {
@@ -482,6 +484,8 @@
       $('#container').hide();
       $('#output').hide();
       $('#switch_to_sam_button').hide();
+      $('#save').hide();
+      $('#load').hide();
       return $('#trash_menu_button').hide();
     };
     toggleMenu = function() {
