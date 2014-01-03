@@ -255,6 +255,7 @@ class GenericSprite extends fabric.Image
         @stateRandom = json['stateRandom']
         @randomRange = json['randomRange']
         @spriteType = json['spriteType']
+        this.setCoords()
 
 # makes classes for different types of sprites
 SpriteFactory = (spriteType, imageObj) ->
@@ -299,7 +300,7 @@ SpriteFactory = (spriteType, imageObj) ->
         @addClassIRule: (rule, idx) ->
             if idx == undefined
                 idx = 0
-            Sprite::_rules[idx] = rule
+            Sprite::_irules[idx] = rule
 
     return Sprite
 
@@ -504,6 +505,10 @@ class CloneAction extends Action
         object.type = 'clone'
         object.spawnWait = @spawnWait
         return object
+
+    restoreFromJSON: (data) ->
+        super()
+        @spawnWait = data.spawnWait
 
 class TransformAction extends Action
     constructor: ->

@@ -298,7 +298,8 @@
       this.stateRecording = false;
       this.stateRandom = json['stateRandom'];
       this.randomRange = json['randomRange'];
-      return this.spriteType = json['spriteType'];
+      this.spriteType = json['spriteType'];
+      return this.setCoords();
     };
 
     return GenericSprite;
@@ -340,7 +341,7 @@
         if (idx === void 0) {
           idx = 0;
         }
-        return Sprite.prototype._rules[idx] = rule;
+        return Sprite.prototype._irules[idx] = rule;
       };
 
       return Sprite;
@@ -631,6 +632,11 @@
       object.type = 'clone';
       object.spawnWait = this.spawnWait;
       return object;
+    };
+
+    CloneAction.prototype.restoreFromJSON = function(data) {
+      CloneAction.__super__.restoreFromJSON.call(this);
+      return this.spawnWait = data.spawnWait;
     };
 
     return CloneAction;
