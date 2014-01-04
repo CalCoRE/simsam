@@ -413,7 +413,17 @@ $(document).ready(function() {
     });
 
     $('#save').click(function() {
-        saveSprites();
+        rawData = saveSprites();
+        $.ajax({
+            url: 'save_sim_state',
+            type: 'POST',
+            data: {
+                serialized: rawData,
+                name: 'default',
+                simid: window.simulationId,
+            },
+            dataType: 'json'
+        });
     });
 
     $('#load').click(function() {

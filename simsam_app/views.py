@@ -27,6 +27,7 @@ def app(request):
     animation_id = request.REQUEST.get('animation', None)
     project = Project.objects.get(id=int(project_id))
     animation = Animation.objects.get(id=int(animation_id))
+    simulation = project.simulations.all()[0]
     t = loader.get_template("sam.html")
     c = RequestContext(request, {
         "project_name": project.name,
@@ -35,6 +36,7 @@ def app(request):
         "animation_id": animation_id,
         "frame_sequence": animation.frame_sequence,
         "sprite_collection": animation.sprite_collection,
+        "simulation_id" : simulation.id,
         "simsam_user": simsam_user
     })
     return HttpResponse(t.render(c))
@@ -252,3 +254,27 @@ def sprite(request):
     t = loader.get_template("sprite.html")
     c = RequestContext(request, {})
     return HttpResponse(t.render(c))
+
+#
+# Interact with sim states
+@login_required
+def save_sim_state(request):
+    """Display the page listing the project's animations."""
+    simjson     = request.POST['serialized']
+    name        = request.POST['name']
+    simid       = request.POST['simid']
+
+    try:
+        simList = SimulationState.objects.filter(name=name)
+    except SimulationState.DoesNotExist:
+        simState = SimulationState.objects.create(name=name, simulation_id=simid, serialized_state=simjson, is_current=False)
+        return HttpResponse(json.dumps({
+            'success': True,
+        }))
+    simState = simList[0]
+    simState.serialized_state = simjson
+    simState.save()
+    return HttpResponse(json.dumps({
+        'success': True,
+    }))
+

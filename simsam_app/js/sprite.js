@@ -829,7 +829,8 @@
     masterObj.objects = objects;
     string = JSON.stringify(masterObj);
     $('#data').html(string);
-    return console.log(typeObjects);
+    console.log(typeObjects);
+    return string;
   };
 
   window.loadSprites = function(dataString) {

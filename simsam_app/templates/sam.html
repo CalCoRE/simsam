@@ -28,6 +28,7 @@
     <script type="text/javascript">
       window.onload = function () {
         window.animationId = {{ animation_id }};
+		window.simulationId = {{ simulation_id }};
   			window.framesequence = [{% for frame in frame_sequence %}"{{ frame|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}];
   			window.projectId = {{ project_id }};
   			window.spritecollection = [{% for sprite in sprite_collection %}"{{ sprite|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}];

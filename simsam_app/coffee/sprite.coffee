@@ -660,6 +660,7 @@ window.saveSprites = ->
     $('#data').html(string)
 
     console.log(typeObjects)
+    return string
 
 window.loadSprites = (dataString) ->
     # Clear everything
