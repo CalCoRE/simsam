@@ -262,8 +262,9 @@
       idx = spriteList.indexOf(this);
       if (idx >= 0) {
         console.log('splicing ' + idx);
-        return spriteList.splice(idx, 1);
+        spriteList.splice(idx, 1);
       }
+      return GenericSprite.__super__.removeFromList.call(this);
     };
 
     GenericSprite.prototype.saveToJSON = function() {
@@ -329,6 +330,10 @@
         Sprite.prototype._count = Sprite.prototype._count + 1;
         Sprite.__super__.constructor.call(this, spriteType);
       }
+
+      Sprite.prototype.removeFromList = function() {
+        return Sprite.prototype._count = Sprite.prototype._count - 1;
+      };
 
       Sprite.addClassRule = function(rule, idx) {
         if (idx === void 0) {
@@ -865,6 +870,7 @@
         }
       }
       typeFactory = SpriteFactory(typeObj.type, typeObj.raw);
+      typeFactory.prototype._count = 0;
       _ref2 = typeObj.rules;
       for (_m = 0, _len4 = _ref2.length; _m < _len4; _m++) {
         ruleData = _ref2[_m];

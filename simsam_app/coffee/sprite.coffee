@@ -217,6 +217,7 @@ class GenericSprite extends fabric.Image
         if idx >= 0
             console.log('splicing ' + idx)
             spriteList.splice(idx, 1)
+        super()
 
     #
     # Saving Object
@@ -290,6 +291,9 @@ SpriteFactory = (spriteType, imageObj) ->
         constructor: (spriteType) ->
             Sprite::_count = Sprite::_count + 1
             super(spriteType)
+
+        removeFromList: ->
+            Sprite::_count = Sprite::_count - 1
 
         # These should only be used for loading objects from JSON
         @addClassRule: (rule, idx) ->
@@ -684,6 +688,7 @@ window.loadSprites = (dataString) ->
                 typeObj.raw = img
                 break
         typeFactory = SpriteFactory(typeObj.type, typeObj.raw)
+        typeFactory::_count = 0
         for ruleData in typeObj.rules
             rule = Rule.createFromData(ruleData)
             typeFactory.addClassRule(rule)

@@ -184,6 +184,7 @@ deleteImageClass = function(spriteType, classImage) {
     onSuccess = function() {
         canvas.forEachObject(function (iterObj) {
             if (iterObj.spriteType == spriteType) {
+                iterObj._count = 0;
                 iterObj.removeFromList();
                 iterObj.remove();
                 delete iterObj;
