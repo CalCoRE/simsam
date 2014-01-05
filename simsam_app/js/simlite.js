@@ -428,7 +428,23 @@ $(document).ready(function() {
 
     $('#load').click(function() {
         console.log('load');
-        loadSprites($('#data').html());
+        //loadSprites($('#data').html());
+        $.ajax({
+            url: 'load_sim_state',
+            type: 'POST',
+            data: {
+                name: 'default',
+                sim_id: window.simulationId,
+            },
+            dataType: 'json',
+            success: function(data) {
+                if (data.status == 'Success') {
+                    loadSprites(data.serialized);
+                } else if (data.status == 'Failed') {
+                    console.log ('Error(load): ' + data.message);
+                }
+            },
+        });
     });
 
 });

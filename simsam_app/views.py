@@ -278,3 +278,30 @@ def save_sim_state(request):
         'success': True,
     }))
 
+
+@login_required
+def load_sim_state(request):
+    """Display the page listing the project's animations."""
+    message = ''
+    status = 'Success'
+
+    name        = request.POST['name']
+    simId       = int(request.POST['sim_id'])
+
+    serial = ''
+
+    try:
+        simState = SimulationState.objects.get(name=name, simulation_id=simId)
+        serial = simState.serialized_state
+    except SimulationState.MultipleObjectsReturned:
+        message = 'Multiple objects returned for %d, "%s"' % (simId, name)
+        status = 'Failed'
+        
+    return HttpResponse(json.dumps({
+        'status': status,
+        'message': message,
+        'serialized': serial,
+    }))
+
+
+# Also we may want a list_sim_states or some such thing.

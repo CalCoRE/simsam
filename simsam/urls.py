@@ -32,6 +32,7 @@ urlpatterns = patterns('',
     url(r"^delete_image/?$", simsam_app.views.delete_image),
     url(r"^save_frame_sequence/?$", simsam_app.views.save_frame_sequence),
     url(r"^save_sim_state/?$", simsam_app.views.save_sim_state),
+    url(r"^load_sim_state/?$", simsam_app.views.load_sim_state),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
