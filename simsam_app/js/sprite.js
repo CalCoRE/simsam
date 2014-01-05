@@ -264,7 +264,7 @@
         console.log('splicing ' + idx);
         spriteList.splice(idx, 1);
       }
-      return GenericSprite.__super__.removeFromList.call(this);
+      return this.subtractCount();
     };
 
     GenericSprite.prototype.saveToJSON = function() {
@@ -331,7 +331,7 @@
         Sprite.__super__.constructor.call(this, spriteType);
       }
 
-      Sprite.prototype.removeFromList = function() {
+      Sprite.prototype.subtractCount = function() {
         return Sprite.prototype._count = Sprite.prototype._count - 1;
       };
 

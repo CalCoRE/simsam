@@ -217,7 +217,7 @@ class GenericSprite extends fabric.Image
         if idx >= 0
             console.log('splicing ' + idx)
             spriteList.splice(idx, 1)
-        super()
+        this.subtractCount()
 
     #
     # Saving Object
@@ -292,7 +292,7 @@ SpriteFactory = (spriteType, imageObj) ->
             Sprite::_count = Sprite::_count + 1
             super(spriteType)
 
-        removeFromList: ->
+        subtractCount: ->
             Sprite::_count = Sprite::_count - 1
 
         # These should only be used for loading objects from JSON

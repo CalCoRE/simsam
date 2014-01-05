@@ -264,19 +264,28 @@ def save_sim_state(request):
     name        = request.POST['name']
     simid       = request.POST['simid']
 
+    response = HttpResponse();
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate';
+    response['Pragma'] = 'no-cache';
+    response['Expires'] = 0;
+
     try:
         simList = SimulationState.objects.filter(name=name)
     except SimulationState.DoesNotExist:
         simState = SimulationState.objects.create(name=name, simulation_id=simid, serialized_state=simjson, is_current=False)
-        return HttpResponse(json.dumps({
+        response.content = json.dumps({
             'success': True,
-        }))
+            'which' : 1,
+        })
+        return response
     simState = simList[0]
     simState.serialized_state = simjson
     simState.save()
-    return HttpResponse(json.dumps({
+    response.content = json.dumps({
         'success': True,
-    }))
+        'which' : 2,
+    })
+    return response
 
 
 @login_required
@@ -289,6 +298,10 @@ def load_sim_state(request):
     simId       = int(request.POST['sim_id'])
 
     serial = ''
+    response = HttpResponse();
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate';
+    response['Pragma'] = 'no-cache';
+    response['Expires'] = 0;
 
     try:
         simState = SimulationState.objects.get(name=name, simulation_id=simId)
@@ -297,11 +310,12 @@ def load_sim_state(request):
         message = 'Multiple objects returned for %d, "%s"' % (simId, name)
         status = 'Failed'
         
-    return HttpResponse(json.dumps({
+    response.content = json.dumps({
         'status': status,
         'message': message,
         'serialized': serial,
-    }))
+    })
+    return response
 
 
 # Also we may want a list_sim_states or some such thing.
