@@ -201,6 +201,7 @@
 #data {
 	z-index: 1000;
 	margin-top: 1024px;
+	display: none;
 }
 
 #right_menu_button {

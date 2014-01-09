@@ -259,7 +259,7 @@ def sprite(request):
 # Interact with sim states
 @login_required
 def save_sim_state(request):
-    """Display the page listing the project's animations."""
+    """Save the Simulation state of all objects, rules, etc."""
     simjson     = request.POST['serialized']
     name        = request.POST['name']
     simid       = request.POST['simid']
@@ -270,7 +270,7 @@ def save_sim_state(request):
     response['Expires'] = 0;
 
     try:
-        simList = SimulationState.objects.filter(name=name)
+        simState = SimulationState.objects.get(name=name, simulation_id=simid)
     except SimulationState.DoesNotExist:
         simState = SimulationState.objects.create(name=name, simulation_id=simid, serialized_state=simjson, is_current=False)
         response.content = json.dumps({
@@ -278,7 +278,20 @@ def save_sim_state(request):
             'which' : 1,
         })
         return response
-    simState = simList[0]
+    except SimulationState.MultipleObjectsReturned:
+        response.content = json.dumps({
+            'success': True,
+            'which' : 1,
+        })
+        return response
+    except:
+        response.content = json.dumps({
+            'success': False,
+            'which' : 1,
+            'message': 'Unexpected error: %s' % sys.exc_info()[0],
+        })
+        return response
+
     simState.serialized_state = simjson
     simState.save()
     response.content = json.dumps({
@@ -290,8 +303,9 @@ def save_sim_state(request):
 
 @login_required
 def load_sim_state(request):
-    """Display the page listing the project's animations."""
+    """Load the Simulation state of all objects, rules, etc."""
     message = ''
+    debug = ''
     status = 'Success'
 
     name        = request.POST['name']
@@ -306,13 +320,20 @@ def load_sim_state(request):
     try:
         simState = SimulationState.objects.get(name=name, simulation_id=simId)
         serial = simState.serialized_state
+    except SimulationState.DoesNotExist:
+        message = 'No state has been saved for this simulation.'
+        debug = 'No objects found in simsam_app_simulationstate for %d, %s' % \
+                (simId, name)
+        status = 'Failed'
     except SimulationState.MultipleObjectsReturned:
-        message = 'Multiple objects returned for %d, "%s"' % (simId, name)
+        message = 'Multiple objects returned for %d, "%s". ' % (simId, name)
+        debug = 'There is an issue with simsam_app_simulationstate.'
         status = 'Failed'
         
     response.content = json.dumps({
         'status': status,
         'message': message,
+        'debug': debug,
         'serialized': serial,
     })
     return response

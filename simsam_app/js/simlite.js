@@ -442,7 +442,12 @@ $(document).ready(function() {
                 if (data.status == 'Success') {
                     loadSprites(data.serialized);
                 } else if (data.status == 'Failed') {
-                    console.log ('Error(load): ' + data.message);
+                    if (data.debug.length) {
+                        console.log ('Error(load): ' + data.debug);
+                    }
+                    if (data.message.length) {
+                        alert('Error: ' + data.message);
+                    }
                 }
             },
         });
