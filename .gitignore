@@ -32,3 +32,9 @@ media/sam_frames/.gitignore
 simsam_app/js/sprite.js
 
 .gitignore
+
+sqlite3_db
+
+simsam/#settings.py#
+
+temp_data.json
