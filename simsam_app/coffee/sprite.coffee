@@ -290,10 +290,14 @@ SpriteFactory = (spriteType, imageObj) ->
 
         constructor: (spriteType) ->
             Sprite::_count = Sprite::_count + 1
+            hash = @imageObj.dataset['hash']
+            $('#' + hash).html(Sprite::_count)
             super(spriteType)
 
         subtractCount: ->
             Sprite::_count = Sprite::_count - 1
+            hash = @imageObj.dataset['hash']
+            $('#' + hash).html(Sprite::_count)
 
         # These should only be used for loading objects from JSON
         @addClassRule: (rule, idx) ->

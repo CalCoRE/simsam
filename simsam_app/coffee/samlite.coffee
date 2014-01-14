@@ -114,7 +114,13 @@ $ ->
         #$(canvas).attr("dropzone", $('container'))
         #canvas.addEventListener "dblclick", (e) => addObject(img)
         #img.addEventListener "dblclick", (e) => spriteList.push( new spriteTypeList[] )
-        output.appendChild img    
+        output.appendChild img
+
+        cnt = document.createElement('div')
+        cnt.className = 'sprite-count'
+        cnt.id = sprite
+        cnt.innerHTML = '0'
+        output.appendChild cnt
     
     loadFrames = (frame) ->
         output = $("#video_output").get(0)
@@ -498,7 +504,7 @@ $ ->
         #$('#controls_container').hide()
         $('#replay').hide()
         $('#video_frame').hide()
-        $('#bottom_frame').hide()
+        $('#video_bottom').hide()
         $('#switch_to_sim_button').hide()
         $('#crop_buttons').hide()
         # show simlite containers
@@ -506,6 +512,9 @@ $ ->
         $('#output').show()
         $('#switch_to_sam_button').show()
         $('#trash_menu_button').show()
+        $('#save').show()
+        $('#load').show()
+        $('.sim_bottom').show()
         window.loadSpriteTypes()
     
     startSamlite = ->
@@ -515,12 +524,15 @@ $ ->
         $('#video_frame').show()
         $('#switch_to_sim_button').show()
         $('#crop_buttons').show()
-        $('#bottom_frame').show()
+        $('#video_bottom').show()
         # hide SiM containers
         $('#container').hide()
         $('#output').hide()
         $('#switch_to_sam_button').hide()
         $('#trash_menu_button').hide()
+        $('#save').hide()
+        $('#load').hide()
+        $('.sim_bottom').hide()
         
         #MHWJ
     toggleMenu = ->

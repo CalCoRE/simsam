@@ -84,13 +84,18 @@
       }
     };
     loadSprites = function(sprite) {
-      var img, output;
+      var cnt, img, output;
       output = $("#sprite_drawer").get(0);
       img = new Image();
       img.src = 'http://' + window.location.host + '/media/sprites/' + sprite + '.jpg';
       img.className = "sprite";
       img.setAttribute('data-hash', sprite);
-      return output.appendChild(img);
+      output.appendChild(img);
+      cnt = document.createElement('div');
+      cnt.className = 'sprite-count';
+      cnt.id = sprite;
+      cnt.innerHTML = '0';
+      return output.appendChild(cnt);
     };
     loadFrames = function(frame) {
       var canvas, context, ctx, frameId, frameIndex, frameOrdinal, img, output, thumb, thumbnail;
@@ -463,7 +468,7 @@
     startSimlite = function() {
       $('#replay').hide();
       $('#video_frame').hide();
-      $('#bottom_frame').hide();
+      $('#video_bottom').hide();
       $('#switch_to_sim_button').hide();
       $('#crop_buttons').hide();
       $('#container').show();
@@ -472,6 +477,7 @@
       $('#trash_menu_button').show();
       $('#save').show();
       $('#load').show();
+      $('.sim_bottom').show();
       return window.loadSpriteTypes();
     };
     startSamlite = function() {
@@ -480,13 +486,14 @@
       $('#video_frame').show();
       $('#switch_to_sim_button').show();
       $('#crop_buttons').show();
-      $('#bottom_frame').show();
+      $('#video_bottom').show();
       $('#container').hide();
       $('#output').hide();
       $('#switch_to_sam_button').hide();
+      $('#trash_menu_button').hide();
       $('#save').hide();
       $('#load').hide();
-      return $('#trash_menu_button').hide();
+      return $('.sim_bottom').hide();
     };
     toggleMenu = function() {
       if (menu) {

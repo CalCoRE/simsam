@@ -327,12 +327,18 @@
       Sprite.prototype._count = 0;
 
       function Sprite(spriteType) {
+        var hash;
         Sprite.prototype._count = Sprite.prototype._count + 1;
+        hash = this.imageObj.dataset['hash'];
+        $('#' + hash).html(Sprite.prototype._count);
         Sprite.__super__.constructor.call(this, spriteType);
       }
 
       Sprite.prototype.subtractCount = function() {
-        return Sprite.prototype._count = Sprite.prototype._count - 1;
+        var hash;
+        Sprite.prototype._count = Sprite.prototype._count - 1;
+        hash = this.imageObj.dataset['hash'];
+        return $('#' + hash).html(Sprite.prototype._count);
       };
 
       Sprite.addClassRule = function(rule, idx) {

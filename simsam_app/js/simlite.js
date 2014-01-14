@@ -24,7 +24,8 @@ window.initSim = (function(){
         if (loc.x > width || loc.y > height) return;
         console.log('toggleRecord');
         selectedObject = canvas.getActiveObject();
-        if( selectedObject !== null ) { // if one object is selected this fires
+        // if one object is selected this fires
+        if (selectedObject !== null && selectedObject !== undefined) { 
             selectedObject.learningToggle();
             if (selectedObject.stateRecording) {
                 selectedObject.bringToFront();
@@ -325,6 +326,47 @@ modifyingHide = function(p_obj) {
     }
 }
 
+// Sim Measurables
+measureShowCounts = false;
+
+simDragStop = function(ev, ui) {
+    var i;
+    var sprite;
+    var match = false;
+    var height = 30;
+    var source;
+
+    for(i=0; i < window.spriteList.length; i++) {
+        sprite = window.spriteList[i];
+        point = {y: ev.pageY, x: ev.pageX};
+        if (sprite.containsPoint(point)) {
+            match = true;
+            break;
+        }
+    }
+    if (!match) return;
+    
+    source = ev.target.id;
+    el = document.createElement('div');
+    className = 'measure-follow';
+    if (source == 'iact_toggle') {
+        className += ' iact';
+    } else {
+        className += ' counts';
+    }
+    el.className = className;
+    el.innerHTML = '26';
+    el["data-follows"] = sprite.spriteId;
+    $(el).css({
+        position: 'absolute',
+        width: '40px',
+        height: '' + height + 'px',
+    });
+    $(el).css('top', sprite.getTop() + sprite.getHeight()/2 - height);
+    $(el).css('left', sprite.getLeft() + sprite.getWidth()/2);
+    $('#construction_frame').append(el);
+}
+
 /* User Interface code for Sprite InteractionRule */
 uiInteractionCB = null;
 
@@ -451,6 +493,35 @@ $(document).ready(function() {
                 }
             },
         });
+    });
+
+    // Measurable panel
+    /*
+    $('.sim_buttons').each(function (idx, e) {
+        $(e).draggable({helper: "clone"});
+    });
+    */
+    simButtonObj = {
+        helper: 'clone',
+        stop: simDragStop,
+    };
+    $('#iact_toggle').draggable(simButtonObj);
+    $('#iact_chart').draggable(simButtonObj);
+    $('#counts').click(function() {
+        measureShowCounts = !measureShowCounts;
+        if (measureShowCounts) {
+            $('#counts').addClass('highlight');
+        } else {
+            $('#counts').removeClass('highlight');
+        }
+    });
+    $('#count_chart').click(function() {
+        measureShowCounts = !measureShowCounts;
+        if (measureShowCounts) {
+            $('#count_chart').addClass('highlight');
+        } else {
+            $('#count_chart').removeClass('highlight');
+        }
     });
 
 });
