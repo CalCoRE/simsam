@@ -478,6 +478,7 @@
       $('#save').show();
       $('#load').show();
       $('.sim_bottom').show();
+      $('#sim_min').show();
       return window.loadSpriteTypes();
     };
     startSamlite = function() {
@@ -487,13 +488,16 @@
       $('#switch_to_sim_button').show();
       $('#crop_buttons').show();
       $('#video_bottom').show();
+      $('#bottom_frame').show();
       $('#container').hide();
       $('#output').hide();
       $('#switch_to_sam_button').hide();
       $('#trash_menu_button').hide();
       $('#save').hide();
       $('#load').hide();
-      return $('.sim_bottom').hide();
+      $('.sim_bottom').hide();
+      $('#sim_min').hide();
+      return $('#sim_max').hide();
     };
     toggleMenu = function() {
       if (menu) {

@@ -515,6 +515,7 @@ $ ->
         $('#save').show()
         $('#load').show()
         $('.sim_bottom').show()
+        $('#sim_min').show()
         window.loadSpriteTypes()
     
     startSamlite = ->
@@ -525,6 +526,7 @@ $ ->
         $('#switch_to_sim_button').show()
         $('#crop_buttons').show()
         $('#video_bottom').show()
+        $('#bottom_frame').show()
         # hide SiM containers
         $('#container').hide()
         $('#output').hide()
@@ -533,6 +535,8 @@ $ ->
         $('#save').hide()
         $('#load').hide()
         $('.sim_bottom').hide()
+        $('#sim_min').hide()
+        $('#sim_max').hide()
         
         #MHWJ
     toggleMenu = ->

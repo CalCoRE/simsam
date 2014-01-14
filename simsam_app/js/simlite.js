@@ -524,4 +524,15 @@ $(document).ready(function() {
         }
     });
 
+    $('#sim_min').click(function(ev) {
+        ev.preventDefault();
+        $('#bottom_frame').slideToggle();
+        $('#sim_max').show(500);
+    });
+    $('#sim_max').click(function(ev) {
+        ev.preventDefault();
+        $('#bottom_frame').slideToggle();
+        $(this).hide(250);
+    });
+
 });
