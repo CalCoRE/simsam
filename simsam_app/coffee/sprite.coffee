@@ -15,6 +15,7 @@ class GenericSprite extends fabric.Image
         @prepObj        = null
         @countElement   = null
         @interElement   = null # Interaction counter
+        @measureObject  = null
         # Don't forget to add these to the save/load routines
         sWidth = this.spriteType * 5
 
@@ -308,7 +309,8 @@ SpriteFactory = (spriteType, imageObj) ->
             hash = @imageObj.dataset['hash']
             $('#' + hash).html(Sprite::_count)
 
-        interactClass: (type) ->
+        interactClass: (iObj) ->
+            type = iObj.spriteType
             cnt = Sprite::_interactCount
             Sprite::_interact[cnt] = []
             $("#sprite_drawer > img").each (i, sprite) -> 
@@ -318,6 +320,10 @@ SpriteFactory = (spriteType, imageObj) ->
             Sprite::_interact[cnt][type] += 1
             console.log ('type[' + type + ']: ' + Sprite::_interact[cnt][type])
             Sprite::_interactCount = cnt + 1
+            if @countElement != null
+                $(@countElement).html(Sprite::_interactCount)
+            if iObj.countElement != null
+                $(iObj.countElement).html(Sprite::_interactCount)
 
         # These should only be used for loading objects from JSON
         @addClassRule: (rule, idx) ->
@@ -474,7 +480,7 @@ class OverlapInteraction extends Interaction
         if obj == false
             return false
         @action.act(sprite)
-        sprite.interactClass(obj.spriteType)
+        sprite.interactClass(obj)
         sprite.prepObj = null
 
     addClone: ->

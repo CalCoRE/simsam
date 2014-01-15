@@ -1,5 +1,7 @@
 window.initSim = (function(){
 
+    interactionWaiting = false;
+
     /* Create a new fabric.Canvas object that wraps around the original <canvas>
      * DOM element.
      */
@@ -81,6 +83,14 @@ getD = function(init , end) {
 }
 
 simObjectSelected = function(options) {
+    // We're waiting for a select to occur on a measurement
+    if (interactionWaiting) {
+
+        canvas.discardActiveObject();
+        interactionWaiting = false;
+        $('#count_blocker').hide();
+    }
+
     currentSimObject = canvas.getActiveObject();
     $('#selected').show(250);
 }
@@ -367,6 +377,10 @@ simDragStop = function(ev, ui) {
     $(el).css('left', sprite.getLeft() + sprite.getWidth()/2);
     $('#construction_frame').append(el);
     sprite.countElement = el;
+    // Prepare to select the interaction target object
+    canvas.discardActiveObject();
+    $('#count_blocker').show();
+    interactionWaiting = true;
 }
 
 /* User Interface code for Sprite InteractionRule */

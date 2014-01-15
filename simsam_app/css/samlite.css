@@ -403,6 +403,7 @@ a.close {
 	right: 20px;
 	padding-left: 4px;
 	padding-right: 3px;
+	display:none;
 }
 
 /*
@@ -432,6 +433,18 @@ a.close {
 #counts.highlight,
 #count_chart.highlight {
 	background-color: #ffff80;
+}
+
+#count_blocker {
+	background-color: #444;
+	position: absolute;
+	top: 10px;
+	left: 70px;
+	font-size: 16px;
+	color: white;
+	width: 180px;
+	height: 60px;
+	display: none;
 }
 
 .measure-follow {

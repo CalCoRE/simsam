@@ -352,8 +352,9 @@
         return $('#' + hash).html(Sprite.prototype._count);
       };
 
-      Sprite.prototype.interactClass = function(type) {
-        var cnt;
+      Sprite.prototype.interactClass = function(iObj) {
+        var cnt, type;
+        type = iObj.spriteType;
         cnt = Sprite.prototype._interactCount;
         Sprite.prototype._interact[cnt] = [];
         $("#sprite_drawer > img").each(function(i, sprite) {
@@ -364,7 +365,13 @@
         }
         Sprite.prototype._interact[cnt][type] += 1;
         console.log('type[' + type + ']: ' + Sprite.prototype._interact[cnt][type]);
-        return Sprite.prototype._interactCount = cnt + 1;
+        Sprite.prototype._interactCount = cnt + 1;
+        if (this.countElement !== null) {
+          $(this.countElement).html(Sprite.prototype._interactCount);
+        }
+        if (iObj.countElement !== null) {
+          return $(iObj.countElement).html(Sprite.prototype._interactCount);
+        }
       };
 
       Sprite.addClassRule = function(rule, idx) {
@@ -580,7 +587,7 @@
         return false;
       }
       this.action.act(sprite);
-      sprite.interactClass(obj.spriteType);
+      sprite.interactClass(obj);
       return sprite.prepObj = null;
     };
 
