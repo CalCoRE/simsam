@@ -12,7 +12,10 @@ class GenericSprite extends fabric.Image
         @ruleTempObject = null
         @tempRandom     = false
         @tempRandomRange = 15
-        @prepObj = null
+        @prepObj        = null
+        @countElement   = null
+        @interElement   = null # Interaction counter
+        # Don't forget to add these to the save/load routines
         sWidth = this.spriteType * 5
 
         shapeParams =
@@ -230,9 +233,10 @@ class GenericSprite extends fabric.Image
         jsonObj['stateRecording'] = @stateRecording
         jsonObj['stateRandom'] = @stateRandom
         jsonObj['randomRange'] = @randomRange
-        jsonObj['ruleTempObject'] = 'XXX'
         jsonObj['tempRandom'] = @tempRandom
         jsonObj['tempRandomRange'] = @tempRandomRange
+        jsonObj['countElement'] = (@countElement == null) ? '0' : '1'
+        jsonObj['interElement'] = (@interElement == null) ? '0' : '1'
 
         jsonObj['spriteType'] = @spriteType
         # We shouldn't ever save amidst a tick execution
@@ -288,6 +292,11 @@ SpriteFactory = (spriteType, imageObj) ->
         # Keep track of how many instances we have spawned.
         _count: 0
 
+        # [iteration][object]
+        _interact: []
+
+        _interactCount: 0
+
         constructor: (spriteType) ->
             Sprite::_count = Sprite::_count + 1
             hash = @imageObj.dataset['hash']
@@ -298,6 +307,17 @@ SpriteFactory = (spriteType, imageObj) ->
             Sprite::_count = Sprite::_count - 1
             hash = @imageObj.dataset['hash']
             $('#' + hash).html(Sprite::_count)
+
+        interactClass: (type) ->
+            cnt = Sprite::_interactCount
+            Sprite::_interact[cnt] = []
+            $("#sprite_drawer > img").each (i, sprite) -> 
+                Sprite::_interact[cnt][i] = 0
+            if cnt > 0
+                Sprite::_interact[cnt] = Sprite::_interact[cnt-1]
+            Sprite::_interact[cnt][type] += 1
+            console.log ('type[' + type + ']: ' + Sprite::_interact[cnt][type])
+            Sprite::_interactCount = cnt + 1
 
         # These should only be used for loading objects from JSON
         @addClassRule: (rule, idx) ->
@@ -454,6 +474,7 @@ class OverlapInteraction extends Interaction
         if obj == false
             return false
         @action.act(sprite)
+        sprite.interactClass(obj.spriteType)
         sprite.prepObj = null
 
     addClone: ->

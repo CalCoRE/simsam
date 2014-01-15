@@ -328,6 +328,7 @@ modifyingHide = function(p_obj) {
 
 // Sim Measurables
 measureShowCounts = false;
+measureShowCharts = false;
 
 simDragStop = function(ev, ui) {
     var i;
@@ -355,7 +356,7 @@ simDragStop = function(ev, ui) {
         className += ' counts';
     }
     el.className = className;
-    el.innerHTML = '26';
+    el.innerHTML = 0;
     el["data-follows"] = sprite.spriteId;
     $(el).css({
         position: 'absolute',
@@ -365,6 +366,7 @@ simDragStop = function(ev, ui) {
     $(el).css('top', sprite.getTop() + sprite.getHeight()/2 - height);
     $(el).css('left', sprite.getLeft() + sprite.getWidth()/2);
     $('#construction_frame').append(el);
+    sprite.countElement = el;
 }
 
 /* User Interface code for Sprite InteractionRule */
@@ -511,14 +513,27 @@ $(document).ready(function() {
         measureShowCounts = !measureShowCounts;
         if (measureShowCounts) {
             $('#counts').addClass('highlight');
+            $('#count_chart').removeClass('highlight');
+            $('.sprite-count').each(function(idx, e) {
+                $(this).show(100);
+            });
+            measureShowCharts = false;
         } else {
             $('#counts').removeClass('highlight');
+            $('.sprite-count').each(function(idx, e) {
+                $(this).hide(100);
+            });
         }
     });
     $('#count_chart').click(function() {
-        measureShowCounts = !measureShowCounts;
-        if (measureShowCounts) {
+        measureShowCharts = !measureShowCharts;
+        if (measureShowCharts) {
             $('#count_chart').addClass('highlight');
+            $('#counts').removeClass('highlight');
+            measureShowCounts = false;
+            $('.sprite-count').each(function(idx, e) {
+                $(this).hide(100);
+            });
         } else {
             $('#count_chart').removeClass('highlight');
         }

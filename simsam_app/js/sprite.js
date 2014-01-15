@@ -19,6 +19,8 @@
       this.tempRandom = false;
       this.tempRandomRange = 15;
       this.prepObj = null;
+      this.countElement = null;
+      this.interElement = null;
       sWidth = this.spriteType * 5;
       shapeParams = {
         height: this.imageObj.clientHeight,
@@ -268,7 +270,7 @@
     };
 
     GenericSprite.prototype.saveToJSON = function() {
-      var fabricJSON, jsonObj;
+      var fabricJSON, jsonObj, _ref, _ref1;
       jsonObj = {};
       fabricJSON = JSON.stringify(this.toJSON());
       jsonObj['fabric'] = fabricJSON;
@@ -276,9 +278,14 @@
       jsonObj['stateRecording'] = this.stateRecording;
       jsonObj['stateRandom'] = this.stateRandom;
       jsonObj['randomRange'] = this.randomRange;
-      jsonObj['ruleTempObject'] = 'XXX';
       jsonObj['tempRandom'] = this.tempRandom;
       jsonObj['tempRandomRange'] = this.tempRandomRange;
+      jsonObj['countElement'] = (_ref = this.countElement === null) != null ? _ref : {
+        '0': '1'
+      };
+      jsonObj['interElement'] = (_ref1 = this.interElement === null) != null ? _ref1 : {
+        '0': '1'
+      };
       jsonObj['spriteType'] = this.spriteType;
       this.ruleTempObject = null;
       this.tempRandomRange = 15;
@@ -326,6 +333,10 @@
 
       Sprite.prototype._count = 0;
 
+      Sprite.prototype._interact = [];
+
+      Sprite.prototype._interactCount = 0;
+
       function Sprite(spriteType) {
         var hash;
         Sprite.prototype._count = Sprite.prototype._count + 1;
@@ -339,6 +350,21 @@
         Sprite.prototype._count = Sprite.prototype._count - 1;
         hash = this.imageObj.dataset['hash'];
         return $('#' + hash).html(Sprite.prototype._count);
+      };
+
+      Sprite.prototype.interactClass = function(type) {
+        var cnt;
+        cnt = Sprite.prototype._interactCount;
+        Sprite.prototype._interact[cnt] = [];
+        $("#sprite_drawer > img").each(function(i, sprite) {
+          return Sprite.prototype._interact[cnt][i] = 0;
+        });
+        if (cnt > 0) {
+          Sprite.prototype._interact[cnt] = Sprite.prototype._interact[cnt - 1];
+        }
+        Sprite.prototype._interact[cnt][type] += 1;
+        console.log('type[' + type + ']: ' + Sprite.prototype._interact[cnt][type]);
+        return Sprite.prototype._interactCount = cnt + 1;
       };
 
       Sprite.addClassRule = function(rule, idx) {
@@ -554,6 +580,7 @@
         return false;
       }
       this.action.act(sprite);
+      sprite.interactClass(obj.spriteType);
       return sprite.prepObj = null;
     };
 
