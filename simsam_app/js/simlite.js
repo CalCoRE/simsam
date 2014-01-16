@@ -1,6 +1,8 @@
 window.initSim = (function(){
 
-    interactionWaiting = false;
+    interactionWaiting = false;     // in state of having just dropped measure
+    currentTracker = null;          // operating measure object
+    currentSimObject = null;
 
     /* Create a new fabric.Canvas object that wraps around the original <canvas>
      * DOM element.
@@ -85,10 +87,11 @@ getD = function(init , end) {
 simObjectSelected = function(options) {
     // We're waiting for a select to occur on a measurement
     if (interactionWaiting) {
-
+        currentTracker.targetSprite = canvas.getActiveObject();
         canvas.discardActiveObject();
         interactionWaiting = false;
         $('#count_blocker').hide();
+        return;
     }
 
     currentSimObject = canvas.getActiveObject();
@@ -97,7 +100,9 @@ simObjectSelected = function(options) {
 
 simObjectCleared = function(options) {
     $('#selected').hide(250);
-    modifyingHide(currentSimObject);
+    if (currentSimObject !== undefined) {
+        modifyingHide(currentSimObject);
+    }
     currentSimObject = null;
 }
 
@@ -330,7 +335,7 @@ modifyingHide = function(p_obj) {
     $('#uimod_rand').removeClass('highlight');
     randomSliderHide(obj);
     // Clear recording if we're in the middle of it.
-    if (obj.stateRecording) {
+    if (obj && obj.stateRecording) {
         // if we should abort recording, just clear stateRecording
         obj.learningToggle();
     }
@@ -344,7 +349,6 @@ simDragStop = function(ev, ui) {
     var i;
     var sprite;
     var match = false;
-    var height = 30;
     var source;
 
     for(i=0; i < window.spriteList.length; i++) {
@@ -358,29 +362,15 @@ simDragStop = function(ev, ui) {
     if (!match) return;
     
     source = ev.target.id;
-    el = document.createElement('div');
-    className = 'measure-follow';
-    if (source == 'iact_toggle') {
-        className += ' iact';
-    } else {
-        className += ' counts';
-    }
-    el.className = className;
-    el.innerHTML = 0;
-    el["data-follows"] = sprite.spriteId;
-    $(el).css({
-        position: 'absolute',
-        width: '40px',
-        height: '' + height + 'px',
-    });
-    $(el).css('top', sprite.getTop() + sprite.getHeight()/2 - height);
-    $(el).css('left', sprite.getLeft() + sprite.getWidth()/2);
-    $('#construction_frame').append(el);
-    sprite.countElement = el;
+    currentTracker = new Tracker;
+    currentTracker.parent = sprite;
+    currentTracker.createElement(source, sprite);
     // Prepare to select the interaction target object
     canvas.discardActiveObject();
+    simObjectCleared();
     $('#count_blocker').show();
     interactionWaiting = true;
+    currentInterObj = sprite;
 }
 
 /* User Interface code for Sprite InteractionRule */

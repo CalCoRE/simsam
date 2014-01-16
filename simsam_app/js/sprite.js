@@ -149,6 +149,9 @@
 
     GenericSprite.prototype.applyIRules = function(environment) {
       var rule, _i, _len, _ref, _results;
+      if (this.countElement) {
+        this.countElement.interactCheck();
+      }
       console.log('--Interaction Rules');
       _ref = this._irules;
       _results = [];
@@ -350,28 +353,6 @@
         Sprite.prototype._count = Sprite.prototype._count - 1;
         hash = this.imageObj.dataset['hash'];
         return $('#' + hash).html(Sprite.prototype._count);
-      };
-
-      Sprite.prototype.interactClass = function(iObj) {
-        var cnt, type;
-        type = iObj.spriteType;
-        cnt = Sprite.prototype._interactCount;
-        Sprite.prototype._interact[cnt] = [];
-        $("#sprite_drawer > img").each(function(i, sprite) {
-          return Sprite.prototype._interact[cnt][i] = 0;
-        });
-        if (cnt > 0) {
-          Sprite.prototype._interact[cnt] = Sprite.prototype._interact[cnt - 1];
-        }
-        Sprite.prototype._interact[cnt][type] += 1;
-        console.log('type[' + type + ']: ' + Sprite.prototype._interact[cnt][type]);
-        Sprite.prototype._interactCount = cnt + 1;
-        if (this.countElement !== null) {
-          $(this.countElement).html(Sprite.prototype._interactCount);
-        }
-        if (iObj.countElement !== null) {
-          return $(iObj.countElement).html(Sprite.prototype._interactCount);
-        }
       };
 
       Sprite.addClassRule = function(rule, idx) {
@@ -587,7 +568,6 @@
         return false;
       }
       this.action.act(sprite);
-      sprite.interactClass(obj);
       return sprite.prepObj = null;
     };
 
