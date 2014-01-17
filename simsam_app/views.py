@@ -41,7 +41,6 @@ def app(request):
     })
     return HttpResponse(t.render(c))
 
-
 def sandbox(request):
     """Debugging environment."""
     t = loader.get_template("sandbox.html")
@@ -340,3 +339,29 @@ def load_sim_state(request):
 
 
 # Also we may want a list_sim_states or some such thing.
+
+
+
+# for testing interface
+@login_required
+def interface(request):
+    """Where the SiMSAM action is prettier (?)."""
+    simsam_user = SimsamUser.lookup(request.user)
+    project_id = request.REQUEST.get('project', None)
+    animation_id = request.REQUEST.get('animation', None)
+    project = Project.objects.get(id=int(project_id))
+    animation = Animation.objects.get(id=int(animation_id))
+    simulation = project.simulations.all()[0]
+    t = loader.get_template("newinterface.html")
+    c = RequestContext(request, {
+        "project_name": project.name,
+        "project_id": project_id,
+        "animation_name": animation.name,
+        "animation_id": animation_id,
+        "frame_sequence": animation.frame_sequence,
+        "sprite_collection": animation.sprite_collection,
+        "simulation_id" : simulation.id,
+        "simsam_user": simsam_user
+    })
+    return HttpResponse(t.render(c))
+

@@ -1,0 +1,77 @@
+<html lang="en">
+<head>
+
+    <title>{{ project_name }} - SiMSAM Alpha PRETTY</title>
+    <meta charset="UTF-8" />
+
+    <script src="{{ STATIC_URL }}js/jquery.js"></script>
+    <script src="{{ STATIC_URL }}js/jquery-ui.js"></script>
+    <script src="{{ STATIC_URL }}js/jquery.ui.touch.js"></script>
+    <script src="{{ STATIC_URL }}js/html5sortable.js"></script>
+    <script src="{{ STATIC_URL }}js/html5support.js"></script>
+
+    <!-- hammer is used to detect touches during cropping -->
+    <script src="{{ STATIC_URL }}js/hammer.min.js"></script>
+
+    <script src="{{ STATIC_URL }}js/cropTool.js"></script>
+    <script src="{{ STATIC_URL }}js/Fabric.js"></script>
+    <script src="{{ STATIC_URL }}js/tracker.js"></script>
+    <script src="{{ STATIC_URL }}js/sprite.js"></script>
+    <script src="{{ STATIC_URL }}js/simlite.js"></script>
+    <script src="{{ STATIC_URL }}js/samlite.js"></script>
+    
+
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/newinterface.css">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/iphone-style-checkboxes.css">
+
+    <script type="text/javascript">
+      window.onload = function () {
+        window.animationId = {{ animation_id }};
+		window.simulationId = {{ simulation_id }};
+  			window.framesequence = [{% for frame in frame_sequence %}"{{ frame|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}];
+  			window.projectId = {{ project_id }};
+  			window.spritecollection = [{% for sprite in sprite_collection %}"{{ sprite|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}];
+			
+  			var cameraMode = true;
+        initSam();
+        initSim();
+      };
+        
+      var simRunning = false;
+        
+      toggleSim = function() {
+        if( !simRunning ) {
+          if( interval = setInterval('tick()',1000) ) { simRunning = true; }
+		  $('#run').html('Stop');
+        } else {
+          clearInterval(interval);
+          simRunning = false;
+		  $('#run').html('Run');
+        }
+      }
+    // Fix for Fabric.js 1.2.9 - Issue #781
+    $('#wholescreen').scroll(function(){
+    	canvas.calcOffset();
+    });
+    </script>
+</head>
+<!-- 16:9 aspect ratio -->
+<!-- size 1, 1200 x 675 and larger -->
+<!-- size 2, 1000 x 562 -->
+<!-- size 3, 800 x 450 -->
+<!-- right menu 1/5, bottom menu 1/7 -->
+    <body>
+    {% if user.is_authenticated %}
+        <div class="app-wrapper">
+            <div class="window"></div>
+            <div class="right-menu">
+                <div class="menu_button" id="switch_to_sim_button" style="border-top: none;">Make Simulation</div>
+                <div class="menu_button" id="switch_to_sim_button" style="border-top: none;">Start Cropping</div>
+                <div class="menu_button" id="switch_to_sim_button" style="border-top: none;">Play Once</div>
+            </div>
+            <div class="bottom-menu"></div>
+        </div>
+    {% endif %}
+    </body>
+</html>

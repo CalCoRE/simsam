@@ -1,0 +1,94 @@
+
+@font-face {
+  font-family: 'Averia Sans Libre';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Averia Sans Libre Regular'), local('AveriaSansLibre-Regular'), url(http://themes.googleusercontent.com/static/fonts/averiasanslibre/v2/yRJpjT39KxACO9F31mj_LhlS6V2rbkt3HRj5hz1lBB8.woff) format('woff');
+}
+
+.window {
+	border-color: white;
+	border-width: 1px;
+	border-style: solid;
+	height: 570;
+	width: 950;
+	background-color: #fffefe;
+	border-radius: 15px;
+}
+
+.bottom-menu {
+	border-color: white;
+	border-style: solid;
+	bottom: 0px;
+	margin-top: 6px;
+	height: 95;
+	width: 950;
+	border-width: 1px;
+	background-color: #fffefe;
+	border-radius: 15px;
+}
+
+.right-menu {
+	font-size: large;
+	font-family: "Averia Sans Libre", Helvetica;
+	border-color: white;
+	border-style: solid;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	height: 658;
+	width: 240;
+	border-width: 1px;
+	background-color: #fffefe;
+	border-radius: 15px;
+	padding-top: 15px;
+}
+
+.menu_button {
+	visibility: visible;
+	border-top-width: 0px;
+	border-bottom-style: solid;
+	border-bottom-width: 0px;
+	border-left-style: none;
+	border-right-style: none;
+	border-top-style: solid;
+	padding-bottom: 15px;
+	padding-top: 15px;
+	text-align: center;
+	width: 100%;
+	cursor:pointer;
+	background-opacity: 0;
+}
+
+.menu_button:hover {
+	background-color: #e0e0e0;
+	visibility: visible;
+	border-top-width: 0px;
+	border-bottom-style: solid;
+	border-bottom-width: 0px;
+	border-left-style: none;
+	border-right-style: none;
+	border-top-style: solid;
+	padding-bottom: 15px;
+	padding-top: 15px;
+	text-align: center;
+	width: 100%;
+	cursor:pointer;
+	background-opacity: 0;
+}
+
+.app-wrapper {
+	position: relative;
+	background-color: #62c004;
+	height: 675px;
+	width: 1200px;
+	border-style: solid;
+	border-color: #62c004;
+	border-width: 5px;
+	border-radius: 15px;
+	margin: 0 auto;
+}
+
+body {
+	background-color: #23374b;
+}

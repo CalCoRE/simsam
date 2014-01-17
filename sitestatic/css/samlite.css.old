@@ -1,3 +1,11 @@
+@font-face {
+  font-family: 'Averia';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Averia Sans Libre Regular'), local('AveriaSansLibre-Regular'), url('../fonts/AveriaSansLibra-Regular.ttf') format('ttf');
+}
+
+
 #wholescreen {
 	position: absolute;
 	right: 0px;
@@ -246,7 +254,7 @@
 	font-size: large;
 	background-opacity: 0;
 	color: #5d5d5d;
-	font-family: Helvetica, Verdana, Arial, sans-serif;
+	font-family: 'Averia', sans-serif;
 }
 
 .sprite {
