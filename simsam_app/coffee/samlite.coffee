@@ -2,7 +2,7 @@ $ ->
     # globals
     thumbnailScaleFactor = 0.25;
     cameraSwitch = {}               # will be reference to on/off node
-    window.playbackFrames = []             # full-size canvas elements, in playback order
+    window.playbackFrames = []      # full-size canvas elements, in playback order
     frameRegistry = {}              # all full-size canvas elements, by id
     playbackTimeouts = []           # list of timeout handles for current playback
                                     # allows them to be canceled (i.e. pause 

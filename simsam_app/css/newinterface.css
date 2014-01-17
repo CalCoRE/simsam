@@ -6,6 +6,34 @@
   src: local('Averia Sans Libre Regular'), local('AveriaSansLibre-Regular'), url(http://themes.googleusercontent.com/static/fonts/averiasanslibre/v2/yRJpjT39KxACO9F31mj_LhlS6V2rbkt3HRj5hz1lBB8.woff) format('woff');
 }
 
+@font-face {
+  font-family: 'PeaxDrawnIcons';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Peax Drawn Icons'), local('PeaxDrawnIcons'), url(../sitestatic/fonts/PeaxDrawnIcons.ttf) format('ttf');
+}
+
+@font-face {
+  font-family: 'SketchIconsBold';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Sketch Icons Bold'), local('SketchIconsBold'), url(../sitestatic/fonts/Sketch Icons Bold.ttf) format('ttf');
+}
+
+.app-wrapper {
+	position: relative;
+	background-color: #62c004;
+	height: 675px;
+	width: 1200px;
+	border-style: solid;
+	border-color: #62c004;
+	border-width: 5px;
+	border-radius: 15px;
+	margin: 0 auto;
+}
+
+/* MAIN APP WINDOW */
+
 .window {
 	border-color: white;
 	border-width: 1px;
@@ -16,17 +44,162 @@
 	border-radius: 15px;
 }
 
-.bottom-menu {
-	border-color: white;
-	border-style: solid;
-	bottom: 0px;
-	margin-top: 6px;
-	height: 95;
-	width: 950;
-	border-width: 1px;
-	background-color: #fffefe;
-	border-radius: 15px;
-}
+/**************************************/
+/* MAIN APP WINDOW , VIDEO COMPONENTS */
+/**************************************/
+
+    #video_frame {
+    	position: absolute;
+    	left: 0px;
+    	top: 0px;
+    	right: 248;
+    	bottom: 103;
+    	border-style: none;
+    	text-align: center;
+    	border-radius: 15px;
+    }
+    
+    #replay {
+    	position: absolute;
+    	left: 0px;
+    	top: 0px;
+    	width: 100%;
+    	height: 100%;
+        background-position: center center;
+    }
+    
+    .overlay-frame {
+        /*-o-object-fit: fill;*/
+        height: 100%;
+        /*width: 100%;*/
+        opacity: .3;
+    	border-radius: 15px;
+    }
+    
+    #camera {
+    	/*position: absolute;*/
+    	top: 0px;
+    	height: 100%;
+    	/*width: 100%;*/
+    	left: 0;
+    	/*-o-object-fit: fill;*/
+    	border-radius: 15px;
+    }
+    
+    .playback-frame {
+        /*-o-object-fit: fill;*/
+        height: 100%;
+        /*width: 100%;*/
+    }
+    
+    .canvas-container {
+        width: 950px;
+        height: 570px;
+    }
+
+/*********************/
+/**** BOTTOM MENU ****/
+/*********************/
+
+    .bottom-menu {
+    	border-color: white;
+    	border-style: solid;
+    	bottom: 0px;
+    	margin-top: 6px;
+    	height: 95;
+    	width: 950;
+    	border-width: 1px;
+    	background-color: #fffefe;
+    	border-radius: 15px;
+    }
+    
+    /* PLAY RECORD TOGGLE */
+    
+    #toggle {
+    	position: relative;
+    	left: 0px;
+    	top: 0px;
+    	height: 100%;
+    	width: 120px;
+    }
+    
+    #play_mode {
+    	/*background-image: url(../images/play.png);
+    	background-repeat: no-repeat;
+    	background-size: 100%;*/
+    	top: -3px;
+    	left: 10px;
+    	position: absolute;
+    	cursor: pointer;
+    	/*margin: -1em;*/
+    	font-family: 'PeaxDrawnIcons'
+    }
+    
+    #record_mode {
+    	/*background-image: url(../images/camera.png);
+    	background-repeat: no-repeat;
+    	background-size: 100%;*/
+    	bottom: 0px;
+    	right: 0px;
+    	position: absolute;
+    	cursor: pointer;
+    	font-family: 'PeaxDrawnIcons';
+    }
+    
+    #toggle .small {
+    	/*position: absolute;
+    	height: 15%;
+    	width: 15%;*/
+    	font-size: 1.5em;
+    }
+    
+    #toggle .big {
+    	/*position: absolute;
+    	height: 50%;
+    	width: 50%;*/
+    	font-size: 6em;
+    }
+    
+    #video_output {
+        overflow-x: scroll;
+        white-space: nowrap;
+        max-height: 97px;
+        left: 150px;
+        right: 330px;
+        top: 578px;
+        position: absolute;
+        background: #000;
+        margin: 0px;
+        padding: 0px;
+        /*border-left-width: 0px;
+        border-right-width: 0px;
+        max-height: 100%;
+        max-width: 100%;
+        white-space: nowrap;
+        border-left: solid;
+        border-right: solid;*/
+    }
+    
+    #video_output canvas {
+        cursor: hand;
+        height: 97px;
+    }
+    
+    #video_output canvas :dragged {
+        cursor: move;
+        height: 97px;
+    }
+    
+    #trash {
+        border-left-width: 0px;
+        border-left: solid;
+        top: 0px;
+        right: 0px;
+        position: absolute;
+        height: 100%;
+        width: 100px;
+        background: url('../images/trash.png') no-repeat center;
+    }
 
 .right-menu {
 	font-size: large;
@@ -77,53 +250,7 @@
 	background-opacity: 0;
 }
 
-.app-wrapper {
-	position: relative;
-	background-color: #62c004;
-	height: 675px;
-	width: 1200px;
-	border-style: solid;
-	border-color: #62c004;
-	border-width: 5px;
-	border-radius: 15px;
-	margin: 0 auto;
-}
-
 body {
 	background-color: #23374b;
 }
 
-#video_frame {
-	position: absolute;
-	left: 0px;
-	top: 0px;
-	right: 249;
-	bottom: 103;
-	border-style: none;
-	text-align: center;
-}
-
-#replay {
-	position: absolute;
-	left: 0px;
-	top: 0px;
-	width: 100%;
-	height: 100%;
-    background-position: center center;
-}
-
-.overlay-frame {
-    /*-o-object-fit: fill;*/
-    height: 100%;
-    /*width: 100%;*/
-    opacity: .3;
-}
-
-#camera {
-	/*position: absolute;*/
-	top: 0px;
-	height: 100%;
-	/*width: 100%;*/
-	left: 0;
-	/*-o-object-fit: fill;*/
-}
