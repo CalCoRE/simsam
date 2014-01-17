@@ -92,3 +92,13 @@
 body {
 	background-color: #23374b;
 }
+
+#video_frame {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	right: 249;
+	bottom: 103;
+	border-style: none;
+	text-align: center;
+}

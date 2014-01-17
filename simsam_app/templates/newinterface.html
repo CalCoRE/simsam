@@ -64,14 +64,80 @@
     <body>
     {% if user.is_authenticated %}
         <div class="app-wrapper">
-            <div class="window"></div>
-            <div class="right-menu">
-                <div class="menu_button" id="switch_to_sim_button" style="border-top: none;">Make Simulation</div>
-                <div class="menu_button" id="switch_to_sim_button" style="border-top: none;">Start Cropping</div>
-                <div class="menu_button" id="switch_to_sim_button" style="border-top: none;">Play Once</div>
+            
+            <!-- MAIN WINDOW -->
+            <div class="window" id="construction_frame">
+                <canvas id="container"></canvas>
+                <div id="video_frame">
+                    <video id="camera"></video>
+                    <div id="replay"></div>
+                    <!-- is this allowed? attempting… -->
+                </div>
             </div>
-            <div class="bottom-menu"></div>
+            
+            <!-- RIGHT MENU -->
+            <div class="right-menu">
+                <div id="menu_options">
+              		<div id="switch_button">
+              			<div class="menu_button" id="switch_to_sim_button" style="border-top: none;">Make Simulation</div>
+              			<div class="menu_button" id="switch_to_sam_button" style="border-top: none;">Make Animation</div>
+              		</div>
+              		<div id="crop_buttons">
+                    <div class="menu_button" id="startcropping" onclick="cropCanvas()">Start Cropping</div>
+            				<div class="menu_button" id="savecrop" onclick="getResults()">Save Crop</div>
+            				<div class="menu_button" id="cancelcrop" onclick="deleteRect()">Cancel Crop</div>
+                	</div>
+            
+                	<div id="sim_buttons">
+                		<div class="menu_button" onclick="tick()">Play Once</div>
+                		<div id="run" class="menu_button" onclick="toggleSim()">Run</div>
+                	</div>
+            	  <!-- Selected Chooser -->
+            	  <div id="selected" >
+            		  <h3>Modify Sprite</h3>
+            		  <div id="uise_del" class="menu_button">Delete</div>
+            		  <div id="uise_delall" class="menu_button">Delete All</div>
+            	  </div>
+            	  <!-- Modifying Chooser -->
+            	  <div id="modifying" >
+            		  <div id="uimod_rand" class="menu_button">Randomize</div>
+            		  <div id="uimod_clone" class="menu_button">Clone</div>
+            	  </div>
+              	</div>
+              	<div id="sprite_drawer"></div>
+            	<div id="trash_menu_button" class="floating_button right-button"></div>
+            </div>
+            
+            <!-- BOTTOM MENU -->
+            <div class="bottom-menu">
+                <div id="video_bottom">
+            		<div id="toggle">
+            			<div id="play_mode" class="big"></div>
+            			<div id="record_mode" class="small"></div>
+            		</div>
+            		<div id="video_output"><!-- filmstrip--></div>
+            		<div id="trash"></div>
+            	</div> <!-- video_bottom -->
+            	<div class="sim_bottom">
+            		<div class="sim_buttons">
+            			<div id="iact_toggle">
+            			</div>
+            			<div id="counts">
+            			</div>
+            			<div id="count_blocker">Please select interaction target</div>
+            			<p style="clear: both;">Counters</p>
+            		</div>
+            		<div class="sim_charts">
+            			<div id="iact_chart"></div>
+            			<div id="count_chart"></div>
+            			<p style="clear: both;">Charts</p>
+            		</div>
+            	</div>
+            	<a href="" id="sim_min" class="close">_</a>
+            </div>
         </div>
+    <!-- secret speed slider -->
+    <input type="hidden" id="fps" value="10">
     {% endif %}
     </body>
 </html>
