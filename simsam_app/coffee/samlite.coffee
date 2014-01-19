@@ -29,6 +29,7 @@ $ ->
         $('#switch_to_sam_button').hide()
         $('#container').hide()
         $('#output').hide()
+        $('#sim_buttons').hide()
     
         # hide save crop and cancel crop buttons (cropping not started yet)
         $('#savecrop').hide()
@@ -516,6 +517,7 @@ $ ->
         $('#save').show()
         $('#load').show()
         $('.sim_bottom').show()
+        $('#sim_buttons').show()
         $('#sim_min').show()
         window.loadSpriteTypes()
     
@@ -536,6 +538,7 @@ $ ->
         $('#save').hide()
         $('#load').hide()
         $('.sim_bottom').hide()
+        $('#sim_buttons').hide()
         $('#sim_min').hide()
         $('#sim_max').hide()
         

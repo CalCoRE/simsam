@@ -82,14 +82,14 @@
               			<div class="menu_button" id="switch_to_sim_button" style="border-top: none;">Make Simulation</div>
               			<div class="menu_button" id="switch_to_sam_button" style="border-top: none;">Make Animation</div>
               		</div>
-              		<div id="crop_buttons">
-                    <div class="menu_button" id="startcropping" onclick="cropCanvas()">Start Cropping</div>
-            				<div class="menu_button" id="savecrop" onclick="getResults()">Save Crop</div>
-            				<div class="menu_button" id="cancelcrop" onclick="deleteRect()">Cancel Crop</div>
+              		    <div id="crop_buttons">
+                        <div class="menu_button" id="startcropping" onclick="cropCanvas()">Start Cropping</div>
+                        <div class="menu_button" id="savecrop" onclick="getResults()">Save Crop</div>
+                        <div class="menu_button" id="cancelcrop" onclick="deleteRect()">Cancel Crop</div>
                 	</div>
             
-                	<div id="sim_buttons">
-                		<div class="menu_button" onclick="tick()">Play Once</div>
+                	<div id="sim_buttons" style="display:none;">
+                		<div class="menu_button" onclick="tick()">One Step</div>
                 		<div id="run" class="menu_button" onclick="toggleSim()">Run</div>
                 	</div>
             	  <!-- Selected Chooser -->
