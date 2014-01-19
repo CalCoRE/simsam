@@ -161,45 +161,83 @@
     }
     
     #video_output {
+        border-right-color: #c0c0c0;
+        border-left-color: #bfbfbf;
+        border-right-style: solid;
+        border-left-style: solid;
+        border-right-width: 1px;
+        border-left-width: 1px;
         overflow-x: scroll;
         white-space: nowrap;
         max-height: 97px;
-        left: 150px;
+        left: 130px;
         right: 330px;
         top: 578px;
         position: absolute;
-        background: #000;
         margin: 0px;
-        padding: 0px;
-        /*border-left-width: 0px;
-        border-right-width: 0px;
-        max-height: 100%;
-        max-width: 100%;
-        white-space: nowrap;
-        border-left: solid;
-        border-right: solid;*/
+    	padding: 0px 2px;
     }
     
     #video_output canvas {
         cursor: hand;
-        height: 97px;
+        padding: 2px 1px 2px 1px;
+        height: 93px;
+    	border-radius: 15px;
+    	display: inline-block;
     }
     
     #video_output canvas :dragged {
         cursor: move;
+        height: 93px;
+        width: 129px;
+    }
+    /*
+    #bottom_frame .sortable-placeholder {
+        border-width: 1px;
+        border-style: dashed;
+        background-color: rgba(0, 50, 0);
+        /*display: inline-block;
+        width: 129px;
         height: 97px;
+    	display: inline;
+    }*/
+    
+    #video_output .sortable-placeholder {
+        border: 1px #62c004;
+        border-style: dashed;
+        background-color: rgba(0, 0, 0, .2);
+        /*display: inline-block;*/
+        height: 95px;
+        width: 127px;
+    	display: inline-block;
+        border-radius: 15px;
     }
     
     #trash {
-        border-left-width: 0px;
-        border-left: solid;
-        top: 0px;
-        right: 0px;
+        top: 578px;
+        right: 249px;
         position: absolute;
-        height: 100%;
-        width: 100px;
-        background: url('../images/trash.png') no-repeat center;
+        height: 97px;
+        width: 70px;
+    	font-family: 'PeaxDrawnIcons';
+    	font-size: 6em;
+    	text-align: center;
+        /*background: url('../images/trash.png') no-repeat center;*/
     }
+    
+    #trash .sortable-placeholder {
+        border-color: #62c004;
+        border-width: 1px;
+        border-style: dashed;
+        background-color: rgba(0, 0, 0, 0.3);
+        top: 0px;
+        right: -1px;
+        position: absolute;
+        height: 94px;
+        width: 79px;
+        border-radius: 0px 15px 15px 0px;
+    }
+
 
 .right-menu {
 	font-size: large;
