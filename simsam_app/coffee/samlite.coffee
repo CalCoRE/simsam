@@ -29,7 +29,6 @@ $ ->
         $('#switch_to_sam_button').hide()
         $('#container').hide()
         $('#output').hide()
-        $('#right_frame').hide()
     
         # hide save crop and cancel crop buttons (cropping not started yet)
         $('#savecrop').hide()
