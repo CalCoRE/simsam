@@ -105,7 +105,7 @@
             	  </div>
               	</div>
               	<div id="sprite_drawer"></div>
-            	<div id="trash_menu_button" class="floating_button right-button"></div>
+            	<div id="trash_menu_button"> trash menu button </div>
             </div>
             
             <!-- BOTTOM MENU -->
@@ -138,6 +138,42 @@
         </div>
     <!-- secret speed slider -->
     <input type="hidden" id="fps" value="10">
+    
+      <!-- Interaction Chooser -->
+    <div id="interactions" class="simui">
+      <h3>Action</h3>
+      <ul>
+    	  <li><a id="uich_trans" class="uich" href="#">Translate</a></li>
+    	  <li><a id="uich_clone" class="uich" href="#">Clone</a></li>
+    	  <li><a id="uich_delete" class="uich" href="#">Delete</a></li>
+    	  <li><a id="uich_close" class="uich" href="#">Close</a></li>
+      </ul>
+    </div>
+    <!-- Random Range Slider -->
+    <div id="random-range">
+      <a href="#" onclick="randomSliderHide();">
+    	  <img src="{{ STATIC_URL }}/images/close-24.png"/>
+      </a>
+      <h3>Range</h3>
+      <div id="randomslider"> </div>
+    </div>
+    <div id="random-ui">
+      <canvas id="random-arc"></canvas>
+    </div>
+    
+    <div id="dialog-confirm" title="Delete this object?">
+      <p><span class="ui-icon ui-icon-alert" style="float: left; margin:0 7px 20px 0;"></span><span id="message-text">This item will be permanantly deleted.  Are you sure?</span></p>
+    </div>
+    
+    <!-- END INTERFACE PANELS -->
+    
+    <!-- PERSISTENT FLOATING ICONS HERE -->
+    <div id="home_button">u</div><div class="title">SiMSAM</div>
+    <a href="#" id="save"></a>
+    <a href="#" id="load"></a>
+    <!-- END FLOATING ICONS -->
+
+    
     {% endif %}
     </body>
 </html>
