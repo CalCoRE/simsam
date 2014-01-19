@@ -161,8 +161,9 @@
     }
     
     #video_output {
-        border-right-color: #c0c0c0;
-        border-left-color: #bfbfbf;
+        border-right-color: #ddd;
+        border-left-color: #ddd;
+        background-color: #eee;
         border-right-style: solid;
         border-left-style: solid;
         border-right-width: 1px;
