@@ -10,6 +10,7 @@ $ ->
     overlayClass = "overlay-frame"
     playbackClass = "playback-frame"
     window.isPlaying = false
+    window.isCropping = false       # if we're cropping we shouldn't play on click
     window.playbackIndex = 0
     window.debug = true             # turns on console logging
     menu = false # side menu
@@ -42,7 +43,8 @@ $ ->
             if (recording)
                 shoot()
             else
-                play()
+                if( not isCropping )
+                   play()
         
         # wire up buttons
         $("#switch_to_sim_button").click startSimlite

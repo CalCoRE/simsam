@@ -168,6 +168,7 @@ function getResults() {
     saveCropCanvas(temp_canvas, frameId); //save the cropped image
 
     showStartCroppingButton();
+    window.isCropping = false;
 
 }
 
@@ -215,6 +216,7 @@ function cropCanvas() {
   hideStartCroppingButton();
 
   window.switchToPlaybackMode();
+  window.isCropping = true;
   
   canvas = $(".playback-frame").get(0);
   
