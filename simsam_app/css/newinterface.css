@@ -44,6 +44,10 @@
 	border-radius: 15px;
 }
 
+.upper-canvas {
+    display: block !important;
+}
+
 /**************************************/
 /* MAIN APP WINDOW , VIDEO COMPONENTS */
 /**************************************/

@@ -12,11 +12,11 @@ window.initSim = (function(){
     canvas.on({'object:modified': simObjectModified});
     canvas.on({'object:selected': simObjectSelected});
     canvas.on({'selection:cleared': simObjectCleared});
+    canvas.on("after:render", function(){canvas.calcOffset();}); // for mouse offset issues
     
-    //HACK - this should be something like css' max-height = 100% etc.
-    // maybe not possible because resizing after setting stretches the canvas img.
-    canvas.setHeight(1000);
-    canvas.setWidth(1000);
+    // Adjust based on width of browser!
+    canvas.setHeight(570);
+    canvas.setWidth(950);
     
     // listen for a doubleclick. 
     fabric.util.addListener(fabric.document, 'dblclick', toggleRecord);
