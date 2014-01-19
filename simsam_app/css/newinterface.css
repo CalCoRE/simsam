@@ -191,26 +191,17 @@
         height: 93px;
         width: 129px;
     }
-    /*
-    #bottom_frame .sortable-placeholder {
-        border-width: 1px;
-        border-style: dashed;
-        background-color: rgba(0, 50, 0);
-        /*display: inline-block;
-        width: 129px;
-        height: 97px;
-    	display: inline;
-    }*/
     
     #video_output .sortable-placeholder {
         border: 1px #62c004;
         border-style: dashed;
         background-color: rgba(0, 0, 0, .2);
         /*display: inline-block;*/
-        height: 95px;
-        width: 127px;
+        height: 91px;
+        width: 122px;
     	display: inline-block;
         border-radius: 15px;
+        margin: 2px 1px 2px 1px;
     }
     
     #trash {
