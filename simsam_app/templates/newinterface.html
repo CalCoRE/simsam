@@ -12,6 +12,9 @@
 
     <!-- hammer is used to detect touches during cropping -->
     <script src="{{ STATIC_URL }}js/hammer.min.js"></script>
+    
+    <!-- detect size of screen and update stylesheet -->
+    <script src="{{ STATIC_URL }}js/resolution.js"></script>
 
     <script src="{{ STATIC_URL }}js/cropTool.js"></script>
     <script src="{{ STATIC_URL }}js/Fabric.js"></script>
@@ -20,8 +23,9 @@
     <script src="{{ STATIC_URL }}js/simlite.js"></script>
     <script src="{{ STATIC_URL }}js/samlite.js"></script>
     
-
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/newinterface.css">
+    <!-- This stylesheet is updated based on browser size by resolution.js -->
+	<link id="size-stylesheet" rel='stylesheet' type='text/css' href='{{ STATIC_URL }}css/wide.css' />
+	
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
     <link rel="stylesheet" href="{{ STATIC_URL }}css/iphone-style-checkboxes.css">
 
@@ -59,6 +63,7 @@
 <!-- 16:9 aspect ratio -->
 <!-- size 1, 1200 x 675 and larger -->
 <!-- size 2, 1000 x 562 -->
+<!-- 900 x 506? -->
 <!-- size 3, 800 x 450 -->
 <!-- right menu 1/5, bottom menu 1/7 -->
     <body>
@@ -169,6 +174,7 @@
     
     <!-- PERSISTENT FLOATING ICONS HERE -->
     <div id="home_button">u</div><div class="title">SiMSAM</div>
+    <div id="help_button">M</div><div class="title">SiMSAM</div>
     <a href="#" id="save"></a>
     <a href="#" id="load"></a>
     <!-- END FLOATING ICONS -->

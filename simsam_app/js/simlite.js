@@ -14,9 +14,7 @@ window.initSim = (function(){
     canvas.on({'selection:cleared': simObjectCleared});
     canvas.on("after:render", function(){canvas.calcOffset();}); // for mouse offset issues
     
-    // Adjust based on width of browser!
-    canvas.setHeight(570);
-    canvas.setWidth(950);
+    setCanvasSize($(this).width());
     
     // listen for a doubleclick. 
     fabric.util.addListener(fabric.document, 'dblclick', toggleRecord);
@@ -43,6 +41,26 @@ window.initSim = (function(){
             }
         }
     }
+});
+
+// dynamic canvas size based on browser window
+setCanvasSize = function(width) {
+    browserWidth = parseInt(width);
+    if (width < 701) {
+        
+    } else if ((width >= 911) && (width < 1210)) {
+        canvas.setHeight(400);
+        canvas.setWidth(650);
+    } else {
+        canvas.setHeight(570);
+        canvas.setWidth(950);
+    }
+}
+
+// check and reset canvas size on resize
+// eventually this should probably scale objects and behaviors too
+$(window).resize(function() {
+    setCanvasSize($(this).width());
 });
 
 // Utility Functions

@@ -23,8 +23,8 @@
 .app-wrapper {
 	position: relative;
 	background-color: #62c004;
-	height: 675px;
-	width: 1200px;
+	height: 506px;
+	width: 900px;
 	border-style: solid;
 	border-color: #62c004;
 	border-width: 5px;
@@ -39,8 +39,8 @@
 	border-color: white;
 	border-width: 1px;
 	border-style: solid;
-	height: 570;
-	width: 950;
+	height: 400;
+	width: 650;
 	background-color: #fffefe;
 	border-radius: 15px;
 }
@@ -72,6 +72,17 @@
     color: #62c004;
     cursor: pointer;
     top: 0px;
+	position: fixed;
+}
+
+#help_button {
+    /*background-image: url(../images/home.png);*/
+    font-family: 'PeaxDrawnIcons';
+    font-size: 4em;
+    color: #62c004;
+    cursor: pointer;
+    top: 0px;
+    right: 0px;
 	position: fixed;
 }
 
@@ -146,7 +157,7 @@
     	bottom: 0px;
     	margin-top: 6px;
     	height: 95;
-    	width: 950;
+    	width: 650;
     	border-width: 1px;
     	background-color: #e0f0d1;
     	border-radius: 15px;
@@ -212,7 +223,7 @@
         max-height: 97px;
         left: 130px;
         right: 330px;
-        top: 578px;
+        top: 408px;
         position: absolute;
         margin: 0px;
     	padding: 0px 2px;
@@ -245,7 +256,7 @@
     }
     
     #trash {
-        top: 578px;
+        top: 408px;
         right: 249px;
         position: absolute;
         height: 97px;
@@ -281,7 +292,7 @@
     	position: absolute;
     	top: 0px;
     	right: 0px;
-    	height: 668;
+    	height: 498;
     	width: 240;
     	background-color: #e0f0d1;
     	border-radius: 15px;
