@@ -46,8 +46,9 @@ window.initSim = (function(){
 // dynamic canvas size based on browser window
 setCanvasSize = function(width) {
     browserWidth = parseInt(width);
-    if (width < 701) {
-        
+    if (width < 910) {
+        canvas.setHeight(420);
+        canvas.setWidth(555);
     } else if ((width >= 911) && (width < 1210)) {
         canvas.setHeight(400);
         canvas.setWidth(650);
