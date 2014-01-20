@@ -1,13 +1,13 @@
 .app-wrapper {
-	height: 573px;
-	width: 900px;
+	height: 506px;
+	width: 745px;
 }
 
 /* MAIN APP WINDOW */
 
 .window {
-	height: 487;
-	width: 649;
+	height: 420;
+	width: 561;
 }
 
 #camera {
@@ -15,7 +15,7 @@
 }
 
 #video_frame {
-    height: 489;
+    height: 422;
 }
 
 /*********************/
@@ -23,15 +23,15 @@
 /*********************/
 
 .bottom-menu {
-    width: 649;
+    width: 555;
     height: 75;
 }
 
 #video_output {
-    top: 496px;
+    top: 429px;
     max-height: 77px;
     left: 100px;
-    right: 315px;
+    right: 260px;
 }
 
 #video_output canvas {
@@ -49,8 +49,8 @@
 }
 
 #trash {
-    top: 495px; 
-    right: 248px;
+    top: 429px; 
+    right: 190px;
     height: 75px;
 	font-size: 4.5em;
     width: 60px;
@@ -58,9 +58,9 @@
 
 #trash .sortable-placeholder {
     height: 73px;
-    width: 64px;
+    width: 70px;
     top: 1px;
-    right: 2px;
+    right: -1px;
 }
 
 #toggle {
@@ -80,18 +80,18 @@
 /**********************/
 
 .right-menu {
-	height: 565;
-    width: 240;
+	height: 498;
+    width: 175;
 }
 
 #home_button {
-    font-size: 4em;
+    font-size: 5em;
 }
 
 #help_button {
-    font-size: 3em;
+    font-size: 4em;
 }
 
 .title {
-    font-size: 2.8em;
+    font-size: 3.8em;
 }
