@@ -121,6 +121,12 @@ $ ->
         cnt.id = sprite
         cnt.innerHTML = '0'
         output.appendChild cnt
+
+        chrt = document.createElement('div')
+        chrt.className = "sprite-chart"
+        chrt.id = 'chart-' + sprite
+        chrt.innerHTML = ''
+        output.appendChild chrt
     
     loadFrames = (frame) ->
         output = $("#video_output").get(0)

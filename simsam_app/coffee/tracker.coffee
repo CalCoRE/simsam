@@ -1,21 +1,33 @@
+window.sparkOpt = {
+    width: '40px',
+    lineColor: '#444',
+    fillColor: '#888',
+    spotColor: false, # Hide it
+    minSpotColor: false, # Hide it
+    maxSpotColor: false, # Hide it
+    chartRangeMinX: 0,
+}
+
 class window.Tracker
-    parent: null
-    element: null
-    count: 0
     height: 30
-    targetSprite: null
-    history: [0]
-    latched: false
+
+    constructor: ->
+        @parent = null
+        @element = null
+        @count = 0
+        @targetSprite = null
+        @history = [0]
+        @latched = false
 
     createElement: (sourceId, target) ->
         el = document.createElement('div')
         className = 'measure-follow'
         if (sourceId == 'iact_toggle')
-            className = className + ' iact'
+            el.innerHTML = ''
         else
-            className = className + ' counts'
+            el.innerHTML = 0
+        className = className + ' iact'
         el.className = className
-        el.innerHTML = 0
         el["data-follows"] = target.spriteId
         $(el).css({
             position: 'absolute',
@@ -50,3 +62,14 @@ class window.Tracker
         @history.push(@count)
         this.update()
 
+class window.ChartTracker extends Tracker
+    update: ->
+        top = @parent.getTop() + @parent.getHeight()/2 - @height
+        left = @parent.getLeft() + @parent.getWidth() /2
+        $(@element).css({top: top, left: left})
+
+        $(@element).sparkline(@history, sparkOpt)
+
+    createElement: (sourceId, targetId)->
+        super(sourceId, targetId)
+        $(@element).html('')

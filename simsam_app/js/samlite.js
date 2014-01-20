@@ -84,7 +84,7 @@
       }
     };
     loadSprites = function(sprite) {
-      var cnt, img, output;
+      var chrt, cnt, img, output;
       output = $("#sprite_drawer").get(0);
       img = new Image();
       img.src = 'http://' + window.location.host + '/media/sprites/' + sprite + '.jpg';
@@ -95,7 +95,12 @@
       cnt.className = 'sprite-count';
       cnt.id = sprite;
       cnt.innerHTML = '0';
-      return output.appendChild(cnt);
+      output.appendChild(cnt);
+      chrt = document.createElement('div');
+      chrt.className = "sprite-chart";
+      chrt.id = 'chart-' + sprite;
+      chrt.innerHTML = '';
+      return output.appendChild(chrt);
     };
     loadFrames = function(frame) {
       var canvas, context, ctx, frameId, frameIndex, frameOrdinal, img, output, thumb, thumbnail;

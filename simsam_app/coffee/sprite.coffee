@@ -14,7 +14,6 @@ class GenericSprite extends fabric.Image
         @tempRandomRange = 15
         @prepObj        = null
         @countElement   = null
-        @interElement   = null # Interaction counter
         # Don't forget to add these to the save/load routines
         sWidth = this.spriteType * 5
 
@@ -103,9 +102,7 @@ class GenericSprite extends fabric.Image
             this.showNormal()
 
     # Rule execution
-
     applyRules: (environment) ->
-        this.saveToJSON()
         console.log('--Regular Rules')
         for rule in @_rules
             if rule == undefined
@@ -131,6 +128,7 @@ class GenericSprite extends fabric.Image
                 continue
             console.log('Applying an iRule')
             rule.act(this, environment)
+        this.historyTick()
 
     # returns the index of the new rule
     addRule: (rule) ->
@@ -224,6 +222,17 @@ class GenericSprite extends fabric.Image
             spriteList.splice(idx, 1)
         this.subtractCount()
 
+    remove: ->
+        if @countElement != null
+            @countElement.remove()
+            @countElement = null
+        super()
+
+    modified: ->
+        if @countElement != null
+            @countElement.update()
+            canvas.renderAll()
+
     #
     # Saving Object
     #
@@ -238,7 +247,6 @@ class GenericSprite extends fabric.Image
         jsonObj['tempRandom'] = @tempRandom
         jsonObj['tempRandomRange'] = @tempRandomRange
         jsonObj['countElement'] = (@countElement == null) ? '0' : '1'
-        jsonObj['interElement'] = (@interElement == null) ? '0' : '1'
 
         jsonObj['spriteType'] = @spriteType
         # We shouldn't ever save amidst a tick execution
@@ -263,6 +271,7 @@ class GenericSprite extends fabric.Image
         @randomRange = json['randomRange']
         @spriteType = json['spriteType']
         this.setCoords()
+#end of GenericSprite
 
 # makes classes for different types of sprites
 SpriteFactory = (spriteType, imageObj) ->
@@ -294,6 +303,9 @@ SpriteFactory = (spriteType, imageObj) ->
         # Keep track of how many instances we have spawned.
         _count: 0
 
+        # Count history
+        _history: []
+
         # [iteration][object]
         _interact: []
 
@@ -303,12 +315,27 @@ SpriteFactory = (spriteType, imageObj) ->
             Sprite::_count = Sprite::_count + 1
             hash = @imageObj.dataset['hash']
             $('#' + hash).html(Sprite::_count)
+            chash = '#' + 'chart-' + hash
+            $(chash).sparkline(Sprite::_history)
             super(spriteType)
 
         subtractCount: ->
             Sprite::_count = Sprite::_count - 1
             hash = @imageObj.dataset['hash']
             $('#' + hash).html(Sprite::_count)
+            chash = '#' + 'chart-' + hash
+            myOpt = window.sparkOpt
+            myOpt['width'] = '22px'
+            $(chash).sparkline(Sprite::_history, myOpt)
+
+        historyTick: ->
+            Sprite::_history.push(Sprite::_count)
+            hash = @imageObj.dataset['hash']
+            $('#' + hash).html(Sprite::_count)
+            chash = '#' + 'chart-' + hash
+            myOpt = window.sparkOpt
+            myOpt['width'] = '22px'
+            $(chash).sparkline(Sprite::_history, myOpt)
 
         # These should only be used for loading objects from JSON
         @addClassRule: (rule, idx) ->

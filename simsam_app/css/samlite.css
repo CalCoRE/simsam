@@ -264,7 +264,9 @@
 	position: relative;
 }
 
-#sprite_drawer .sprite-count {
+#sprite_drawer .sprite-count,
+#sprite_drawer .sprite-chart
+{
 	position: absolute;
 	left: 140px;
 	text-align: center;
@@ -278,6 +280,11 @@
 	border-radius: 6px;
 	box-shadow: 2px 2px 4px;
 	display: none;
+}
+
+#sprite_drawer .sprite-chart {
+	width: 22px;
+	height: 22px;
 }
 
 .menu_button {
@@ -419,12 +426,14 @@ a.close {
 }
 */
 
-#iact_toggle {
+#iact_toggle,
+#iact_chart {
 	background-image: url(../images/inter.png);
 	background-repeat: no-repeat;
 	background-position: center;
 }
-#counts {
+#counts,
+#count_chart {
 	background-image: url(../images/hash.png);
 	background-repeat: no-repeat;
 	background-position: center;
@@ -517,6 +526,7 @@ a.close {
 	position: absolute;
 	top: 50px;
 	left: 50px;
+	display: none;
 }
 
 #modifying {

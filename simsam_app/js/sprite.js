@@ -20,7 +20,6 @@
       this.tempRandomRange = 15;
       this.prepObj = null;
       this.countElement = null;
-      this.interElement = null;
       sWidth = this.spriteType * 5;
       shapeParams = {
         height: this.imageObj.clientHeight,
@@ -118,7 +117,6 @@
 
     GenericSprite.prototype.applyRules = function(environment) {
       var rule, _i, _len, _ref, _results;
-      this.saveToJSON();
       console.log('--Regular Rules');
       _ref = this._rules;
       _results = [];
@@ -148,22 +146,21 @@
     };
 
     GenericSprite.prototype.applyIRules = function(environment) {
-      var rule, _i, _len, _ref, _results;
+      var rule, _i, _len, _ref;
       if (this.countElement) {
         this.countElement.interactCheck();
       }
       console.log('--Interaction Rules');
       _ref = this._irules;
-      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         rule = _ref[_i];
         if (rule === void 0) {
           continue;
         }
         console.log('Applying an iRule');
-        _results.push(rule.act(this, environment));
+        rule.act(this, environment);
       }
-      return _results;
+      return this.historyTick();
     };
 
     GenericSprite.prototype.addRule = function(rule) {
@@ -272,8 +269,23 @@
       return this.subtractCount();
     };
 
+    GenericSprite.prototype.remove = function() {
+      if (this.countElement !== null) {
+        this.countElement.remove();
+        this.countElement = null;
+      }
+      return GenericSprite.__super__.remove.call(this);
+    };
+
+    GenericSprite.prototype.modified = function() {
+      if (this.countElement !== null) {
+        this.countElement.update();
+        return canvas.renderAll();
+      }
+    };
+
     GenericSprite.prototype.saveToJSON = function() {
-      var fabricJSON, jsonObj, _ref, _ref1;
+      var fabricJSON, jsonObj, _ref;
       jsonObj = {};
       fabricJSON = JSON.stringify(this.toJSON());
       jsonObj['fabric'] = fabricJSON;
@@ -284,9 +296,6 @@
       jsonObj['tempRandom'] = this.tempRandom;
       jsonObj['tempRandomRange'] = this.tempRandomRange;
       jsonObj['countElement'] = (_ref = this.countElement === null) != null ? _ref : {
-        '0': '1'
-      };
-      jsonObj['interElement'] = (_ref1 = this.interElement === null) != null ? _ref1 : {
         '0': '1'
       };
       jsonObj['spriteType'] = this.spriteType;
@@ -336,23 +345,42 @@
 
       Sprite.prototype._count = 0;
 
+      Sprite.prototype._history = [];
+
       Sprite.prototype._interact = [];
 
       Sprite.prototype._interactCount = 0;
 
       function Sprite(spriteType) {
-        var hash;
+        var chash, hash;
         Sprite.prototype._count = Sprite.prototype._count + 1;
         hash = this.imageObj.dataset['hash'];
         $('#' + hash).html(Sprite.prototype._count);
+        chash = '#' + 'chart-' + hash;
+        $(chash).sparkline(Sprite.prototype._history);
         Sprite.__super__.constructor.call(this, spriteType);
       }
 
       Sprite.prototype.subtractCount = function() {
-        var hash;
+        var chash, hash, myOpt;
         Sprite.prototype._count = Sprite.prototype._count - 1;
         hash = this.imageObj.dataset['hash'];
-        return $('#' + hash).html(Sprite.prototype._count);
+        $('#' + hash).html(Sprite.prototype._count);
+        chash = '#' + 'chart-' + hash;
+        myOpt = window.sparkOpt;
+        myOpt['width'] = '22px';
+        return $(chash).sparkline(Sprite.prototype._history, myOpt);
+      };
+
+      Sprite.prototype.historyTick = function() {
+        var chash, hash, myOpt;
+        Sprite.prototype._history.push(Sprite.prototype._count);
+        hash = this.imageObj.dataset['hash'];
+        $('#' + hash).html(Sprite.prototype._count);
+        chash = '#' + 'chart-' + hash;
+        myOpt = window.sparkOpt;
+        myOpt['width'] = '22px';
+        return $(chash).sparkline(Sprite.prototype._history, myOpt);
       };
 
       Sprite.addClassRule = function(rule, idx) {
