@@ -393,8 +393,34 @@ uiInteractionChoose = function(sprite, callback) {
     $('#interactions').show();
 }
 
+spriteChartClick = function(obj, ev) {
+    var i;
+    var sprite = null;
+    var hash = obj['data-hash'];
+    for (i = 0; i < window.spriteTypeList.length; i++) {
+        if (window.spriteTypeList[i].prototype.hash == hash) {
+            sprite = window.spriteTypeList[i];
+            break;
+        }
+    }
+    if (sprite == null) {
+        console.log('No Sprite matching ' + hash);
+        return;
+    }
+    $('#count_big_chart').show(100);
+    ourOpt = JSON.parse(JSON.stringify(window.sparkOpt));
+    ourOpt['width'] = '100px';
+    ourOpt['height'] = '50px';
+    $('#count_big_chart').sparkline(sprite.prototype.getHistory(), ourOpt);
+    ev.stopPropagation();
+}
+
 // UI Setup for events
 $(document).ready(function() {
+
+    $('body').click(function () {
+        $('#count_big_chart').hide(100);
+    });
     interMap = { 'uich_trans': 'transpose',
         'uich_clone': 'clone',
         'uich_delete': 'delete',

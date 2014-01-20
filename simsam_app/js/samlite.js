@@ -98,8 +98,13 @@
       output.appendChild(cnt);
       chrt = document.createElement('div');
       chrt.className = "sprite-chart";
+      chrt['data-hash'] = sprite;
+      chrt['data-type'] = sprite.spriteType;
       chrt.id = 'chart-' + sprite;
       chrt.innerHTML = '';
+      $(chrt).click(function(ev) {
+        return spriteChartClick(this, ev);
+      });
       return output.appendChild(chrt);
     };
     loadFrames = function(frame) {

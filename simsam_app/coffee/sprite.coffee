@@ -287,6 +287,8 @@ SpriteFactory = (spriteType, imageObj) ->
         # mhewj - changed this to the image elt
         imageObj: imageObj
 
+        hash: imageObj.dataset.hash
+
         # The underscore here indicates private; you aren't supposed to modify
         # the list directly. Use mySpriteInstance.addRule() instead.
         # Because the list is in the Sprite prototype, rules will apply to all
@@ -324,16 +326,19 @@ SpriteFactory = (spriteType, imageObj) ->
             hash = @imageObj.dataset['hash']
             $('#' + hash).html(Sprite::_count)
             chash = '#' + 'chart-' + hash
-            myOpt = window.sparkOpt
+            myOpt = JSON.parse(JSON.stringify(window.sparkOpt))
             myOpt['width'] = '22px'
             $(chash).sparkline(Sprite::_history, myOpt)
+
+        getHistory: ->
+            return Sprite::_history
 
         historyTick: ->
             Sprite::_history.push(Sprite::_count)
             hash = @imageObj.dataset['hash']
             $('#' + hash).html(Sprite::_count)
             chash = '#' + 'chart-' + hash
-            myOpt = window.sparkOpt
+            myOpt = JSON.parse(JSON.stringify(window.sparkOpt))
             myOpt['width'] = '22px'
             $(chash).sparkline(Sprite::_history, myOpt)
 

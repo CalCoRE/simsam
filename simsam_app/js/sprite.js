@@ -339,6 +339,8 @@
 
       Sprite.prototype.imageObj = imageObj;
 
+      Sprite.prototype.hash = imageObj.dataset.hash;
+
       Sprite.prototype._rules = [];
 
       Sprite.prototype._irules = [];
@@ -367,9 +369,13 @@
         hash = this.imageObj.dataset['hash'];
         $('#' + hash).html(Sprite.prototype._count);
         chash = '#' + 'chart-' + hash;
-        myOpt = window.sparkOpt;
+        myOpt = JSON.parse(JSON.stringify(window.sparkOpt));
         myOpt['width'] = '22px';
         return $(chash).sparkline(Sprite.prototype._history, myOpt);
+      };
+
+      Sprite.prototype.getHistory = function() {
+        return Sprite.prototype._history;
       };
 
       Sprite.prototype.historyTick = function() {
@@ -378,7 +384,7 @@
         hash = this.imageObj.dataset['hash'];
         $('#' + hash).html(Sprite.prototype._count);
         chash = '#' + 'chart-' + hash;
-        myOpt = window.sparkOpt;
+        myOpt = JSON.parse(JSON.stringify(window.sparkOpt));
         myOpt['width'] = '22px';
         return $(chash).sparkline(Sprite.prototype._history, myOpt);
       };

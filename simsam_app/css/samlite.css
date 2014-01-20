@@ -287,6 +287,23 @@
 	height: 22px;
 }
 
+#count_big_chart {
+	position: absolute;
+	right: 40px;
+	text-align: center;
+	color: #333;
+	font-size: 20px;
+	font-weight: 900;
+	background-color: white;
+	padding: 4px 5px 4px 5px;
+	margin-left: 20px;
+	border-radius: 6px;
+	box-shadow: 2px 2px 4px;
+	height: 50px;
+	width: 100px;
+	display: none;
+}
+
 .menu_button {
 	visibility: visible;
 	border-top-color: white;
