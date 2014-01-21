@@ -308,7 +308,9 @@ body {
 	position: relative;
 }
 
-#sprite_drawer .sprite-count {
+#sprite_drawer .sprite-count,
+#sprite_drawer .sprite-chart
+{
 	position: absolute;
 	left: 140px;
 	text-align: center;
@@ -321,6 +323,28 @@ body {
 	margin-left: 20px;
 	border-radius: 6px;
 	box-shadow: 2px 2px 4px;
+	display: none;
+}
+
+#sprite_drawer .sprite-chart {
+	width: 22px;
+	height: 22px;
+}
+
+#count_big_chart {
+	position: absolute;
+	right: 40px;
+	text-align: center;
+	color: #333;
+	font-size: 20px;
+	font-weight: 900;
+	background-color: white;
+	padding: 4px 5px 4px 5px;
+	margin-left: 20px;
+	border-radius: 6px;
+	box-shadow: 2px 2px 4px;
+	height: 50px;
+	width: 100px;
 	display: none;
 }
 
@@ -461,12 +485,14 @@ a.close {
 }
 */
 
-#iact_toggle {
+#iact_toggle,
+#iact_chart {
 	background-image: url(../images/inter.png);
 	background-repeat: no-repeat;
 	background-position: center;
 }
-#counts {
+#counts,
+#count_chart {
 	background-image: url(../images/hash.png);
 	background-repeat: no-repeat;
 	background-position: center;
@@ -559,6 +585,7 @@ a.close {
 	position: absolute;
 	top: 50px;
 	left: 50px;
+	display: none;
 }
 
 #modifying {

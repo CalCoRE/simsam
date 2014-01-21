@@ -8,6 +8,7 @@
     <script src="{{ STATIC_URL }}js/jquery.js"></script>
     <script src="{{ STATIC_URL }}js/jquery-ui.js"></script>
     <script src="{{ STATIC_URL }}js/jquery.ui.touch.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.min.js"></script>
     <script src="{{ STATIC_URL }}js/html5sortable.js"></script>
     <script src="{{ STATIC_URL }}js/html5support.js"></script>
 
@@ -130,7 +131,9 @@ $('#wholescreen').scroll(function(){
 		  <div id="uimod_clone" class="menu_button">Clone</div>
 	  </div>
   	</div>
-  	<div id="sprite_drawer"></div>
+	<div id="sprite_drawer">
+		<div id="count_big_chart"></div>
+	</div>
 	<div id="trash_menu_button" class="floating_button right-button"></div>
   </div>
 

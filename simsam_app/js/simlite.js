@@ -145,6 +145,9 @@ djangoDeleteImage = function(image_hash) {
 simObjectModified = function(options) {
     if (options.target) {
         target = options.target;
+        if (typeof target.modified === 'function') {
+            target.modified();
+        }
         rec = target.hasOwnProperty('stateRecording') && target.stateRecording;
         tran = target.hasOwnProperty('stateTranspose') && target.stateTranspose;
         if (!rec & !tran) {
@@ -381,7 +384,7 @@ simDragStop = function(ev, ui) {
     if (!match) return;
     
     source = ev.target.id;
-    currentTracker = new Tracker;
+    currentTracker = new ChartTracker;
     currentTracker.parent = sprite;
     currentTracker.createElement(source, sprite);
     // Prepare to select the interaction target object
@@ -409,8 +412,34 @@ uiInteractionChoose = function(sprite, callback) {
     $('#interactions').show();
 }
 
+spriteChartClick = function(obj, ev) {
+    var i;
+    var sprite = null;
+    var hash = obj['data-hash'];
+    for (i = 0; i < window.spriteTypeList.length; i++) {
+        if (window.spriteTypeList[i].prototype.hash == hash) {
+            sprite = window.spriteTypeList[i];
+            break;
+        }
+    }
+    if (sprite == null) {
+        console.log('No Sprite matching ' + hash);
+        return;
+    }
+    $('#count_big_chart').show(100);
+    ourOpt = JSON.parse(JSON.stringify(window.sparkOpt));
+    ourOpt['width'] = '100px';
+    ourOpt['height'] = '50px';
+    $('#count_big_chart').sparkline(sprite.prototype.getHistory(), ourOpt);
+    ev.stopPropagation();
+}
+
 // UI Setup for events
 $(document).ready(function() {
+
+    $('body').click(function () {
+        $('#count_big_chart').hide(100);
+    });
     interMap = { 'uich_trans': 'transpose',
         'uich_clone': 'clone',
         'uich_delete': 'delete',
@@ -530,6 +559,10 @@ $(document).ready(function() {
         helper: 'clone',
         stop: simDragStop,
     };
+    simChartObj = {
+        helper: 'clone',
+        stop: simDragStop,
+    };
     $('#iact_toggle').draggable(simButtonObj);
     $('#iact_chart').draggable(simButtonObj);
     $('#counts').click(function() {
@@ -539,6 +572,9 @@ $(document).ready(function() {
             $('#count_chart').removeClass('highlight');
             $('.sprite-count').each(function(idx, e) {
                 $(this).show(100);
+            });
+            $('.sprite-chart').each(function(idx, e) {
+                $(this).hide(100);
             });
             measureShowCharts = false;
         } else {
@@ -554,10 +590,17 @@ $(document).ready(function() {
             $('#count_chart').addClass('highlight');
             $('#counts').removeClass('highlight');
             measureShowCounts = false;
+            $('.sprite-chart').each(function(idx, e) {
+                $(this).show(100);
+            });
             $('.sprite-count').each(function(idx, e) {
                 $(this).hide(100);
             });
+            $.sparkline_display_visible();
         } else {
+            $('.sprite-chart').each(function(idx, e) {
+                $(this).hide(100);
+            });
             $('#count_chart').removeClass('highlight');
         }
     });
