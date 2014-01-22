@@ -49,7 +49,7 @@ def sandbox(request):
 
 
 def login_user(request):
-    state = "Welcome to SiMSAM! Please log in below..."
+    state = ""
     username = password = ''
     redirect_to = request.REQUEST.get('next','')
     if request.POST:
