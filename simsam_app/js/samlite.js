@@ -23,7 +23,7 @@
       $('#switch_to_sam_button').hide();
       $('#container').hide();
       $('#output').hide();
-      $('#right_frame').hide();
+      $('#sim_buttons').hide();
       $('#savecrop').hide();
       $('#cancelcrop').hide();
       window.camera = $("#camera").get(0);
@@ -490,6 +490,7 @@
       $('#save').show();
       $('#load').show();
       $('.sim_bottom').show();
+      $('#sim_buttons').show();
       $('#sim_min').show();
       return window.loadSpriteTypes();
     };
@@ -508,6 +509,7 @@
       $('#save').hide();
       $('#load').hide();
       $('.sim_bottom').hide();
+      $('#sim_buttons').hide();
       $('#sim_min').hide();
       return $('#sim_max').hide();
     };
