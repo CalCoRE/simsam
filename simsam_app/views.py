@@ -49,7 +49,6 @@ def sandbox(request):
 
 
 def login_user(request):
-    """Currently a separate page; todo: embed form in home, make this ajax."""
     state = "Welcome to SiMSAM! Please log in below..."
     username = password = ''
     redirect_to = request.REQUEST.get('next','')
@@ -72,10 +71,10 @@ def login_user(request):
                         c = RequestContext(request, {})
                         return HttpResponseRedirect('/')
             else:
-                state = "Your account is not active, please contact the site admin."
+                state = "Your account is not active. Talk to your teacher."
         else:
-            state = "The username and password were incorrect."
-    t = loader.get_template("login.html")
+            state = "Oops! The username and password you entered do not match our records."
+    t = loader.get_template("createOrOpenProject.html")
     c = RequestContext(request, {
         'next': redirect_to,
         'user_message': state,

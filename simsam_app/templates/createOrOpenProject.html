@@ -1,7 +1,7 @@
 <!Doctype html>
 <html lang="en">
 <head>
-	<title>SAM</title>
+	<title>SiMSAM</title>
         <meta charset="UTF-8" />
       
 	<link rel="stylesheet" href="{{ STATIC_URL }}css/homepage.css">
@@ -10,41 +10,58 @@
 
 <body>
 
-	<div class="header"> 
-		<h1 class="greeting">
+    <div class="wrapper"> 
+       <div class="window">
+       
+            <h1 class="greeting">
+                {% if user.is_authenticated %}
+                    Hello {{ user.username }}
+                {% else %}
+                    Welcome to SiMSAM! <br><br>
+                {% endif %}
+            </h1>
+            
             {% if user.is_authenticated %}
-            Hello {{ user.username }}
-            {% else %}
-            Welcome!
+                <div id="logout"> 
+                    <form action="logout" method="post">
+                        <input id="logoutbutton" type="submit" value="log out" />
+                    </form>
+                </div>
             {% endif %}
-        </h1>
-        {% if user.is_authenticated %}
-		<div id="logout"> 
-		<form action="logout" method="post">
-    			<input id="logoutbutton" type="submit" value="log out" />
-		</form>
-		</div>
-        {% endif %}
-	</div>
-
-    {% if user.is_authenticated %}
-	<form class="chooseproject" action="openproject" method="post">
-		<input type="submit" value="Open Project" />
-	</form>
-
-	<form class="chooseproject" action="make_project" method="post">
-        New Project Name:
-        <input type="text" name="projectName" />
-		<input type="submit" value="Make New Project" />
-	</form>
-    {% else %}
-	<p>Please Login</p>
-        <div id="login"> 
-        <form action="login" method="post">
-                <input id="loginbutton" type="submit" value="log in" />
-        </form>
+            
+            {% if user.is_authenticated %}
+                <form class="chooseproject" action="openproject" method="post">
+                    <input type="submit" value="Open Project" />
+                </form>
+                
+                <form class="chooseproject" action="make_project" method="post">
+                    New Project Name:
+                    <input type="text" name="projectName" />
+                    <input type="submit" value="Make New Project" />
+                </form>
+            {% else %}
+                <p>Please Login:</p>
+                <div id="login">
+                    <form id="login" action="/login" method="post">
+                        <div id="formcol">
+                            username
+                            <input type="text" name="username" value="{{ username }} " /><br />
+                            password
+                            <input type="password" name="password" value="" /><br />
+                        </div>
+                        <div id="formcol">
+                            <input id="button" type="submit" value="Log In" />
+                            <input type="hidden" name="next" value="{{ next }}" />
+                        </div>
+                    </form>
+                </div>
+            {% endif %}
+            <br>
+            <div id="error">
+                {{user_message}}
+            </div>
         </div>
-    {% endif %}
+	</div>
 
 </body>
 </html>
