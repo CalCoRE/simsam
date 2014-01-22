@@ -312,6 +312,29 @@
         margin: auto;
     }
     
+    #sprite_drawer .sprite-count,
+    #sprite_drawer .sprite-chart
+    {
+            position: absolute;
+            left: 140px;
+            text-align: center;
+            color: #333;
+            font-size: 20px;
+            font-weight: 900;
+            background-color: white;
+            padding: 4px 5px 4px 5px;
+            margin-top: -50px;
+            margin-left: 20px;
+            border-radius: 6px;
+            box-shadow: 2px 2px 4px;
+            display: none;
+    }
+    
+    #sprite_drawer .sprite-chart {
+            width: 22px;
+            height: 22px;
+    }
+    
     .sim_buttons, .sim_charts {
         margin-left: 80px;
         margin-top: 8px;
