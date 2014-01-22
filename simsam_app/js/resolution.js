@@ -1,11 +1,11 @@
 function adjustStyle(width) {
     width = parseInt(width);
     if (width < 910) {
-        $("#size-stylesheet").attr("href", "static/css/narrow.css");
+        $("#size-stylesheet").attr("href", "static/css/simsam_narrow.css");
     } else if ((width >= 911) && (width < 1210)) {
-        $("#size-stylesheet").attr("href", "static/css/medium.css");
+        $("#size-stylesheet").attr("href", "static/css/simsam_medium.css");
     } else {
-       $("#size-stylesheet").attr("href", "static/css/wide.css"); 
+       $("#size-stylesheet").attr("href", "static/css/simsam_wide.css"); 
     }
 }
 
