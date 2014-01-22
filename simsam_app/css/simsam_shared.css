@@ -418,15 +418,18 @@ a.close {
 	float: left;
 }
 
-#iact_toggle {
-	background-image: url(../images/inter.png);
-	background-repeat: no-repeat;
-	background-position: center;
+#iact_toggle,
+#iact_chart {
+        background-image: url(../images/inter.png);
+        background-repeat: no-repeat;
+        background-position: center;
 }
-#counts {
-	background-image: url(../images/hash.png);
-	background-repeat: no-repeat;
-	background-position: center;
+
+#counts,
+#count_chart {
+        background-image: url(../images/hash.png);
+        background-repeat: no-repeat;
+        background-position: center;
 }
 
 #counts.highlight,
