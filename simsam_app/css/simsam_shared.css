@@ -347,7 +347,7 @@
 .sim_buttons > #iact_toggle,
 .sim_charts > #iact_chart {
 	box-shadow: 0px 0px 4px 2px;
-	display: none;
+	/*display: none;*/
 }
 
 a.close {
