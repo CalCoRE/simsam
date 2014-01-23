@@ -11,6 +11,7 @@
     function GenericSprite(spriteId) {
       var sWidth, shapeParams;
       this.spriteId = spriteId;
+      this.uniqueId = '';
       this.stateTranspose = false;
       this.stateRecording = false;
       this.stateRandom = false;
@@ -21,6 +22,7 @@
       this.prepObj = null;
       this.countElement = null;
       sWidth = this.spriteType * 5;
+      this.uniqueId = generateUUID();
       shapeParams = {
         height: this.imageObj.clientHeight,
         width: this.imageObj.clientWidth,
@@ -289,6 +291,7 @@
       jsonObj = {};
       fabricJSON = JSON.stringify(this.toJSON());
       jsonObj['fabric'] = fabricJSON;
+      jsonObj['uniqueId'] = this.uniqueId;
       jsonObj['stateTranspose'] = this.stateTranspose;
       jsonObj['stateRecording'] = this.stateRecording;
       jsonObj['stateRandom'] = this.stateRandom;
@@ -314,6 +317,7 @@
       this._initConfig(fabricObj);
       canvas.add(this);
       console.log("Rest L: " + this.getLeft() + " T: " + this.getTop());
+      this.uniqueId = json['uniqueId'];
       this.stateTranspose = false;
       this.stateRecording = false;
       this.stateRandom = json['stateRandom'];
@@ -349,44 +353,42 @@
 
       Sprite.prototype._history = [];
 
-      Sprite.prototype._interact = [];
-
-      Sprite.prototype._interactCount = 0;
-
       function Sprite(spriteType) {
         var chash, hash;
         Sprite.prototype._count = Sprite.prototype._count + 1;
         hash = this.imageObj.dataset['hash'];
         $('#' + hash).html(Sprite.prototype._count);
+        this.myOpt = JSON.parse(JSON.stringify(window.sparkOpt));
+        this.myOpt['width'] = '22px';
         chash = '#' + 'chart-' + hash;
-        $(chash).sparkline(Sprite.prototype._history);
+        $(chash).sparkline(Sprite.prototype._history, this.myOpt);
         Sprite.__super__.constructor.call(this, spriteType);
       }
 
       Sprite.prototype.subtractCount = function() {
-        var chash, hash, myOpt;
+        var chash, hash;
         Sprite.prototype._count = Sprite.prototype._count - 1;
         hash = this.imageObj.dataset['hash'];
         $('#' + hash).html(Sprite.prototype._count);
         chash = '#' + 'chart-' + hash;
-        myOpt = JSON.parse(JSON.stringify(window.sparkOpt));
-        myOpt['width'] = '22px';
-        return $(chash).sparkline(Sprite.prototype._history, myOpt);
+        return $(chash).sparkline(Sprite.prototype._history, this.myOpt);
       };
 
       Sprite.prototype.getHistory = function() {
         return Sprite.prototype._history;
       };
 
+      Sprite.prototype.clearHistory = function() {
+        return Sprite.prototype._history = [];
+      };
+
       Sprite.prototype.historyTick = function() {
-        var chash, hash, myOpt;
+        var chash, hash;
         Sprite.prototype._history.push(Sprite.prototype._count);
         hash = this.imageObj.dataset['hash'];
         $('#' + hash).html(Sprite.prototype._count);
         chash = '#' + 'chart-' + hash;
-        myOpt = JSON.parse(JSON.stringify(window.sparkOpt));
-        myOpt['width'] = '22px';
-        return $(chash).sparkline(Sprite.prototype._history, myOpt);
+        return $(chash).sparkline(Sprite.prototype._history, this.myOpt);
       };
 
       Sprite.addClassRule = function(rule, idx) {

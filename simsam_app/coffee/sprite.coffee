@@ -5,6 +5,7 @@ class GenericSprite extends fabric.Image
     # Variables prefixed with @ will be properties of individual sprite
     # instances.
     constructor: (@spriteId) ->
+        @uniqueId       = ''
         @stateTranspose = false
         @stateRecording = false
         @stateRandom    = false
@@ -16,6 +17,8 @@ class GenericSprite extends fabric.Image
         @countElement   = null
         # Don't forget to add these to the save/load routines
         sWidth = this.spriteType * 5
+
+        @uniqueId = generateUUID()
 
         shapeParams =
             height: this.imageObj.clientHeight,
@@ -240,6 +243,7 @@ class GenericSprite extends fabric.Image
         jsonObj = {}
         fabricJSON = JSON.stringify(this.toJSON())
         jsonObj['fabric'] = fabricJSON
+        jsonObj['uniqueId'] = @uniqueId
         jsonObj['stateTranspose'] = @stateTranspose
         jsonObj['stateRecording'] = @stateRecording
         jsonObj['stateRandom'] = @stateRandom
@@ -265,6 +269,7 @@ class GenericSprite extends fabric.Image
         this._initConfig(fabricObj)
         canvas.add(this)
         console.log("Rest L: " + this.getLeft() + " T: " + this.getTop())
+        @uniqueId = json['uniqueId']
         @stateTranspose = false
         @stateRecording = false
         @stateRandom = json['stateRandom']
@@ -308,17 +313,15 @@ SpriteFactory = (spriteType, imageObj) ->
         # Count history
         _history: []
 
-        # [iteration][object]
-        _interact: []
-
-        _interactCount: 0
-
         constructor: (spriteType) ->
             Sprite::_count = Sprite::_count + 1
             hash = @imageObj.dataset['hash']
             $('#' + hash).html(Sprite::_count)
+
+            @myOpt = JSON.parse(JSON.stringify(window.sparkOpt))
+            @myOpt['width'] = '22px'
             chash = '#' + 'chart-' + hash
-            $(chash).sparkline(Sprite::_history)
+            $(chash).sparkline(Sprite::_history, @myOpt)
             super(spriteType)
 
         subtractCount: ->
@@ -326,21 +329,20 @@ SpriteFactory = (spriteType, imageObj) ->
             hash = @imageObj.dataset['hash']
             $('#' + hash).html(Sprite::_count)
             chash = '#' + 'chart-' + hash
-            myOpt = JSON.parse(JSON.stringify(window.sparkOpt))
-            myOpt['width'] = '22px'
-            $(chash).sparkline(Sprite::_history, myOpt)
+            $(chash).sparkline(Sprite::_history, @myOpt)
 
         getHistory: ->
             return Sprite::_history
+
+        clearHistory: ->
+            Sprite::_history = []
 
         historyTick: ->
             Sprite::_history.push(Sprite::_count)
             hash = @imageObj.dataset['hash']
             $('#' + hash).html(Sprite::_count)
             chash = '#' + 'chart-' + hash
-            myOpt = JSON.parse(JSON.stringify(window.sparkOpt))
-            myOpt['width'] = '22px'
-            $(chash).sparkline(Sprite::_history, myOpt)
+            $(chash).sparkline(Sprite::_history, @myOpt)
 
         # These should only be used for loading objects from JSON
         @addClassRule: (rule, idx) ->

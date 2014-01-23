@@ -304,6 +304,10 @@
 	display: none;
 }
 
+#clear {
+	display: none;
+}
+
 .menu_button {
 	visibility: visible;
 	border-top-color: white;

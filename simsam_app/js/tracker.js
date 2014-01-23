@@ -24,6 +24,7 @@
       this.targetSprite = null;
       this.history = [0];
       this.latched = false;
+      this.latchedList = {};
     }
 
     Tracker.prototype.createElement = function(sourceId, target) {
@@ -61,6 +62,11 @@
       return $(this.element).html(this.count);
     };
 
+    Tracker.prototype.clear = function() {
+      this.history = [0];
+      return this.count = 0;
+    };
+
     Tracker.prototype.remove = function() {
       $(this.element).remove();
       if (this.parent.measureObject === this) {
@@ -69,6 +75,28 @@
     };
 
     Tracker.prototype.interactCheck = function() {
+      var sprite, uuid, _i, _len, _ref;
+      _ref = window.spriteList;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        sprite = _ref[_i];
+        if (sprite.spriteType !== this.targetSprite.spriteType) {
+          continue;
+        }
+        uuid = sprite.uniqueId;
+        if (this.parent.trueIntersectsWithObject(sprite)) {
+          if (!this.latchedList[uuid]) {
+            this.count += 1;
+            this.latchedList[uuid] = true;
+          }
+        } else {
+          this.latchedList[uuid] = false;
+        }
+      }
+      this.history.push(this.count);
+      return this.update();
+    };
+
+    Tracker.prototype.interactObjectCheck = function() {
       if (this.parent.trueIntersectsWithObject(this.targetSprite)) {
         if (!this.latched) {
           this.count += 1;

@@ -18,6 +18,7 @@ class window.Tracker
         @targetSprite = null
         @history = [0]
         @latched = false
+        @latchedList = {}
 
     createElement: (sourceId, target) ->
         el = document.createElement('div')
@@ -46,6 +47,10 @@ class window.Tracker
         $(@element).css({top: top, left: left})
         $(@element).html(@count)
 
+    clear: ->
+        @history = [0]
+        @count = 0
+
     remove: ->
         $(@element).remove()
         if @parent.measureObject == this
@@ -53,6 +58,20 @@ class window.Tracker
 
     # We interacted with something.  See if we care and act accordingly.
     interactCheck: ->
+        for sprite in window.spriteList
+            if sprite.spriteType != @targetSprite.spriteType
+                continue
+            uuid = sprite.uniqueId
+            if @parent.trueIntersectsWithObject(sprite)
+                if !@latchedList[uuid]
+                    @count += 1
+                    @latchedList[uuid] = true
+            else
+                @latchedList[uuid] = false
+        @history.push(@count)
+        this.update()
+
+    interactObjectCheck: ->
         if @parent.trueIntersectsWithObject(@targetSprite)
             if !@latched
                 @count += 1
