@@ -14,7 +14,7 @@
     window.playbackIndex = 0;
     window.debug = true;
     menu = false;
-    recording = true;
+    recording = false;
     cameraState = 1;
     anyCamera = true;
     window.spritecollection = [];
@@ -24,6 +24,7 @@
       $('#container').hide();
       $('#output').hide();
       $('#sim_buttons').hide();
+      $('#record_mode').hide();
       $('#savecrop').hide();
       $('#cancelcrop').hide();
       window.camera = $("#camera").get(0);
@@ -66,13 +67,14 @@
           console.log("success");
           camera.src = stream;
           camera.play();
+          $('#record_mode').show();
           return switchToRecordMode();
         };
         failure = function(error) {
-          console.log("failure");
-          alert(JSON.stringify(error));
+          anyCamera = false;
           window.playbackIndex = 0;
-          return switchToPlaybackMode();
+          switchToPlaybackMode();
+          return alert("For some reason, we can't access your camera. Try reloading and permitting access.");
         };
         return html5support.getUserMedia({
           video: true
@@ -81,7 +83,6 @@
         anyCamera = false;
         window.playbackIndex = 0;
         switchToPlaybackMode();
-        $("#record_mode").css('display', 'none');
         return alert("Your browser will not allow SiMSAM to use the webcam. Related functions will be disabled.");
       }
     };

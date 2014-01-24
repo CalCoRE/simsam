@@ -14,7 +14,7 @@ $ ->
     window.playbackIndex = 0
     window.debug = true             # turns on console logging
     menu = false # side menu
-    recording = true #starts out in record mode
+    recording = false #starts out in play mode, switches to record if camera
     cameraState = 1
     anyCamera = true
     
@@ -30,6 +30,7 @@ $ ->
         $('#container').hide()
         $('#output').hide()
         $('#sim_buttons').hide()
+        $('#record_mode').hide()
     
         # hide save crop and cancel crop buttons (cropping not started yet)
         $('#savecrop').hide()
@@ -80,20 +81,19 @@ $ ->
                 console.log("success")
                 camera.src = stream
                 camera.play()
+                $('#record_mode').show()
                 # if getUserMedia is available, start in record mode
                 switchToRecordMode()
             failure = (error) -> 
-                console.log("failure")
-                alert JSON.stringify error
-                #if not available, start in playback mode
+                anyCamera = false
                 window.playbackIndex = 0
                 switchToPlaybackMode()
+                alert "For some reason, we can't access your camera. Try reloading and permitting access."
             html5support.getUserMedia {video:true}, success, failure
         else
             anyCamera = false
             window.playbackIndex = 0
             switchToPlaybackMode()
-            $("#record_mode").css('display', 'none')
             alert "Your browser will not allow SiMSAM to use the webcam. Related functions will be disabled."
     
         # always start in record mode
