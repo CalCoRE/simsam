@@ -168,6 +168,6 @@ LOGGING = {
     }
 }
 
-LOGIN_URL = "/login/"
+LOGIN_URL = "/"
 
 LOGOUT_URL = "/logout/"

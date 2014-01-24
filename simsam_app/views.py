@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.utils import simplejson as json
 from django.contrib.auth.decorators import login_required
+import logging
 
 from simsam_app.models import *
 
@@ -11,12 +12,6 @@ from simsam_app.models import *
 
 import pprint
 
-
-def home(request):
-    """Welcome/home screen; doesn't require log in."""
-    t = loader.get_template("createOrOpenProject.html")
-    c = RequestContext(request, {})
-    return HttpResponse(t.render(c))
 
 
 @login_required
@@ -66,18 +61,30 @@ def login_user(request):
                 if len(next_url) > 0:
                         return HttpResponseRedirect(next_url)
                 else:
-                        #return HttpResponseRedirect(redirect_to)
-                        t = loader.get_template("createOrOpenProject.html")
-                        c = RequestContext(request, {})
-                        return HttpResponseRedirect('/')
+                        simsam_user = SimsamUser.lookup(user)
+                        projects = Project.objects.filter(owner=simsam_user)
+                        t = loader.get_template("home.html")
+                        c = RequestContext(request, {'projectList': projects})
+                        return HttpResponse(t.render(c))
             else:
                 state = "Your account is not active. Talk to your teacher."
         else:
             state = "Oops! The username and password you entered do not match our records."
-    t = loader.get_template("createOrOpenProject.html")
+    else:
+        if request.user.is_authenticated():
+            simsam_user = SimsamUser.lookup(request.user)
+            projects = Project.objects.filter(owner=simsam_user)
+            t = loader.get_template("home.html")
+            c = RequestContext(request, {
+                'next': redirect_to,
+                'projectList': projects
+            })
+            return HttpResponse(t.render(c))
+            
+    t = loader.get_template("home.html")
     c = RequestContext(request, {
         'next': redirect_to,
-        'user_message': state,
+        'user_message': state
     })
     return HttpResponse(t.render(c))
 
@@ -202,16 +209,6 @@ def newanim(request):
             animation.save()
     return HttpResponseRedirect("/app?project={}&animation={}".format(
         project.id, animation.id))
-
-
-@login_required
-def openproject(request):
-    """Display the page listing current projects."""
-    simsam_user = SimsamUser.lookup(request.user)
-    projects = Project.objects.filter(owner=simsam_user)
-    t = loader.get_template("chooseproject.html")
-    c = RequestContext(request, {"projectList": projects})
-    return HttpResponse(t.render(c))
 
 
 @login_required
