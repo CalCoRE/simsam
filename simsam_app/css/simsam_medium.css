@@ -1,0 +1,97 @@
+.app-wrapper {
+	height: 573px;
+	width: 900px;
+}
+
+/* MAIN APP WINDOW */
+
+.window {
+	height: 487;
+	width: 649;
+}
+
+#camera {
+    width: 555;
+}
+
+#video_frame {
+    height: 489;
+}
+
+/*********************/
+/**** BOTTOM MENU ****/
+/*********************/
+
+.bottom-menu {
+    width: 649;
+    height: 75;
+}
+
+#video_output {
+    top: 496px;
+    max-height: 77px;
+    left: 100px;
+    right: 315px;
+}
+
+#video_output canvas {
+    height: 72px;
+}
+
+#video_output canvas :dragged {
+    height: 76px;
+    width: 98px;
+}
+
+#video_output .sortable-placeholder {
+    height: 68px;
+    width: 94px;
+}
+
+#trash {
+    top: 495px; 
+    right: 248px;
+    height: 75px;
+	font-size: 4.5em;
+    width: 60px;
+}
+
+#trash .sortable-placeholder {
+    height: 73px;
+    width: 64px;
+    top: 1px;
+    right: 2px;
+}
+
+#toggle {
+    width: 90px;
+}
+
+#toggle .small {
+	font-size: 1.5em;
+}
+
+#toggle .big {
+	font-size: 4.5em;
+}
+    
+/**********************/
+/***** RIGHT MENU *****/
+/**********************/
+
+.right-menu {
+	height: 565;
+    width: 240;
+}
+
+#home_button {
+    font-size: 4em;
+}
+
+#help_button {
+    font-size: 3em;
+}
+
+.title {
+    font-size: 2.8em;
+}

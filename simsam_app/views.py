@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.utils import simplejson as json
 from django.contrib.auth.decorators import login_required
+import logging
 
 from simsam_app.models import *
 
@@ -11,12 +12,6 @@ from simsam_app.models import *
 
 import pprint
 
-
-def home(request):
-    """Welcome/home screen; doesn't require log in."""
-    t = loader.get_template("createOrOpenProject.html")
-    c = RequestContext(request, {})
-    return HttpResponse(t.render(c))
 
 
 @login_required
@@ -27,6 +22,7 @@ def app(request):
     animation_id = request.REQUEST.get('animation', None)
     project = Project.objects.get(id=int(project_id))
     animation = Animation.objects.get(id=int(animation_id))
+    simulation = project.simulations.all()[0]
     t = loader.get_template("sam.html")
     c = RequestContext(request, {
         "project_name": project.name,
@@ -35,10 +31,10 @@ def app(request):
         "animation_id": animation_id,
         "frame_sequence": animation.frame_sequence,
         "sprite_collection": animation.sprite_collection,
+        "simulation_id" : simulation.id,
         "simsam_user": simsam_user
     })
     return HttpResponse(t.render(c))
-
 
 def sandbox(request):
     """Debugging environment."""
@@ -48,8 +44,7 @@ def sandbox(request):
 
 
 def login_user(request):
-    """Currently a separate page; todo: embed form in home, make this ajax."""
-    state = "Welcome to SiMSAM! Please log in below..."
+    state = ""
     username = password = ''
     redirect_to = request.REQUEST.get('next','')
     if request.POST:
@@ -66,18 +61,30 @@ def login_user(request):
                 if len(next_url) > 0:
                         return HttpResponseRedirect(next_url)
                 else:
-                        #return HttpResponseRedirect(redirect_to)
-                        t = loader.get_template("createOrOpenProject.html")
-                        c = RequestContext(request, {})
-                        return HttpResponseRedirect('/')
+                        simsam_user = SimsamUser.lookup(user)
+                        projects = Project.objects.filter(owner=simsam_user)
+                        t = loader.get_template("home.html")
+                        c = RequestContext(request, {'projectList': projects})
+                        return HttpResponse(t.render(c))
             else:
-                state = "Your account is not active, please contact the site admin."
+                state = "Your account is not active. Talk to your teacher."
         else:
-            state = "The username and password were incorrect."
-    t = loader.get_template("login.html")
+            state = "Oops! The username and password you entered do not match our records."
+    else:
+        if request.user.is_authenticated():
+            simsam_user = SimsamUser.lookup(request.user)
+            projects = Project.objects.filter(owner=simsam_user)
+            t = loader.get_template("home.html")
+            c = RequestContext(request, {
+                'next': redirect_to,
+                'projectList': projects
+            })
+            return HttpResponse(t.render(c))
+            
+    t = loader.get_template("home.html")
     c = RequestContext(request, {
         'next': redirect_to,
-        'user_message': state,
+        'user_message': state
     })
     return HttpResponse(t.render(c))
 
@@ -205,16 +212,6 @@ def newanim(request):
 
 
 @login_required
-def openproject(request):
-    """Display the page listing current projects."""
-    simsam_user = SimsamUser.lookup(request.user)
-    projects = Project.objects.filter(owner=simsam_user)
-    t = loader.get_template("chooseproject.html")
-    c = RequestContext(request, {"projectList": projects})
-    return HttpResponse(t.render(c))
-
-
-@login_required
 def chooseproject(request):
     """Open the chosen project."""
     simsam_user = SimsamUser.lookup(request.user)
@@ -252,3 +249,89 @@ def sprite(request):
     t = loader.get_template("sprite.html")
     c = RequestContext(request, {})
     return HttpResponse(t.render(c))
+
+#
+# Interact with sim states
+@login_required
+def save_sim_state(request):
+    """Save the Simulation state of all objects, rules, etc."""
+    simjson     = request.POST['serialized']
+    name        = request.POST['name']
+    simid       = request.POST['simid']
+
+    response = HttpResponse();
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate';
+    response['Pragma'] = 'no-cache';
+    response['Expires'] = 0;
+
+    try:
+        simState = SimulationState.objects.get(name=name, simulation_id=simid)
+    except SimulationState.DoesNotExist:
+        simState = SimulationState.objects.create(name=name, simulation_id=simid, serialized_state=simjson, is_current=False)
+        response.content = json.dumps({
+            'success': True,
+            'which' : 1,
+        })
+        return response
+    except SimulationState.MultipleObjectsReturned:
+        response.content = json.dumps({
+            'success': True,
+            'which' : 1,
+        })
+        return response
+    except:
+        response.content = json.dumps({
+            'success': False,
+            'which' : 1,
+            'message': 'Unexpected error: %s' % sys.exc_info()[0],
+        })
+        return response
+
+    simState.serialized_state = simjson
+    simState.save()
+    response.content = json.dumps({
+        'success': True,
+        'which' : 2,
+    })
+    return response
+
+
+@login_required
+def load_sim_state(request):
+    """Load the Simulation state of all objects, rules, etc."""
+    message = ''
+    debug = ''
+    status = 'Success'
+
+    name        = request.POST['name']
+    simId       = int(request.POST['sim_id'])
+
+    serial = ''
+    response = HttpResponse();
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate';
+    response['Pragma'] = 'no-cache';
+    response['Expires'] = 0;
+
+    try:
+        simState = SimulationState.objects.get(name=name, simulation_id=simId)
+        serial = simState.serialized_state
+    except SimulationState.DoesNotExist:
+        message = 'No state has been saved for this simulation.'
+        debug = 'No objects found in simsam_app_simulationstate for %d, %s' % \
+                (simId, name)
+        status = 'Failed'
+    except SimulationState.MultipleObjectsReturned:
+        message = 'Multiple objects returned for %d, "%s". ' % (simId, name)
+        debug = 'There is an issue with simsam_app_simulationstate.'
+        status = 'Failed'
+        
+    response.content = json.dumps({
+        'status': status,
+        'message': message,
+        'debug': debug,
+        'serialized': serial,
+    })
+    return response
+
+
+# Also we may want a list_sim_states or some such thing.

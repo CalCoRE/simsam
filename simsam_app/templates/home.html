@@ -1,0 +1,86 @@
+<!Doctype html>
+<html lang="en">
+<head>
+	<title>SiMSAM</title>
+        <meta charset="UTF-8" />
+      
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/homepage.css">
+
+</head>
+
+<body>
+
+    <div class="wrapper"> 
+       <div class="window">
+       
+        <!-- GREETING -->
+            <h1 class="greeting">
+                {% if user.is_authenticated %}
+                    Hello {{ user.username }}!
+                {% else %}
+                    Welcome to SiMSAM! <br><br>
+                {% endif %}
+            </h1>
+            
+            
+    {% if user.is_authenticated %}
+            <div class="projects">
+        <!-- OPEN PROJECT -->
+                {% if projectList %}  
+                Open an existing project:  
+                <form method="post" name="myForm" action="chooseproject/">
+                    {% for project in projectList %}
+                      <button type="submit" class="button" name="projectId" value="{{ project.id }}" />{{ project.name }}</button><br>
+                    {% endfor %}
+                </form>
+                {% endif %}
+                
+        <!-- NEW PROJECT -->
+                <form class="chooseproject" action="make_project" method="post">
+                <br>
+                    Start a New Project:<br>
+                    <input type="text" name="projectName" />
+                    <input type="submit" class="button" value="Make New Project" />
+                </form>
+                
+    {% else %}
+            
+        <!-- LOGIN -->
+                <p>Please Login:</p>
+                <div id="login">
+                    <form id="login" action="/" method="post">
+                        <div id="formcol">
+                            username
+                            <input type="text" name="username" value="{{ username }}" /><br />
+                            password
+                            <input type="password" name="password" value="" /><br />
+                        </div>
+                        <div id="formcol">
+                            <input class="button" type="submit" value="Log In" />
+                            <input type="hidden" name="next" value="{{ next }}" />
+                        </div>
+                    </form>
+                </div>
+    {% endif %}
+                <br>
+            
+        <!-- LOGOUT -->
+            {% if user.is_authenticated %}
+                <div id="logout"> 
+                    <form action="logout" method="post">
+                        <input class="button" type="submit" value="log out" />
+                    </form>
+                </div>
+            {% endif %}
+            
+        <!-- ERROR MESSAGE -->
+                <div id="error">
+                    {{user_message}}
+                </div>
+                <br>
+            </div>
+        </div>
+	</div>
+
+</body>
+</html>

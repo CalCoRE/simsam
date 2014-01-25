@@ -1,0 +1,89 @@
+.app-wrapper {
+	height: 675px;
+	width: 1200px;
+}
+
+/* MAIN APP WINDOW */
+
+.window {
+	height: 570;
+	width: 950;
+}
+
+/*********************/
+/**** BOTTOM MENU ****/
+/*********************/
+
+.bottom-menu {
+    width: 950;
+    height: 95;
+}
+
+#video_output {
+    top: 578px;
+    max-height: 97px;
+    left: 130px;
+    right: 330px;
+}
+
+#video_output canvas {
+    height: 93px;
+}
+
+#video_output canvas :dragged {
+    height: 93px;
+    width: 129px;
+}
+
+#video_output .sortable-placeholder {
+    height: 91px;
+    width: 122px;
+}
+
+#trash {
+    top: 578px; 
+    right: 249px;
+    height: 97px;
+	font-size: 6em;
+    width: 70px;
+}
+
+#trash .sortable-placeholder {
+    height: 94px;
+    width: 79px;
+    top: 0px;
+    right: -1px;
+}
+
+#toggle {
+    width: 120px;
+}
+
+#toggle .small {
+	font-size: 1.5em;
+}
+
+#toggle .big {
+	font-size: 6em;
+}
+
+/**********************/
+/***** RIGHT MENU *****/
+/**********************/
+
+.right-menu {
+	height: 668;
+    width: 240;
+}
+
+#home_button {
+    font-size: 5em;
+}
+
+#help_button {
+    font-size: 4em;
+}
+
+.title {
+    font-size: 3.8em;
+}

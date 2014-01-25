@@ -7,8 +7,14 @@ class GenericSprite extends fabric.Image
     constructor: (@spriteId) ->
         @stateTranspose = false
         @stateRecording = false
+        @stateRandom    = false
+        @randomRange    = 15
         @ruleTempObject = null
-        @prepObj = null
+        @tempRandom     = false
+        @tempRandomRange = 15
+        @prepObj        = null
+        @countElement   = null
+        # Don't forget to add these to the save/load routines
         sWidth = this.spriteType * 5
 
         shapeParams =
@@ -19,6 +25,40 @@ class GenericSprite extends fabric.Image
             cornerSize: 20
         # Call fabric.Image's constructor so it can do its magic.
         super(this.imageObj, shapeParams)
+
+    # States
+
+    isRandom: ->
+        if @_rules.length && @_rules[0] != undefined
+            action = @_rules[0].action
+            return action.stateRandom
+        return @stateRandom
+
+    showRandom: ->
+        if @stateTranspose
+            return @tempRandom
+        return this.isRandom()
+
+    setRandom: (value) ->
+        # We got set to random while recording an interaction
+        if @stateTranspose
+            @tempRandom = value
+            return
+        @stateRandom = value
+        if @_rules.length
+            action = @_rules[0].action
+            action.stateRandom = value
+
+    setRandomRange: (range) ->
+        # Interaction
+        if @stateTranspose
+            @tempRandomRange = range
+            return
+        # Normal Transpose
+        @randomRange = range
+
+    isEditing: ->
+        return @stateRecording
 
     # Whatever UI event we decide should create an interaction, has occurred
     interactionEvent: (obj) ->
@@ -42,10 +82,31 @@ class GenericSprite extends fabric.Image
             @stateTranspose = true
             @initState = getObjectState(this)
             @stateRecording = false
+        else if choice == 'close'
+            @stateTranspose = false
+            @stateRecording = false
+            this.showNormal()
+        else if choice == 'clone'
+            r = new OverlapInteraction(@ruleTempObject)
+            r.addClone()
+            this.addIRule(r, @ruleTempObject.spriteType)
+            @stateTranspose = false
+            @stateRecording = false
+            this.showNormal()
+        else if choice == 'delete'
+            r = new OverlapInteraction(@ruleTempObject)
+            r.addDelete()
+            this.addIRule(r, @ruleTempObject.spriteType)
+            @stateRecording = false
+            @stateTranspose = false
+            this.showNormal()
 
+    # Rule execution
     applyRules: (environment) ->
         console.log('--Regular Rules')
         for rule in @_rules
+            if rule == undefined
+                continue
             # call each rule's act method, supplying this sprite and
             # information about other sprites in its environment
             console.log('applying rule' + rule)
@@ -58,31 +119,48 @@ class GenericSprite extends fabric.Image
             @prepObj = rule.prep(this, environment)
 
     applyIRules: (environment) ->
+        if @countElement
+            @countElement.interactCheck()
         console.log('--Interaction Rules')
         for rule in @_irules
-            console.log('Applying an iRule')
             # CoffeeScript design flaw requires this
             if (rule == undefined)
                 continue
+            console.log('Applying an iRule')
             rule.act(this, environment)
+        this.historyTick()
 
     # returns the index of the new rule
     addRule: (rule) ->
-        @_rules.push(rule)
+        # Try switching to a single rule XXX
+        @_rules[0] = rule
+        rule.action.stateRandom = @stateRandom
         return @_rules.length - 1
 
     # will complain if given a bad index
     setRule: (index, rule) ->
-    
-        if @_rules[index] != undefined
-            @_rules[index] = rule
-        else
-            throw Error("The rule index #{index} doesn't exist.")
+        @_rules[index] = rule
 
     # index of the irule so we overwrite duplicates
     addIRule: (rule, index) ->
         @_irules[index] = rule
         return @_irules.length - 1
+
+    # Clones
+
+    # This could go in simlite.js, but wanted to keep it with learningToggle
+    addSimpleClone: ->
+        r = new Rule()
+        r.setActionType('clone')
+        this.setRule(1, r)
+
+    removeClone: ->
+        delete this._rules[1]
+
+    isClone: ->
+        if @_rules[1] != undefined
+            return true
+        return false
 
     learningToggle: ->
         if @stateTranspose
@@ -93,6 +171,9 @@ class GenericSprite extends fabric.Image
             r = new OverlapInteraction(@ruleTempObject)
             r.setActionType('transform')
             r.addTransform(@initState, endState)
+            if @tempRandom
+                r.addRandom(@tempRandomRange)
+                @tempRandom = false
             this.addIRule(r, @ruleTempObject.spriteType)
             return
         if not @stateRecording
@@ -105,11 +186,12 @@ class GenericSprite extends fabric.Image
             r = new Rule(this.spriteType)
             r.setActionType('transform')
             r.addTransform(@initState, endState)
+            if this.isRandom()
+                r.addRandom(@randomRange)
             this.addRule(r)
             @stateRecording = false
 
     showLearning: ->
-        console.log("showLearning")
         this.set({
             borderColor: "red",
             cornerColor: "red",
@@ -117,7 +199,6 @@ class GenericSprite extends fabric.Image
         canvas.renderAll();
     
     showNormal: ->
-        console.log("showNoraml")
         this.set({
             borderColor: "rgb(210,210,255)",
             cornerColor: "rgb(210,210,255)",
@@ -134,6 +215,63 @@ class GenericSprite extends fabric.Image
             return true
         return false
 
+    removeFromList: ->
+        idx = spriteList.indexOf(this)
+        if idx >= 0
+            console.log('splicing ' + idx)
+            spriteList.splice(idx, 1)
+        this.subtractCount()
+
+    remove: ->
+        if @countElement != null
+            @countElement.remove()
+            @countElement = null
+        super()
+
+    modified: ->
+        if @countElement != null
+            @countElement.update()
+            canvas.renderAll()
+
+    #
+    # Saving Object
+    #
+    saveToJSON: ->
+        jsonObj = {}
+        fabricJSON = JSON.stringify(this.toJSON())
+        jsonObj['fabric'] = fabricJSON
+        jsonObj['stateTranspose'] = @stateTranspose
+        jsonObj['stateRecording'] = @stateRecording
+        jsonObj['stateRandom'] = @stateRandom
+        jsonObj['randomRange'] = @randomRange
+        jsonObj['tempRandom'] = @tempRandom
+        jsonObj['tempRandomRange'] = @tempRandomRange
+        jsonObj['countElement'] = (@countElement == null) ? '0' : '1'
+
+        jsonObj['spriteType'] = @spriteType
+        # We shouldn't ever save amidst a tick execution
+        #jsonObj['prepObj'] = @prepObj
+        @ruleTempObject = null
+        @tempRandomRange = 15
+        @prepObj = null
+        
+        console.log(jsonObj)
+        console.log("L: " + this.getLeft() + " T: " + this.getTop())
+        return jsonObj
+
+    restoreFromJSON: (json) ->
+        fabricObj = JSON.parse(json['fabric'])
+        this.constructor.fromObject(fabricObj)
+        this._initConfig(fabricObj)
+        canvas.add(this)
+        console.log("Rest L: " + this.getLeft() + " T: " + this.getTop())
+        @stateTranspose = false
+        @stateRecording = false
+        @stateRandom = json['stateRandom']
+        @randomRange = json['randomRange']
+        @spriteType = json['spriteType']
+        this.setCoords()
+#end of GenericSprite
 
 # makes classes for different types of sprites
 SpriteFactory = (spriteType, imageObj) ->
@@ -149,6 +287,8 @@ SpriteFactory = (spriteType, imageObj) ->
         # mhewj - changed this to the image elt
         imageObj: imageObj
 
+        hash: imageObj.dataset.hash
+
         # The underscore here indicates private; you aren't supposed to modify
         # the list directly. Use mySpriteInstance.addRule() instead.
         # Because the list is in the Sprite prototype, rules will apply to all
@@ -162,6 +302,57 @@ SpriteFactory = (spriteType, imageObj) ->
         # priority.  Seemed overly complex for now.
         _irules: []
 
+        # Keep track of how many instances we have spawned.
+        _count: 0
+
+        # Count history
+        _history: []
+
+        # [iteration][object]
+        _interact: []
+
+        _interactCount: 0
+
+        constructor: (spriteType) ->
+            Sprite::_count = Sprite::_count + 1
+            hash = @imageObj.dataset['hash']
+            $('#' + hash).html(Sprite::_count)
+            chash = '#' + 'chart-' + hash
+            $(chash).sparkline(Sprite::_history)
+            super(spriteType)
+
+        subtractCount: ->
+            Sprite::_count = Sprite::_count - 1
+            hash = @imageObj.dataset['hash']
+            $('#' + hash).html(Sprite::_count)
+            chash = '#' + 'chart-' + hash
+            myOpt = JSON.parse(JSON.stringify(window.sparkOpt))
+            myOpt['width'] = '22px'
+            $(chash).sparkline(Sprite::_history, myOpt)
+
+        getHistory: ->
+            return Sprite::_history
+
+        historyTick: ->
+            Sprite::_history.push(Sprite::_count)
+            hash = @imageObj.dataset['hash']
+            $('#' + hash).html(Sprite::_count)
+            chash = '#' + 'chart-' + hash
+            myOpt = JSON.parse(JSON.stringify(window.sparkOpt))
+            myOpt['width'] = '22px'
+            $(chash).sparkline(Sprite::_history, myOpt)
+
+        # These should only be used for loading objects from JSON
+        @addClassRule: (rule, idx) ->
+            if idx == undefined
+                idx = 0
+            Sprite::_rules[idx] = rule
+
+        @addClassIRule: (rule, idx) ->
+            if idx == undefined
+                idx = 0
+            Sprite::_irules[idx] = rule
+
     return Sprite
 
 #
@@ -171,6 +362,8 @@ SpriteFactory = (spriteType, imageObj) ->
 # simple transform applied all the time, ignores environment
 class Rule
     constructor: (@spriteType) ->
+        @action = null
+        @type   = ''
     
     act: (sprite, environment) ->
         console.log('Rule[' + @name + '].act: ' + sprite.spriteType)
@@ -187,24 +380,67 @@ class Rule
         @type = type
         actClass = switch type
             when 'transform' then TransformAction
-            # Later we add 'Delete' and 'Clone' at least
+            when 'clone' then CloneAction
+            when 'delete' then DeleteAction
         @action = new actClass()
 
     addTransform: (start, end) ->
-        console.log('addTransform')
         if @type != 'transform'
             console.log('Error: addTransform called on other type of Rule')
 
         @action = new TransformAction()
         @action.setTransformDelta(start, end)
 
+    addRandom: (range) ->
+        @action.randomRange = range
+        @action.stateRandom = true
+
+    addClone: ->
+        @type = 'clone'
+        @action = new CloneAction()
+
+    addDelete: ->
+        @type = 'delete'
+        @action = new DeleteAction()
+
+    toJSON: ->
+        object = {}
+        object.type = 'default'
+        object.action = @action.toJSON()
+        return object
+
+    @createFromData: (data) ->
+        className = ''
+        className = switch data.type
+            when 'overlap' then OverlapInteraction
+            when 'interaction' then Interaction
+            when 'default' then Rule
+        if (data.type == 'default')
+            obj = new className
+        else
+            obj = new className(data.targetType)
+
+        # Now build actions for this rule
+        actionObj = data.action
+        actClass = switch actionObj.type
+            when 'transform' then TransformAction
+            when 'clone' then CloneAction
+            when 'delete' then DeleteAction
+        act = new actClass
+        act.restoreFromJSON(actionObj)
+        obj.action = act
+        return obj
+
         
 # a transform which is conditional on the environment of the sprite
 class Interaction extends Rule
     constructor: (target) ->
-        console.log('Interaction: New ' + target.spriteType)
-        @targetType = target.spriteType
-        # The type of Sprite with which we interact
+        if typeof target == 'object'
+            console.log('Interaction: New ' + target.spriteType)
+            @targetType = target.spriteType
+        else
+            @targetType = target
+    # The type of Sprite with which we interact
     # I imagine an environment as a object with properties corresponding to
     # spriteTypes, where the value of each is an integer indicating how many
     # sprites of that type are in the environment, e.g.
@@ -225,6 +461,12 @@ class Interaction extends Rule
 
         if shouldAct
             sprite.applyTransform(@transform)
+
+    toJSON: ->
+        obj = super
+        obj.type = 'interaction'
+        obj.targetType = @targetType
+        return obj
 
 class OverlapInteraction extends Interaction
     # This might just replace Interaction, but for now it's separate because
@@ -257,45 +499,133 @@ class OverlapInteraction extends Interaction
         @action.act(sprite)
         sprite.prepObj = null
 
+    addClone: ->
+        super
+        # Since we're an interaction, clone each and every time
+        @action.spawnWait = 1
+
+    toJSON: ->
+        obj = super
+        obj.type = 'overlap'
+        obj.targetType = @targetType
+        return obj
 #
 #
 # Actions - Transform, Delete, Clone, Random Transform, etc.
 #     Actions handle the "what" and Rules handle the "When"
 #
 class Action
+    constructor: ->
     # Override this function to do, well, whatever you're doing
-    act: ->
+    act: (sprite) ->
         console.log("Action is an abstract class, don't use it.")
+
+    restoreFromJSON: (data) ->
+        # Everyone needs one, but it doesn't need to do anything
+
+class DeleteAction extends Action
+    act: (sprite) ->
+        console.log('DeleteAction: act')
+        spriteDeleteList.push(sprite)
+    toJSON: ->
+        object = {}
+        object.type = 'delete'
+        return object
+
+class CloneAction extends Action
+    constructor: ->
+        # On average, spawn every spawnWait ticks
+        @spawnWait = 2
+
+    act: (sprite) ->
+        console.log('act: CloneAction (spawnWait: ' + @spawnWait + ')')
+        # only act 1 out of ever @spawnWait times
+        if (Math.random() * @spawnWait) > 1
+            return
+        if window.spriteTypeList[sprite.spriteType]::_count >= window.maxSprites
+            return
+        newSprite = new window.spriteTypeList[sprite.spriteType]  # make one
+        spriteList.push( newSprite )
+        newSprite.setTop(sprite.getTop() + Math.random() * 20 - 10)
+        newSprite.setLeft(sprite.getLeft() + Math.random() * 20 - 10)
+        canvas.add(newSprite)
+        canvas.renderAll()
+
+    toJSON: ->
+        object = {}
+        object.type = 'clone'
+        object.spawnWait = @spawnWait
+        return object
+
+    restoreFromJSON: (data) ->
+        super()
+        @spawnWait = data.spawnWait
 
 class TransformAction extends Action
     constructor: ->
         @transform = {dx:0, dy:0, dr:0, dxScale:1, dyScale: 1}
+        @stateRandom = false
+        @randomRange = 15
 
     # Takes a start and end state as returned by getObjectState
     setTransformDelta: (start, end) ->
+        # N.B. These don't take angle shift into account, only starting angle
+        dx = end.left - start.left
+        dy = end.top - start.top
+        rad = start.angle * Math.PI / 180
+        x = dx * Math.cos(-rad) - dy * Math.sin(-rad)
+        y = -dx * Math.sin(rad) + dy * Math.cos(rad)
         @transform.dxScale  = end.width - start.width
         @transform.dyScale  = end.height - start.height
-        @transform.dx       = end.left - start.left
-        @transform.dy       = end.top - start.top
+        @transform.dx       = x
+        @transform.dy       = y
         @transform.dr       = end.angle - start.angle
 
     act: (sprite) ->
+        console.log('TransformAction: ' + sprite.spriteType)
+        rawAngle = sprite.getAngle()
+        if @stateRandom
+            range = @randomRange / 180
+            theta = (sprite.getAngle() + @transform.dr) * Math.PI / 180 +
+                (Math.random() * range - range / 2) * (2 * Math.PI)
+        else
+            theta = (sprite.getAngle() + @transform.dr) * Math.PI / 180
+        if isNaN(theta)
+            theta = 0
+        dx = @transform.dx * Math.cos(theta) - @transform.dy * Math.sin(theta)
+        dy = @transform.dx * Math.sin(theta) + @transform.dy * Math.cos(theta)
         sprite.set({
-            left: sprite.getLeft() + @transform.dx
-            top: sprite.getTop() + @transform.dy
-            angle: sprite.getAngle() + @transform.dr
+            left: sprite.getLeft() + dx
+            top: sprite.getTop() + dy
+            angle: sprite.getAngle() - @transform.dr
             #width: @sprite.getWidth() * transform.dxScale
-            width: sprite.getWidth() + @transform.dxScale
+            width: sprite.width + @transform.dxScale
             #height: @sprite.getHeight * transform.dyScale
-            height: sprite.getHeight() + @transform.dyScale
+            height: sprite.height + @transform.dyScale
         })
+        # Remove this if you don't want objects to rotate visually
+        sprite.setAngle(theta * 180 / Math.PI)
 
         # Tell the sprite to update its internal state for intersect checks
         sprite.setCoords()
 
+    toJSON: ->
+        object = {}
+        object.type = 'transform'
+        object.stateRandom = @stateRandom
+        object.randomRange = @randomRange
+        object.transform   = @transform
+        return object
+
+    restoreFromJSON: (data) ->
+        @stateRandom = data.stateRandom
+        @randomRange = data.randomRange
+        @transform = data.transform
+
 
 window.spriteList = []
 window.spriteTypeList = []
+window.spriteDeleteList = []
 
 # Take another simulation step
 #  First, apply simple rules
@@ -308,13 +638,18 @@ window.tick = ->
         sprite.prepIRules()
     for sprite in spriteList
         sprite.applyIRules()
+    # post-process removes so we don't kill the list while executing
+    for sprite in spriteDeleteList
+        sprite.removeFromList()
+        sprite.remove()
     canvas.renderAll.bind(canvas)
     canvas.renderAll()
 
 window.loadSpriteTypes = ->
+    window.maxSprites = 25
     console.log "loading sprite types"
     spriteTypeList = [] # re-init. hmm, this could get messy TODO
-    $("img").each (i, sprite) -> # for each sprite in the drawer
+    $("#sprite_drawer > img").each (i, sprite) -> # all sprites in the drawer
         console.log "loading sprite type" + i
         window.spriteTypeList.push( SpriteFactory( i , sprite ) ) #make a factory
         
@@ -333,10 +668,85 @@ window.loadSpriteTypes = ->
                     deleteImageFully(i, this)
                     return
                 console.log(i); # tell me which one you are
+                if window.spriteTypeList[i]::_count >= maxSprites
+                    return
                 newSprite = new window.spriteTypeList[i]  # make one
                 spriteList.push( newSprite )
-                pos = $(this).position()
+                # pos = $(this).position()
                 newSprite.setTop(ev.pageY)
                 newSprite.setLeft(ev.pageX)
                 canvas.add(newSprite)
                 canvas.renderAll();
+
+window.saveSprites = ->
+    masterObj = {}
+    typeObjects = []
+    for type in spriteTypeList
+        oneType = {}
+        oneType.type = type::spriteType
+        oneType.imageObj = type::imageObj.src
+        oneType.count = type::_count
+        oneType.rules = []
+        for rule in type::_rules
+            if rule == undefined
+                continue
+            ruleJSON = rule.toJSON()
+            oneType.rules.push(ruleJSON)
+        oneType.irules = []
+        for rule in type::_irules
+            if rule == undefined
+                continue
+            console.log('adding irule to json')
+            ruleJSON = rule.toJSON()
+            oneType.irules.push(ruleJSON)
+        typeObjects.push(oneType)
+    masterObj.classObjects = typeObjects
+
+    objects = []
+    for obj in spriteList
+        objects.push(obj.saveToJSON())
+    masterObj.objects = objects
+
+    string = JSON.stringify(masterObj)
+    $('#data').html(string)
+
+    console.log(typeObjects)
+    return string
+
+window.loadSprites = (dataString) ->
+    # Clear everything
+    tmpList = []
+    window.spriteTypeList = []
+    for sprite in window.spriteList
+        tmpList.push(sprite)
+    for sprite in tmpList
+        sprite.removeFromList()
+        sprite.remove()
+    canvas.renderAll()
+
+    inObject = JSON.parse(dataString)
+    imageObjects = []
+    $("#sprite_drawer > img").each (i, sprite) -> # all sprites in the drawer
+        imageObjects.push(this)
+    for typeObj in inObject.classObjects
+        imgSrc = typeObj.imageObj
+        for img in imageObjects
+            if imgSrc == img.src
+                typeObj.raw = img
+                break
+        typeFactory = SpriteFactory(typeObj.type, typeObj.raw)
+        typeFactory::_count = 0
+        for ruleData in typeObj.rules
+            rule = Rule.createFromData(ruleData)
+            typeFactory.addClassRule(rule)
+        for iruleData in typeObj.irules
+            rule = Rule.createFromData(iruleData)
+            typeFactory.addClassIRule(rule, iruleData.targetType)
+
+        window.spriteTypeList.push(typeFactory)
+    for obj in inObject.objects
+        newSprite = new window.spriteTypeList[obj.spriteType]  # make one
+        newSprite.restoreFromJSON(obj)
+        window.spriteList.push(newSprite)
+
+    canvas.renderAll()

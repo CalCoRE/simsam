@@ -2,7 +2,7 @@ $ ->
     # globals
     thumbnailScaleFactor = 0.25;
     cameraSwitch = {}               # will be reference to on/off node
-    window.playbackFrames = []             # full-size canvas elements, in playback order
+    window.playbackFrames = []      # full-size canvas elements, in playback order
     frameRegistry = {}              # all full-size canvas elements, by id
     playbackTimeouts = []           # list of timeout handles for current playback
                                     # allows them to be canceled (i.e. pause 
@@ -10,10 +10,11 @@ $ ->
     overlayClass = "overlay-frame"
     playbackClass = "playback-frame"
     window.isPlaying = false
+    window.isCropping = false       # if we're cropping we shouldn't play on click
     window.playbackIndex = 0
     window.debug = true             # turns on console logging
     menu = false # side menu
-    recording = true #starts out in record mode
+    recording = false #starts out in play mode, switches to record if camera
     cameraState = 1
     anyCamera = true
     
@@ -28,7 +29,8 @@ $ ->
         $('#switch_to_sam_button').hide()
         $('#container').hide()
         $('#output').hide()
-        $('#right_frame').hide()
+        $('#sim_buttons').hide()
+        $('#record_mode').hide()
     
         # hide save crop and cancel crop buttons (cropping not started yet)
         $('#savecrop').hide()
@@ -42,7 +44,8 @@ $ ->
             if (recording)
                 shoot()
             else
-                play()
+                if( not isCropping )
+                   play()
         
         # wire up buttons
         $("#switch_to_sim_button").click startSimlite
@@ -78,20 +81,19 @@ $ ->
                 console.log("success")
                 camera.src = stream
                 camera.play()
+                $('#record_mode').show()
                 # if getUserMedia is available, start in record mode
                 switchToRecordMode()
             failure = (error) -> 
-                console.log("failure")
-                alert JSON.stringify error
-                #if not available, start in playback mode
+                anyCamera = false
                 window.playbackIndex = 0
                 switchToPlaybackMode()
+                alert "For some reason, we can't access your camera. Try reloading and permitting access."
             html5support.getUserMedia {video:true}, success, failure
         else
             anyCamera = false
             window.playbackIndex = 0
             switchToPlaybackMode()
-            $("#record_mode").css('display', 'none')
             alert "Your browser will not allow SiMSAM to use the webcam. Related functions will be disabled."
     
         # always start in record mode
@@ -114,7 +116,22 @@ $ ->
         #$(canvas).attr("dropzone", $('container'))
         #canvas.addEventListener "dblclick", (e) => addObject(img)
         #img.addEventListener "dblclick", (e) => spriteList.push( new spriteTypeList[] )
-        output.appendChild img    
+        output.appendChild img
+
+        cnt = document.createElement('div')
+        cnt.className = 'sprite-count'
+        cnt.id = sprite
+        cnt.innerHTML = '0'
+        output.appendChild cnt
+
+        chrt = document.createElement('div')
+        chrt.className = "sprite-chart"
+        chrt['data-hash'] = sprite
+        chrt['data-type'] = sprite.spriteType
+        chrt.id = 'chart-' + sprite
+        chrt.innerHTML = ''
+        $(chrt).click( (ev) -> spriteChartClick(this, ev))
+        output.appendChild chrt
     
     loadFrames = (frame) ->
         output = $("#video_output").get(0)
@@ -498,7 +515,7 @@ $ ->
         #$('#controls_container').hide()
         $('#replay').hide()
         $('#video_frame').hide()
-        $('#bottom_frame').hide()
+        $('#video_bottom').hide()
         $('#switch_to_sim_button').hide()
         $('#crop_buttons').hide()
         # show simlite containers
@@ -506,6 +523,11 @@ $ ->
         $('#output').show()
         $('#switch_to_sam_button').show()
         $('#trash_menu_button').show()
+        $('#save').show()
+        $('#load').show()
+        $('.sim_bottom').show()
+        $('#sim_buttons').show()
+        $('#sim_min').show()
         window.loadSpriteTypes()
     
     startSamlite = ->
@@ -515,12 +537,19 @@ $ ->
         $('#video_frame').show()
         $('#switch_to_sim_button').show()
         $('#crop_buttons').show()
+        $('#video_bottom').show()
         $('#bottom_frame').show()
         # hide SiM containers
         $('#container').hide()
         $('#output').hide()
         $('#switch_to_sam_button').hide()
         $('#trash_menu_button').hide()
+        $('#save').hide()
+        $('#load').hide()
+        $('.sim_bottom').hide()
+        $('#sim_buttons').hide()
+        $('#sim_min').hide()
+        $('#sim_max').hide()
         
         #MHWJ
     toggleMenu = ->
