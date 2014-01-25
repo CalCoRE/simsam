@@ -27,6 +27,7 @@
     <script src="{{ STATIC_URL }}js/samlite.js"></script>
     
     <!-- This is the base stylesheet -->
+    <link rel='stylesheet' type='text/css' href='{{ STATIC_URL }}css/app.css' />
     <link rel='stylesheet' type='text/css' href='{{ STATIC_URL }}css/simsam_shared.css' />
     <!-- This stylesheet adjusts size based on browser size as determined in resolution.js -->
 	<link id="size-stylesheet" rel='stylesheet' type='text/css' href='{{ STATIC_URL }}css/simsam_narrow.css' />
@@ -72,7 +73,7 @@
 <!-- right menu 1/5, bottom menu 1/7 -->
     <body>
     {% if user.is_authenticated %}
-        <div class="app-wrapper">
+        <div class="wrapper">
             
             <!-- MAIN WINDOW -->
             <div class="window" id="construction_frame">

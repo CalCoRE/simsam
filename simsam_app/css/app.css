@@ -1,0 +1,50 @@
+@font-face {
+  font-family: 'Averia Sans Libre';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Averia Sans Libre Regular'), local('AveriaSansLibre-Regular'), url(http://themes.googleusercontent.com/static/fonts/averiasanslibre/v2/yRJpjT39KxACO9F31mj_LhlS6V2rbkt3HRj5hz1lBB8.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'PeaxDrawnIcons';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Peax Drawn Icons'), local('PeaxDrawnIcons'), url(../sitestatic/fonts/PeaxDrawnIcons.ttf) format('ttf');
+}
+
+@font-face {
+  font-family: 'SketchIconsBold';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Sketch Icons Bold'), local('SketchIconsBold'), url(../sitestatic/fonts/SketchIconsBold.ttf) format('ttf');
+}
+
+body {
+	background-color: #23374b;
+    font-family: "Averia Sans Libre", Helvetica;
+}
+
+.wrapper {
+	background-color: #62c004;
+	border-style: solid;
+	border-color: #62c004;
+	border-width: 5px;
+	border-radius: 15px;
+	margin: 0 auto;
+	margin-top: 70px;
+}
+
+.window {
+	border-color: white;
+	border-width: 1px;
+	border-style: solid;
+	background-color: #fffefe;
+	border-radius: 15px;
+}
+
+.title {
+    color: #62c004;
+    top: 0px;
+    left: 85px;
+	position: fixed;
+}
