@@ -267,8 +267,8 @@
       if (idx >= 0) {
         console.log('splicing ' + idx);
         spriteList.splice(idx, 1);
+        return this.subtractCount();
       }
-      return this.subtractCount();
     };
 
     GenericSprite.prototype.remove = function() {
@@ -908,6 +908,7 @@
       sprite.removeFromList();
       sprite.remove();
     }
+    tmpList = [];
     canvas.renderAll();
     inObject = JSON.parse(dataString);
     imageObjects = [];

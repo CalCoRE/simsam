@@ -223,7 +223,7 @@ class GenericSprite extends fabric.Image
         if idx >= 0
             console.log('splicing ' + idx)
             spriteList.splice(idx, 1)
-        this.subtractCount()
+            this.subtractCount()
 
     remove: ->
         if @countElement != null
@@ -724,6 +724,7 @@ window.loadSprites = (dataString) ->
     for sprite in tmpList
         sprite.removeFromList()
         sprite.remove()
+    tmpList = []
     canvas.renderAll()
 
     inObject = JSON.parse(dataString)
