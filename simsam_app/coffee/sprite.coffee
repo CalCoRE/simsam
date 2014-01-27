@@ -219,6 +219,21 @@ class GenericSprite extends fabric.Image
             return true
         return false
 
+    isOnCanvas: ->
+        canvas = $('#container')
+        height = $(canvas).height()
+        width = $(canvas).width()
+        bound = this.getBoundingRect()
+        if (bound.width + bound.left) < 0
+            return false
+        if (bound.height + bound.top) < 0
+            return false
+        if (bound.left > width)
+            return false
+        if (bound.top > height)
+            return false
+        return true
+
     removeFromList: ->
         idx = spriteList.indexOf(this)
         if idx >= 0
@@ -639,6 +654,10 @@ window.tick = ->
         sprite.prepIRules()
     for sprite in spriteList
         sprite.applyIRules()
+    for sprite in spriteList
+        if not sprite.isOnCanvas()
+            console.log('He left!!!')
+            spriteDeleteList.push(sprite)
     # post-process removes so we don't kill the list while executing
     for sprite in spriteDeleteList
         sprite.removeFromList()

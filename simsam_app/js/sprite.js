@@ -262,6 +262,27 @@
       return false;
     };
 
+    GenericSprite.prototype.isOnCanvas = function() {
+      var bound, canvas, height, width;
+      canvas = $('#container');
+      height = $(canvas).height();
+      width = $(canvas).width();
+      bound = this.getBoundingRect();
+      if ((bound.width + bound.left) < 0) {
+        return false;
+      }
+      if ((bound.height + bound.top) < 0) {
+        return false;
+      }
+      if (bound.left > width) {
+        return false;
+      }
+      if (bound.top > height) {
+        return false;
+      }
+      return true;
+    };
+
     GenericSprite.prototype.removeFromList = function() {
       var idx;
       idx = spriteList.indexOf(this);
@@ -785,7 +806,7 @@
   window.spriteDeleteList = [];
 
   window.tick = function() {
-    var sprite, _i, _j, _k, _l, _len, _len1, _len2, _len3;
+    var sprite, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m;
     for (_i = 0, _len = spriteList.length; _i < _len; _i++) {
       sprite = spriteList[_i];
       sprite.applyRules();
@@ -798,8 +819,15 @@
       sprite = spriteList[_k];
       sprite.applyIRules();
     }
-    for (_l = 0, _len3 = spriteDeleteList.length; _l < _len3; _l++) {
-      sprite = spriteDeleteList[_l];
+    for (_l = 0, _len3 = spriteList.length; _l < _len3; _l++) {
+      sprite = spriteList[_l];
+      if (!sprite.isOnCanvas()) {
+        console.log('He left!!!');
+        spriteDeleteList.push(sprite);
+      }
+    }
+    for (_m = 0, _len4 = spriteDeleteList.length; _m < _len4; _m++) {
+      sprite = spriteDeleteList[_m];
       sprite.removeFromList();
       sprite.remove();
     }
