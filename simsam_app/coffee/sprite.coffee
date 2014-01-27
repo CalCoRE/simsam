@@ -13,7 +13,7 @@ class GenericSprite extends fabric.Image
         @ruleTempObject = null
         @tempRandom     = false
         @tempRandomRange = 15
-        @prepObj        = null
+        @prepObj        = {}
         @countElement   = null
         # Don't forget to add these to the save/load routines
         sWidth = this.spriteType * 5
@@ -116,21 +116,22 @@ class GenericSprite extends fabric.Image
             rule.act(this, environment)
 
     prepIRules: (environment) ->
-        for rule in @_irules
+        for key, rule of @_irules
             if rule == undefined
                 continue
-            @prepObj = rule.prep(this, environment)
+            @prepObj[key] = rule.prep(this, environment)
 
     applyIRules: (environment) ->
         if @countElement
             @countElement.interactCheck()
         console.log('--Interaction Rules')
-        for rule in @_irules
+        for key, rule of @_irules
             # CoffeeScript design flaw requires this
             if (rule == undefined)
                 continue
             console.log('Applying an iRule')
-            rule.act(this, environment)
+            rule.act(this, @prepObj[key], environment)
+            @prepObj[key] = null
         this.historyTick()
 
     # returns the index of the new rule
@@ -367,7 +368,7 @@ class Rule
         @action = null
         @type   = ''
     
-    act: (sprite, environment) ->
+    act: (sprite, obj, environment) ->
         console.log('Rule[' + @name + '].act: ' + sprite.spriteType)
         if @action != null
             @action.act(sprite)
@@ -449,7 +450,7 @@ class Interaction extends Rule
     # {star: 1, cloud: 2}
     setEnvironment: (@requiredEnvironment) ->
 
-    act: (sprite, environment) ->
+    act: (sprite, iObj, environment) ->
         # unlike StageCast, we want sloppy application here; extra things
         # in the environment don't matter as long as the minimum required are
         # present
@@ -494,12 +495,10 @@ class OverlapInteraction extends Interaction
         # We didn't find anything
         return false
 
-    act: (sprite, environment) ->
-        obj = sprite.prepObj
-        if obj == false
+    act: (sprite, iObj, environment) ->
+        if iObj == false
             return false
         @action.act(sprite)
-        sprite.prepObj = null
 
     addClone: ->
         super

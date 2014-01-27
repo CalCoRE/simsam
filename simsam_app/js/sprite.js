@@ -19,7 +19,7 @@
       this.ruleTempObject = null;
       this.tempRandom = false;
       this.tempRandomRange = 15;
-      this.prepObj = null;
+      this.prepObj = {};
       this.countElement = null;
       sWidth = this.spriteType * 5;
       this.uniqueId = generateUUID();
@@ -134,33 +134,34 @@
     };
 
     GenericSprite.prototype.prepIRules = function(environment) {
-      var rule, _i, _len, _ref, _results;
+      var key, rule, _ref, _results;
       _ref = this._irules;
       _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        rule = _ref[_i];
+      for (key in _ref) {
+        rule = _ref[key];
         if (rule === void 0) {
           continue;
         }
-        _results.push(this.prepObj = rule.prep(this, environment));
+        _results.push(this.prepObj[key] = rule.prep(this, environment));
       }
       return _results;
     };
 
     GenericSprite.prototype.applyIRules = function(environment) {
-      var rule, _i, _len, _ref;
+      var key, rule, _ref;
       if (this.countElement) {
         this.countElement.interactCheck();
       }
       console.log('--Interaction Rules');
       _ref = this._irules;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        rule = _ref[_i];
+      for (key in _ref) {
+        rule = _ref[key];
         if (rule === void 0) {
           continue;
         }
         console.log('Applying an iRule');
-        rule.act(this, environment);
+        rule.act(this, this.prepObj[key], environment);
+        this.prepObj[key] = null;
       }
       return this.historyTick();
     };
@@ -419,7 +420,7 @@
       this.type = '';
     }
 
-    Rule.prototype.act = function(sprite, environment) {
+    Rule.prototype.act = function(sprite, obj, environment) {
       console.log('Rule[' + this.name + '].act: ' + sprite.spriteType);
       if (this.action !== null) {
         return this.action.act(sprite);
@@ -531,7 +532,7 @@
       this.requiredEnvironment = requiredEnvironment;
     };
 
-    Interaction.prototype.act = function(sprite, environment) {
+    Interaction.prototype.act = function(sprite, iObj, environment) {
       var minCount, shouldAct, spriteType, _ref;
       shouldAct = true;
       _ref = this.requiredEnvironment;
@@ -597,14 +598,11 @@
       return false;
     };
 
-    OverlapInteraction.prototype.act = function(sprite, environment) {
-      var obj;
-      obj = sprite.prepObj;
-      if (obj === false) {
+    OverlapInteraction.prototype.act = function(sprite, iObj, environment) {
+      if (iObj === false) {
         return false;
       }
-      this.action.act(sprite);
-      return sprite.prepObj = null;
+      return this.action.act(sprite);
     };
 
     OverlapInteraction.prototype.addClone = function() {
