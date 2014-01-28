@@ -3,7 +3,7 @@ SiMSAM
 SiMSAM stands for **Si**mulation, **M**easurement, and **S**top **A**ction **M**oviemaking. It combines the playful, expressive, easy-to-use features of [Sam Animation](http://icreatetoeducate.com/) with the precision and testability of programming environments like [NetLogo](http://ccl.northwestern.edu/netlogo) and [StageCast Creator](http://www.stagecast.com/). 
 
 To learn more, visit the [SiMSAM Project Site](http://sites.tufts.edu/simsam).
-To learn more about us, visit the [Expressive Technologies Lab](http://extech.tufts.edu)
+To learn more about us, visit the [Expressive Technologies Lab](http://extech.tufts.edu).
 
 SiMSAM is made possible through the generous support of the National Science Foundation, Grant #[IIS-1217100](http://www.nsf.gov/awardsearch/showAward?AWD_ID=1217100), and the Tufts University Mason Fund. Any opinions, findings, and conclusions or recommendations expressed in this material are those of the authors and do not necessarily reflect the views of the NSF or Tufts University. 
 
