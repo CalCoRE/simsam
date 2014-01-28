@@ -78,6 +78,18 @@ pointWithinElement = function(x, y, element) {
     return true;
 }
 
+// Borrowed from http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
+generateUUID = function() {
+    var d = new Date().getTime(); // .now() doesn't work in Opera
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, 
+            function(c) {
+                var r = (d + Math.random() * 16) %16 | 0;
+                d = Math.floor(d/16);
+                return (c=='x' ? r : (r&0x7|0x8)).toString(16);
+            });
+    return uuid;
+}
+
 getObjectState = function(object) {
     retObj = {
         width: object.getWidth(),
@@ -384,7 +396,11 @@ simDragStop = function(ev, ui) {
     if (!match) return;
     
     source = ev.target.id;
-    currentTracker = new ChartTracker;
+    if (source == 'iact_toggle') {
+        currentTracker = new Tracker;
+    } else {
+        currentTracker = new ChartTracker;
+    }
     currentTracker.parent = sprite;
     currentTracker.createElement(source, sprite);
     // Prepare to select the interaction target object
@@ -393,6 +409,26 @@ simDragStop = function(ev, ui) {
     $('#count_blocker').show();
     interactionWaiting = true;
     currentInterObj = sprite;
+}
+
+clearTrackers = function() {
+    var i;
+
+    for (i=0; i < window.spriteList.length; i++) {
+        var s = window.spriteList[i];
+        if (s === undefined) continue;
+        if (s.countElement == null) continue;
+
+        s.countElement.clear();
+        s.countElement.update();
+    }
+
+    for (i = 0; i < window.spriteTypeList.length; i++) {
+        sprite = window.spriteTypeList[i];
+        sprite.prototype.clearHistory();
+        sprite.prototype.historyTick();
+    }
+    return false;
 }
 
 /* User Interface code for Sprite InteractionRule */

@@ -11,6 +11,7 @@
     function GenericSprite(spriteId) {
       var sWidth, shapeParams;
       this.spriteId = spriteId;
+      this.uniqueId = '';
       this.stateTranspose = false;
       this.stateRecording = false;
       this.stateRandom = false;
@@ -18,9 +19,10 @@
       this.ruleTempObject = null;
       this.tempRandom = false;
       this.tempRandomRange = 15;
-      this.prepObj = null;
+      this.prepObj = {};
       this.countElement = null;
       sWidth = this.spriteType * 5;
+      this.uniqueId = generateUUID();
       shapeParams = {
         height: this.imageObj.clientHeight,
         width: this.imageObj.clientWidth,
@@ -132,33 +134,34 @@
     };
 
     GenericSprite.prototype.prepIRules = function(environment) {
-      var rule, _i, _len, _ref, _results;
+      var key, rule, _ref, _results;
       _ref = this._irules;
       _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        rule = _ref[_i];
+      for (key in _ref) {
+        rule = _ref[key];
         if (rule === void 0) {
           continue;
         }
-        _results.push(this.prepObj = rule.prep(this, environment));
+        _results.push(this.prepObj[key] = rule.prep(this, environment));
       }
       return _results;
     };
 
     GenericSprite.prototype.applyIRules = function(environment) {
-      var rule, _i, _len, _ref;
+      var key, rule, _ref;
       if (this.countElement) {
         this.countElement.interactCheck();
       }
       console.log('--Interaction Rules');
       _ref = this._irules;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        rule = _ref[_i];
+      for (key in _ref) {
+        rule = _ref[key];
         if (rule === void 0) {
           continue;
         }
         console.log('Applying an iRule');
-        rule.act(this, environment);
+        rule.act(this, this.prepObj[key], environment);
+        this.prepObj[key] = null;
       }
       return this.historyTick();
     };
@@ -265,8 +268,8 @@
       if (idx >= 0) {
         console.log('splicing ' + idx);
         spriteList.splice(idx, 1);
+        return this.subtractCount();
       }
-      return this.subtractCount();
     };
 
     GenericSprite.prototype.remove = function() {
@@ -289,6 +292,7 @@
       jsonObj = {};
       fabricJSON = JSON.stringify(this.toJSON());
       jsonObj['fabric'] = fabricJSON;
+      jsonObj['uniqueId'] = this.uniqueId;
       jsonObj['stateTranspose'] = this.stateTranspose;
       jsonObj['stateRecording'] = this.stateRecording;
       jsonObj['stateRandom'] = this.stateRandom;
@@ -314,6 +318,7 @@
       this._initConfig(fabricObj);
       canvas.add(this);
       console.log("Rest L: " + this.getLeft() + " T: " + this.getTop());
+      this.uniqueId = json['uniqueId'];
       this.stateTranspose = false;
       this.stateRecording = false;
       this.stateRandom = json['stateRandom'];
@@ -349,44 +354,42 @@
 
       Sprite.prototype._history = [];
 
-      Sprite.prototype._interact = [];
-
-      Sprite.prototype._interactCount = 0;
-
       function Sprite(spriteType) {
         var chash, hash;
         Sprite.prototype._count = Sprite.prototype._count + 1;
         hash = this.imageObj.dataset['hash'];
         $('#' + hash).html(Sprite.prototype._count);
+        this.myOpt = JSON.parse(JSON.stringify(window.sparkOpt));
+        this.myOpt['width'] = '22px';
         chash = '#' + 'chart-' + hash;
-        $(chash).sparkline(Sprite.prototype._history);
+        $(chash).sparkline(Sprite.prototype._history, this.myOpt);
         Sprite.__super__.constructor.call(this, spriteType);
       }
 
       Sprite.prototype.subtractCount = function() {
-        var chash, hash, myOpt;
+        var chash, hash;
         Sprite.prototype._count = Sprite.prototype._count - 1;
         hash = this.imageObj.dataset['hash'];
         $('#' + hash).html(Sprite.prototype._count);
         chash = '#' + 'chart-' + hash;
-        myOpt = JSON.parse(JSON.stringify(window.sparkOpt));
-        myOpt['width'] = '22px';
-        return $(chash).sparkline(Sprite.prototype._history, myOpt);
+        return $(chash).sparkline(Sprite.prototype._history, this.myOpt);
       };
 
       Sprite.prototype.getHistory = function() {
         return Sprite.prototype._history;
       };
 
+      Sprite.prototype.clearHistory = function() {
+        return Sprite.prototype._history = [];
+      };
+
       Sprite.prototype.historyTick = function() {
-        var chash, hash, myOpt;
+        var chash, hash;
         Sprite.prototype._history.push(Sprite.prototype._count);
         hash = this.imageObj.dataset['hash'];
         $('#' + hash).html(Sprite.prototype._count);
         chash = '#' + 'chart-' + hash;
-        myOpt = JSON.parse(JSON.stringify(window.sparkOpt));
-        myOpt['width'] = '22px';
-        return $(chash).sparkline(Sprite.prototype._history, myOpt);
+        return $(chash).sparkline(Sprite.prototype._history, this.myOpt);
       };
 
       Sprite.addClassRule = function(rule, idx) {
@@ -417,7 +420,7 @@
       this.type = '';
     }
 
-    Rule.prototype.act = function(sprite, environment) {
+    Rule.prototype.act = function(sprite, obj, environment) {
       console.log('Rule[' + this.name + '].act: ' + sprite.spriteType);
       if (this.action !== null) {
         return this.action.act(sprite);
@@ -529,7 +532,7 @@
       this.requiredEnvironment = requiredEnvironment;
     };
 
-    Interaction.prototype.act = function(sprite, environment) {
+    Interaction.prototype.act = function(sprite, iObj, environment) {
       var minCount, shouldAct, spriteType, _ref;
       shouldAct = true;
       _ref = this.requiredEnvironment;
@@ -595,14 +598,11 @@
       return false;
     };
 
-    OverlapInteraction.prototype.act = function(sprite, environment) {
-      var obj;
-      obj = sprite.prepObj;
-      if (obj === false) {
+    OverlapInteraction.prototype.act = function(sprite, iObj, environment) {
+      if (iObj === false) {
         return false;
       }
-      this.action.act(sprite);
-      return sprite.prepObj = null;
+      return this.action.act(sprite);
     };
 
     OverlapInteraction.prototype.addClone = function() {
@@ -906,6 +906,7 @@
       sprite.removeFromList();
       sprite.remove();
     }
+    tmpList = [];
     canvas.renderAll();
     inObject = JSON.parse(dataString);
     imageObjects = [];

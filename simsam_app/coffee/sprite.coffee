@@ -5,6 +5,7 @@ class GenericSprite extends fabric.Image
     # Variables prefixed with @ will be properties of individual sprite
     # instances.
     constructor: (@spriteId) ->
+        @uniqueId       = ''
         @stateTranspose = false
         @stateRecording = false
         @stateRandom    = false
@@ -12,10 +13,12 @@ class GenericSprite extends fabric.Image
         @ruleTempObject = null
         @tempRandom     = false
         @tempRandomRange = 15
-        @prepObj        = null
+        @prepObj        = {}
         @countElement   = null
         # Don't forget to add these to the save/load routines
         sWidth = this.spriteType * 5
+
+        @uniqueId = generateUUID()
 
         shapeParams =
             height: this.imageObj.clientHeight,
@@ -113,21 +116,22 @@ class GenericSprite extends fabric.Image
             rule.act(this, environment)
 
     prepIRules: (environment) ->
-        for rule in @_irules
+        for key, rule of @_irules
             if rule == undefined
                 continue
-            @prepObj = rule.prep(this, environment)
+            @prepObj[key] = rule.prep(this, environment)
 
     applyIRules: (environment) ->
         if @countElement
             @countElement.interactCheck()
         console.log('--Interaction Rules')
-        for rule in @_irules
+        for key, rule of @_irules
             # CoffeeScript design flaw requires this
             if (rule == undefined)
                 continue
             console.log('Applying an iRule')
-            rule.act(this, environment)
+            rule.act(this, @prepObj[key], environment)
+            @prepObj[key] = null
         this.historyTick()
 
     # returns the index of the new rule
@@ -220,7 +224,7 @@ class GenericSprite extends fabric.Image
         if idx >= 0
             console.log('splicing ' + idx)
             spriteList.splice(idx, 1)
-        this.subtractCount()
+            this.subtractCount()
 
     remove: ->
         if @countElement != null
@@ -240,6 +244,7 @@ class GenericSprite extends fabric.Image
         jsonObj = {}
         fabricJSON = JSON.stringify(this.toJSON())
         jsonObj['fabric'] = fabricJSON
+        jsonObj['uniqueId'] = @uniqueId
         jsonObj['stateTranspose'] = @stateTranspose
         jsonObj['stateRecording'] = @stateRecording
         jsonObj['stateRandom'] = @stateRandom
@@ -265,6 +270,7 @@ class GenericSprite extends fabric.Image
         this._initConfig(fabricObj)
         canvas.add(this)
         console.log("Rest L: " + this.getLeft() + " T: " + this.getTop())
+        @uniqueId = json['uniqueId']
         @stateTranspose = false
         @stateRecording = false
         @stateRandom = json['stateRandom']
@@ -308,17 +314,15 @@ SpriteFactory = (spriteType, imageObj) ->
         # Count history
         _history: []
 
-        # [iteration][object]
-        _interact: []
-
-        _interactCount: 0
-
         constructor: (spriteType) ->
             Sprite::_count = Sprite::_count + 1
             hash = @imageObj.dataset['hash']
             $('#' + hash).html(Sprite::_count)
+
+            @myOpt = JSON.parse(JSON.stringify(window.sparkOpt))
+            @myOpt['width'] = '22px'
             chash = '#' + 'chart-' + hash
-            $(chash).sparkline(Sprite::_history)
+            $(chash).sparkline(Sprite::_history, @myOpt)
             super(spriteType)
 
         subtractCount: ->
@@ -326,21 +330,20 @@ SpriteFactory = (spriteType, imageObj) ->
             hash = @imageObj.dataset['hash']
             $('#' + hash).html(Sprite::_count)
             chash = '#' + 'chart-' + hash
-            myOpt = JSON.parse(JSON.stringify(window.sparkOpt))
-            myOpt['width'] = '22px'
-            $(chash).sparkline(Sprite::_history, myOpt)
+            $(chash).sparkline(Sprite::_history, @myOpt)
 
         getHistory: ->
             return Sprite::_history
+
+        clearHistory: ->
+            Sprite::_history = []
 
         historyTick: ->
             Sprite::_history.push(Sprite::_count)
             hash = @imageObj.dataset['hash']
             $('#' + hash).html(Sprite::_count)
             chash = '#' + 'chart-' + hash
-            myOpt = JSON.parse(JSON.stringify(window.sparkOpt))
-            myOpt['width'] = '22px'
-            $(chash).sparkline(Sprite::_history, myOpt)
+            $(chash).sparkline(Sprite::_history, @myOpt)
 
         # These should only be used for loading objects from JSON
         @addClassRule: (rule, idx) ->
@@ -365,7 +368,7 @@ class Rule
         @action = null
         @type   = ''
     
-    act: (sprite, environment) ->
+    act: (sprite, obj, environment) ->
         console.log('Rule[' + @name + '].act: ' + sprite.spriteType)
         if @action != null
             @action.act(sprite)
@@ -447,7 +450,7 @@ class Interaction extends Rule
     # {star: 1, cloud: 2}
     setEnvironment: (@requiredEnvironment) ->
 
-    act: (sprite, environment) ->
+    act: (sprite, iObj, environment) ->
         # unlike StageCast, we want sloppy application here; extra things
         # in the environment don't matter as long as the minimum required are
         # present
@@ -492,12 +495,10 @@ class OverlapInteraction extends Interaction
         # We didn't find anything
         return false
 
-    act: (sprite, environment) ->
-        obj = sprite.prepObj
-        if obj == false
+    act: (sprite, iObj, environment) ->
+        if iObj == false
             return false
         @action.act(sprite)
-        sprite.prepObj = null
 
     addClone: ->
         super
@@ -722,6 +723,7 @@ window.loadSprites = (dataString) ->
     for sprite in tmpList
         sprite.removeFromList()
         sprite.remove()
+    tmpList = []
     canvas.renderAll()
 
     inObject = JSON.parse(dataString)
