@@ -1,7 +1,13 @@
 # unknown purpose
 *.log
 *.pot
+
+# local_settings points to mysql on Tufts server
+# should point to sqlite3 on your test machine
 local_settings.py
+
+# you should have your own sqlite3 set up by django
+sqlite3_db
 
 # for compiled python byte-code
 *.pyc
@@ -18,23 +24,12 @@ samlite/.DS_Store
 *.sublime-project
 *.sublime-workspace
 
-
+# your own media
 media/sam_frames/.gitignore
-
 media/sprites/.gitignore
 
-media/sprites/.gitignore
-
-media/sprites/.gitignore
-
-media/sam_frames/.gitignore
 
 simsam_app/js/sprite.js
-
 .gitignore
-
-sqlite3_db
-
 simsam/#settings.py#
-
 temp_data.json
