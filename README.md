@@ -8,7 +8,7 @@ To learn more about us, visit the [Expressive Technologies Lab](http://extech.tu
 SiMSAM is made possible through the generous support of the National Science Foundation, Grant #[IIS-1217100](http://www.nsf.gov/awardsearch/showAward?AWD_ID=1217100), and the Tufts University Mason Fund. Any opinions, findings, and conclusions or recommendations expressed in this material are those of the authors and do not necessarily reflect the views of the NSF or Tufts University. 
 
 Development by [Geisel Software](http://www.geisel-software.com/), Christopher Macrander, [Michelle Wilkerson-Jerde](http://sites.tufts.edu/michelle), Amanda Bell. 
-Major contributions by [Brian Gravel](http://ase.tufts.edu/education/faculty/gravel.asp), Margot Krouwer, Yara Shaban, Mirjana Hotomski.
+Major contributions by [Brian Gravel](http://ase.tufts.edu/education/faculty/gravel.asp), Margot Krouwer, Yara Shaban, Mirjana Hotomski, and members of the [Center for Engineering Education and Outreach](http://ceeo.tufts.edu/).
 
 Glossary
 --------
