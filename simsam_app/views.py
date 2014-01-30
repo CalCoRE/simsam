@@ -36,6 +36,12 @@ def app(request):
     })
     return HttpResponse(t.render(c))
 
+def about(request):
+    """About and help page"""
+    t = loader.get_template("about.html")
+    c = RequestContext(request, {})
+    return HttpResponse(t.render(c))
+
 def sandbox(request):
     """Debugging environment."""
     t = loader.get_template("sandbox.html")

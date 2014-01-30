@@ -24,25 +24,6 @@
 	filter: “alpha(opacity=50)”;
 }
 
-#home_button {
-    /*background-image: url(../images/home.png);*/
-    font-family: 'SketchIconsBold';
-    color: #62c004;
-    cursor: pointer;
-    top: 0px;
-	position: fixed;
-}
-
-#help_button {
-    /*background-image: url(../images/home.png);*/
-    font-family: 'PeaxDrawnIcons';
-    color: #62c004;
-    cursor: pointer;
-    top: 0px;
-    right: 0px;
-	position: fixed;
-}
-
 /**************************************/
 /* MAIN APP WINDOW , VIDEO COMPONENTS */
 /**************************************/
@@ -256,6 +237,12 @@
     
     .menu_button.highlight {
     	background-color: #ffff88;
+    }
+    
+    .sprite {
+        display: block;
+        margin: 10px auto 10px auto;
+        border: 1px solid #444;
     }
     
     #sprite_drawer {

@@ -5,7 +5,7 @@
 }
 
 .window {
-	font-size: xx-large;
+	font-size: large;
 	text-align: center;
 	height: 100%;
 	width: 100%;
@@ -58,4 +58,14 @@ input, button {
 .projects {
     font-size: x-large;
     color: #62c004;
+}
+
+.smallinfo {
+    font-size: small;
+    padding: 0em 3em 2em 3em;
+    color: gray;
+}
+
+h1 {
+    font-size: 3em;
 }
