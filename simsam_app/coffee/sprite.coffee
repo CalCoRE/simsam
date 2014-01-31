@@ -23,8 +23,9 @@ class GenericSprite extends fabric.Image
         shapeParams =
             height: this.imageObj.clientHeight,
             width: this.imageObj.clientWidth,
-            fill: "rgb(0,255,0)",
-            stroke: "rgb(0,0,0)",
+            borderColor: "rgb(37,58,79)",
+            cornerColor: "rgb(37,58,79)",
+            transparentCorners: false,
             cornerSize: 20
         # Call fabric.Image's constructor so it can do its magic.
         super(this.imageObj, shapeParams)
@@ -197,15 +198,17 @@ class GenericSprite extends fabric.Image
 
     showLearning: ->
         this.set({
-            borderColor: "red",
-            cornerColor: "red",
+            borderColor: "rgb(98,192,4)",
+            cornerColor: "rgb(98,192,4)",
+            transparentCorners: false,
         })
         canvas.renderAll();
     
     showNormal: ->
         this.set({
-            borderColor: "rgb(210,210,255)",
-            cornerColor: "rgb(210,210,255)",
+            borderColor: "rgb(37,58,79)",
+            cornerColor: "rgb(37,58,79)",
+            transparentCorners: false,
         })
         canvas.renderAll();
         
