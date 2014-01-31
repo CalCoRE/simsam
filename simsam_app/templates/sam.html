@@ -51,7 +51,7 @@
         
       toggleSim = function() {
         if( !simRunning ) {
-          if( interval = setInterval('tick()',1000) ) { simRunning = true; }
+          if( interval = setInterval('tick()',500) ) { simRunning = true; }
 		  $('#run').html('Stop');
         } else {
           clearInterval(interval);
@@ -116,9 +116,10 @@
             	  </div>
                 </div>
                 <div id="sprite_drawer">
-              	 <div id="trash_menu_button" class="floating_button"> 
+                 My objects:
+              	 <!--<div id="trash_menu_button" class="floating_button"> 
               	 trash sprite class 
-              	 </div>
+              	 </div>-->
                 </div>
             	
             </div>
