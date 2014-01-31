@@ -8,6 +8,10 @@
     display: block !important;
 }
 
+.ui-draggable-helper.sprite {
+    display: inline;
+}
+
 .floating_button {
 	background-repeat: no-repeat;
 	top: 5px;
@@ -243,6 +247,7 @@
         display: block;
         margin: 10px auto 10px auto;
         border: 1px solid #444;
+        cursor: move;
     }
     
     #sprite_drawer {
@@ -255,10 +260,10 @@
     	padding-top: 15px;
     	text-align: center;
     	width: 95%;
-    	cursor:pointer;
     	background-opacity: 0;
         border-radius: 15px;
         margin: auto;
+        overflow-y: scroll;
     }
     
     #sprite_drawer .sprite-count,
