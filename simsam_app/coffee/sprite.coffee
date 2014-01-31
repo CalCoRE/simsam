@@ -14,6 +14,7 @@ class GenericSprite extends fabric.Image
         @tempRandom     = false
         @tempRandomRange = 15
         @prepObj        = {}
+        @prePrepObj     = {}
         @countElement   = null
         # Don't forget to add these to the save/load routines
         sWidth = this.spriteType * 5
@@ -120,6 +121,11 @@ class GenericSprite extends fabric.Image
             if rule == undefined
                 continue
             @prepObj[key] = rule.prep(this, environment)
+            # Latch if we are still interacting with the same object 
+            if @prepObj[key] == @prePrepObj[key]
+                @prepObj[key] = null
+            else if @prepObj[key] == false
+                @prePrepObj[key] = null
 
     applyIRules: (environment) ->
         if @countElement
@@ -131,6 +137,8 @@ class GenericSprite extends fabric.Image
                 continue
             console.log('Applying an iRule')
             rule.act(this, @prepObj[key], environment)
+            if @prepObj[key]
+                @prePrepObj[key] = @prepObj[key]
             @prepObj[key] = null
         this.historyTick()
 
@@ -511,7 +519,7 @@ class OverlapInteraction extends Interaction
         return false
 
     act: (sprite, iObj, environment) ->
-        if iObj == false
+        if iObj == false or iObj == null
             return false
         @action.act(sprite)
 

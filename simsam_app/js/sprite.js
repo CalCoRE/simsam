@@ -20,6 +20,7 @@
       this.tempRandom = false;
       this.tempRandomRange = 15;
       this.prepObj = {};
+      this.prePrepObj = {};
       this.countElement = null;
       sWidth = this.spriteType * 5;
       this.uniqueId = generateUUID();
@@ -142,7 +143,14 @@
         if (rule === void 0) {
           continue;
         }
-        _results.push(this.prepObj[key] = rule.prep(this, environment));
+        this.prepObj[key] = rule.prep(this, environment);
+        if (this.prepObj[key] === this.prePrepObj[key]) {
+          _results.push(this.prepObj[key] = null);
+        } else if (this.prepObj[key] === false) {
+          _results.push(this.prePrepObj[key] = null);
+        } else {
+          _results.push(void 0);
+        }
       }
       return _results;
     };
@@ -161,6 +169,9 @@
         }
         console.log('Applying an iRule');
         rule.act(this, this.prepObj[key], environment);
+        if (this.prepObj[key]) {
+          this.prePrepObj[key] = this.prepObj[key];
+        }
         this.prepObj[key] = null;
       }
       return this.historyTick();
@@ -620,7 +631,7 @@
     };
 
     OverlapInteraction.prototype.act = function(sprite, iObj, environment) {
-      if (iObj === false) {
+      if (iObj === false || iObj === null) {
         return false;
       }
       return this.action.act(sprite);
