@@ -372,6 +372,7 @@ a.close {
         background-image: url(../images/inter.png);
         background-repeat: no-repeat;
         background-position: center;
+        cursor: move;
 }
 
 #counts,
