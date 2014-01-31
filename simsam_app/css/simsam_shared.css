@@ -1,45 +1,8 @@
-
-@font-face {
-  font-family: 'Averia Sans Libre';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Averia Sans Libre Regular'), local('AveriaSansLibre-Regular'), url(http://themes.googleusercontent.com/static/fonts/averiasanslibre/v2/yRJpjT39KxACO9F31mj_LhlS6V2rbkt3HRj5hz1lBB8.woff) format('woff');
-}
-
-@font-face {
-  font-family: 'PeaxDrawnIcons';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Peax Drawn Icons'), local('PeaxDrawnIcons'), url(../sitestatic/fonts/PeaxDrawnIcons.ttf) format('ttf');
-}
-
-@font-face {
-  font-family: 'SketchIconsBold';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Sketch Icons Bold'), local('SketchIconsBold'), url(../sitestatic/fonts/SketchIconsBold.ttf) format('ttf');
-}
-
-.app-wrapper {
+.wrapper {
 	position: relative;
-	background-color: #62c004;
-	border-style: solid;
-	border-color: #62c004;
-	border-width: 5px;
-	border-radius: 15px;
-	margin: 0 auto;
-	margin-top: 70px;
 }
 
 /* MAIN APP WINDOW */
-
-.window {
-	border-color: white;
-	border-width: 1px;
-	border-style: solid;
-	background-color: #fffefe;
-	border-radius: 15px;
-}
 
 .upper-canvas {
     display: block !important;
@@ -59,32 +22,6 @@
 	opacity:.50;
 	filter:alpha(opacity=50);
 	filter: “alpha(opacity=50)”;
-}
-
-#home_button {
-    /*background-image: url(../images/home.png);*/
-    font-family: 'SketchIconsBold';
-    color: #62c004;
-    cursor: pointer;
-    top: 0px;
-	position: fixed;
-}
-
-#help_button {
-    /*background-image: url(../images/home.png);*/
-    font-family: 'PeaxDrawnIcons';
-    color: #62c004;
-    cursor: pointer;
-    top: 0px;
-    right: 0px;
-	position: fixed;
-}
-
-.title {
-    color: #62c004;
-    top: 0px;
-    left: 85px;
-	position: fixed;
 }
 
 /**************************************/
@@ -302,6 +239,12 @@
     	background-color: #ffff88;
     }
     
+    .sprite {
+        display: block;
+        margin: 10px auto 10px auto;
+        border: 1px solid #444;
+    }
+    
     #sprite_drawer {
     	background-color: white;
     	border-style: solid;
@@ -429,6 +372,7 @@ a.close {
         background-image: url(../images/inter.png);
         background-repeat: no-repeat;
         background-position: center;
+        cursor: move;
 }
 
 #counts,
@@ -571,10 +515,3 @@ a.close {
 	color: #444;
 	text-decoration: none;
 }
-
-
-body {
-	background-color: #23374b;
-    font-family: "Averia Sans Libre", Helvetica;
-}
-

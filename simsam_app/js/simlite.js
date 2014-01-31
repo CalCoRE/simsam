@@ -41,6 +41,7 @@ window.initSim = (function(){
             }
         }
     }
+    window.load(); // when I first load the project, load any saved sim stuff
 });
 
 // dynamic canvas size based on browser window
@@ -76,6 +77,18 @@ pointWithinElement = function(x, y, element) {
     if (y < y1 || y > y2) return false;
 
     return true;
+}
+
+// Borrowed from http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
+generateUUID = function() {
+    var d = new Date().getTime(); // .now() doesn't work in Opera
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, 
+            function(c) {
+                var r = (d + Math.random() * 16) %16 | 0;
+                d = Math.floor(d/16);
+                return (c=='x' ? r : (r&0x7|0x8)).toString(16);
+            });
+    return uuid;
 }
 
 getObjectState = function(object) {
@@ -123,6 +136,7 @@ simObjectCleared = function(options) {
         modifyingHide(currentSimObject);
     }
     currentSimObject = null;
+    save(); // when I have moved or programmed an object, auto-save it
 }
 
 
@@ -384,7 +398,11 @@ simDragStop = function(ev, ui) {
     if (!match) return;
     
     source = ev.target.id;
-    currentTracker = new ChartTracker;
+    if (source == 'iact_toggle') {
+        currentTracker = new Tracker;
+    } else {
+        currentTracker = new ChartTracker;
+    }
     currentTracker.parent = sprite;
     currentTracker.createElement(source, sprite);
     // Prepare to select the interaction target object
@@ -393,6 +411,26 @@ simDragStop = function(ev, ui) {
     $('#count_blocker').show();
     interactionWaiting = true;
     currentInterObj = sprite;
+}
+
+clearTrackers = function() {
+    var i;
+
+    for (i=0; i < window.spriteList.length; i++) {
+        var s = window.spriteList[i];
+        if (s === undefined) continue;
+        if (s.countElement == null) continue;
+
+        s.countElement.clear();
+        s.countElement.update();
+    }
+
+    for (i = 0; i < window.spriteTypeList.length; i++) {
+        sprite = window.spriteTypeList[i];
+        sprite.prototype.clearHistory();
+        sprite.prototype.historyTick();
+    }
+    return false;
 }
 
 /* User Interface code for Sprite InteractionRule */
@@ -432,6 +470,46 @@ spriteChartClick = function(obj, ev) {
     ourOpt['height'] = '50px';
     $('#count_big_chart').sparkline(sprite.prototype.getHistory(), ourOpt);
     ev.stopPropagation();
+}
+
+window.save = function() {
+    rawData = saveSprites();
+    $.ajax({
+        url: 'save_sim_state',
+        type: 'POST',
+        data: {
+            serialized: rawData,
+            name: 'default',
+            simid: window.simulationId,
+        },
+        dataType: 'json'
+    });
+}
+
+window.load = function() {
+    console.log('load');
+    //loadSprites($('#data').html());
+    $.ajax({
+        url: 'load_sim_state',
+        type: 'POST',
+        data: {
+            name: 'default',
+            sim_id: window.simulationId,
+        },
+        dataType: 'json',
+        success: function(data) {
+            if (data.status == 'Success') {
+                loadSprites(data.serialized);
+            } else if (data.status == 'Failed') {
+                if (data.debug.length) {
+                    console.log ('Error(load): ' + data.debug);
+                }
+                if (data.message.length) {
+                    alert('Error: ' + data.message);
+                }
+            }
+        },
+    });
 }
 
 // UI Setup for events
@@ -510,43 +588,13 @@ $(document).ready(function() {
     });
 
     $('#save').click(function() {
-        rawData = saveSprites();
-        $.ajax({
-            url: 'save_sim_state',
-            type: 'POST',
-            data: {
-                serialized: rawData,
-                name: 'default',
-                simid: window.simulationId,
-            },
-            dataType: 'json'
-        });
+        console.log('save')
+        window.save();
     });
 
     $('#load').click(function() {
-        console.log('load');
-        //loadSprites($('#data').html());
-        $.ajax({
-            url: 'load_sim_state',
-            type: 'POST',
-            data: {
-                name: 'default',
-                sim_id: window.simulationId,
-            },
-            dataType: 'json',
-            success: function(data) {
-                if (data.status == 'Success') {
-                    loadSprites(data.serialized);
-                } else if (data.status == 'Failed') {
-                    if (data.debug.length) {
-                        console.log ('Error(load): ' + data.debug);
-                    }
-                    if (data.message.length) {
-                        alert('Error: ' + data.message);
-                    }
-                }
-            },
-        });
+        console.log('load')
+        window.load();
     });
 
     // Measurable panel

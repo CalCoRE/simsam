@@ -1,0 +1,90 @@
+@font-face {
+  font-family: 'Averia Sans Libre';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Averia Sans Libre Regular'), local('AveriaSansLibre-Regular'), url(http://themes.googleusercontent.com/static/fonts/averiasanslibre/v2/yRJpjT39KxACO9F31mj_LhlS6V2rbkt3HRj5hz1lBB8.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'PeaxDrawnIcons';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Peax Drawn Icons'), local('PeaxDrawnIcons'), url(../sitestatic/fonts/PeaxDrawnIcons.ttf) format('ttf');
+}
+
+@font-face {
+  font-family: 'SketchIconsBold';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Sketch Icons Bold'), local('SketchIconsBold'), url(../sitestatic/fonts/SketchIconsBold.ttf) format('ttf');
+}
+
+body {
+	background-image: url(../images/bg.jpg);
+	background-color: #23374b;
+    font-family: "Averia Sans Libre", Helvetica;
+}
+
+.wrapper {
+	background-color: #62c004;
+	border-style: solid;
+	border-color: #62c004;
+	border-width: 5px;
+	border-radius: 15px;
+	margin: 0 auto;
+	margin-top: 70px;
+}
+
+.window {
+	border-color: white;
+	border-width: 1px;
+	border-style: solid;
+	background-color: #fffefe;
+	border-radius: 15px;
+}
+
+a {
+    color: grey;
+    -o-transition:.5s;
+    -ms-transition:.5s;
+    -moz-transition:.5s;
+    -webkit-transition:.5s;
+    /* ...and now for the proper property */
+    transition:.5s;
+    text-decoration: none; 
+    border-bottom: 1px black dotted;
+    size: inherit;
+}
+
+a:hover {
+    color: inherit;
+}
+
+#home_button {
+    /*background-image: url(../images/home.png);*/
+    font-family: 'SketchIconsBold';
+    color: #62c004;
+    cursor: pointer;
+    top: 0px;
+	position: fixed;
+	font-size: 5em;
+}
+
+#help_button {
+    /*background-image: url(../images/home.png);*/
+    font-family: 'PeaxDrawnIcons';
+    color: #62c004;
+    cursor: pointer;
+    top: 0px;
+    right: 0px;
+	position: fixed;
+	font-size: 4em;
+}
+
+.title {
+    color: #62c004;
+    top: 0px;
+    left: 85px;
+	position: fixed;
+	font-size: 3.8em;
+}

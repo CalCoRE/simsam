@@ -27,12 +27,12 @@
     <script src="{{ STATIC_URL }}js/samlite.js"></script>
     
     <!-- This is the base stylesheet -->
+    <link rel='stylesheet' type='text/css' href='{{ STATIC_URL }}css/app.css' />
     <link rel='stylesheet' type='text/css' href='{{ STATIC_URL }}css/simsam_shared.css' />
     <!-- This stylesheet adjusts size based on browser size as determined in resolution.js -->
 	<link id="size-stylesheet" rel='stylesheet' type='text/css' href='{{ STATIC_URL }}css/simsam_narrow.css' />
 	
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
-    <!--<link rel="stylesheet" href="{{ STATIC_URL }}css/iphone-style-checkboxes.css">-->
 
     <script type="text/javascript">
       window.onload = function () {
@@ -51,7 +51,7 @@
         
       toggleSim = function() {
         if( !simRunning ) {
-          if( interval = setInterval('tick()',1000) ) { simRunning = true; }
+          if( interval = setInterval('tick()',500) ) { simRunning = true; }
 		  $('#run').html('Stop');
         } else {
           clearInterval(interval);
@@ -73,7 +73,7 @@
 <!-- right menu 1/5, bottom menu 1/7 -->
     <body>
     {% if user.is_authenticated %}
-        <div class="app-wrapper">
+        <div class="wrapper">
             
             <!-- MAIN WINDOW -->
             <div class="window" id="construction_frame">
@@ -101,6 +101,7 @@
                 	<div id="sim_buttons" style="display:none;">
                 		<div class="menu_button" onclick="tick()">One Step</div>
                 		<div id="run" class="menu_button" onclick="toggleSim()">Run</div>
+                        <div id="clear" class="menu_button" onclick="clearTrackers()">Clear</div>
                 	</div>
             	  <!-- Selected Chooser -->
             	  <div id="selected" >
@@ -115,9 +116,10 @@
             	  </div>
                 </div>
                 <div id="sprite_drawer">
-              	 <div id="trash_menu_button" class="floating_button"> 
+                 My objects:
+              	 <!--<div id="trash_menu_button" class="floating_button"> 
               	 trash sprite class 
-              	 </div>
+              	 </div>-->
                 </div>
             	
             </div>
@@ -183,11 +185,10 @@
     
     <!-- PERSISTENT FLOATING ICONS HERE -->
     <div id="home_button" onclick="window.location = '/'">u</div><div class="title">SiMSAM</div>
-    <div id="help_button">M</div><div class="title">SiMSAM</div>
+    <div id="help_button" onclick="window.location = 'about/'">M</div>
     <a href="#" id="save"></a>
     <a href="#" id="load"></a>
     <!-- END FLOATING ICONS -->
-
     
     {% endif %}
     </body>

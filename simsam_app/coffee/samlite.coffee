@@ -518,6 +518,7 @@ $ ->
         $('#video_bottom').hide()
         $('#switch_to_sim_button').hide()
         $('#crop_buttons').hide()
+        $('#clear').show()
         # show simlite containers
         $('#container').show()
         $('#output').show()
@@ -543,6 +544,7 @@ $ ->
         $('#container').hide()
         $('#output').hide()
         $('#switch_to_sam_button').hide()
+        $('#clear').hide()
         $('#trash_menu_button').hide()
         $('#save').hide()
         $('#load').hide()
