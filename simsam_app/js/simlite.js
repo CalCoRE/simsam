@@ -41,6 +41,7 @@ window.initSim = (function(){
             }
         }
     }
+    window.load(); // when I first load the project, load any saved sim stuff
 });
 
 // dynamic canvas size based on browser window
@@ -135,6 +136,7 @@ simObjectCleared = function(options) {
         modifyingHide(currentSimObject);
     }
     currentSimObject = null;
+    save(); // when I have moved or programmed an object, auto-save it
 }
 
 
@@ -470,6 +472,46 @@ spriteChartClick = function(obj, ev) {
     ev.stopPropagation();
 }
 
+window.save = function() {
+    rawData = saveSprites();
+    $.ajax({
+        url: 'save_sim_state',
+        type: 'POST',
+        data: {
+            serialized: rawData,
+            name: 'default',
+            simid: window.simulationId,
+        },
+        dataType: 'json'
+    });
+}
+
+window.load = function() {
+    console.log('load');
+    //loadSprites($('#data').html());
+    $.ajax({
+        url: 'load_sim_state',
+        type: 'POST',
+        data: {
+            name: 'default',
+            sim_id: window.simulationId,
+        },
+        dataType: 'json',
+        success: function(data) {
+            if (data.status == 'Success') {
+                loadSprites(data.serialized);
+            } else if (data.status == 'Failed') {
+                if (data.debug.length) {
+                    console.log ('Error(load): ' + data.debug);
+                }
+                if (data.message.length) {
+                    alert('Error: ' + data.message);
+                }
+            }
+        },
+    });
+}
+
 // UI Setup for events
 $(document).ready(function() {
 
@@ -546,43 +588,13 @@ $(document).ready(function() {
     });
 
     $('#save').click(function() {
-        rawData = saveSprites();
-        $.ajax({
-            url: 'save_sim_state',
-            type: 'POST',
-            data: {
-                serialized: rawData,
-                name: 'default',
-                simid: window.simulationId,
-            },
-            dataType: 'json'
-        });
+        console.log('save')
+        window.save();
     });
 
     $('#load').click(function() {
-        console.log('load');
-        //loadSprites($('#data').html());
-        $.ajax({
-            url: 'load_sim_state',
-            type: 'POST',
-            data: {
-                name: 'default',
-                sim_id: window.simulationId,
-            },
-            dataType: 'json',
-            success: function(data) {
-                if (data.status == 'Success') {
-                    loadSprites(data.serialized);
-                } else if (data.status == 'Failed') {
-                    if (data.debug.length) {
-                        console.log ('Error(load): ' + data.debug);
-                    }
-                    if (data.message.length) {
-                        alert('Error: ' + data.message);
-                    }
-                }
-            },
-        });
+        console.log('load')
+        window.load();
     });
 
     // Measurable panel
