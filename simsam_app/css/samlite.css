@@ -521,6 +521,14 @@ a.close {
 	text-align: center;
 }
 
+.ui-hover {
+	opacity: 0.8;
+	background-color: rgba(180,180,180,0.5);
+	border-radius: 6px;
+	box-shadow: 2px 2px 4px;
+	padding: 8px;
+}
+
 #random-range {
 	display: none;
 	position: absolute;
@@ -528,9 +536,10 @@ a.close {
 }
 
 #random-range {
-	background: #eee;
-	box-shadow: 2px 2px 4px;
-	padding: 6px;
+}
+#random-range h3 {
+	margin-top: .5em;
+	margin-bottom: .5em;
 }
 
 #random-range > a {
@@ -550,16 +559,11 @@ a.close {
 	display: none;
 }
 
+
 #clone-ui {
 	top: 50px;
 	left: 50px;
 	position: absolute;
-	opacity: 0.7;
-	background-color: rgba(180,180,180,0.5);
-	border-radius: 6px;
-	padding: 8px;
-	border-radius: 5px;
-	box-shadow: 2px 2px 4px;
 	display: none;
 }
 
