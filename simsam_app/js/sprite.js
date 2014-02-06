@@ -57,7 +57,7 @@
         return;
       }
       this.stateRandom = value;
-      if (this._rules.length) {
+      if (this._rules.length && this._rules[0] !== void 0) {
         action = this._rules[0].action;
         return action.stateRandom = value;
       }
@@ -386,6 +386,14 @@
 
       Sprite.prototype._history = [];
 
+      Sprite.prototype.cloneTranslate = {
+        top: 0,
+        left: 0,
+        rotate: 0
+      };
+
+      Sprite.prototype.cloneFrequency = 100;
+
       function Sprite(spriteType) {
         var chash, hash;
         Sprite.prototype._count = Sprite.prototype._count + 1;
@@ -436,6 +444,16 @@
           idx = 0;
         }
         return Sprite.prototype._irules[idx] = rule;
+      };
+
+      Sprite.prototype.setCloneOffset = function(topVal, leftVal, rotate) {
+        Sprite.prototype.cloneTranslate.top = topVal;
+        Sprite.prototype.cloneTranslate.left = leftVal;
+        return Sprite.prototype.cloneTranslate.rotate = rotate;
+      };
+
+      Sprite.prototype.setCloneFrequency = function(freq) {
+        return Sprite.prototype.cloneFrequency = freq;
       };
 
       return Sprite;
@@ -638,8 +656,7 @@
     };
 
     OverlapInteraction.prototype.addClone = function() {
-      OverlapInteraction.__super__.addClone.apply(this, arguments);
-      return this.action.spawnWait = 1;
+      return OverlapInteraction.__super__.addClone.apply(this, arguments);
     };
 
     OverlapInteraction.prototype.toJSON = function() {
@@ -696,14 +713,11 @@
 
     __extends(CloneAction, _super);
 
-    function CloneAction() {
-      this.spawnWait = 2;
-    }
+    function CloneAction() {}
 
     CloneAction.prototype.act = function(sprite) {
-      var newSprite;
-      console.log('act: CloneAction (spawnWait: ' + this.spawnWait + ')');
-      if ((Math.random() * this.spawnWait) > 1) {
+      var dx, dy, newSprite, sLeft, sTop, theta;
+      if ((Math.random() * 100) > sprite.cloneFrequency) {
         return;
       }
       if (window.spriteTypeList[sprite.spriteType].prototype._count >= window.maxSprites) {
@@ -711,8 +725,14 @@
       }
       newSprite = new window.spriteTypeList[sprite.spriteType];
       spriteList.push(newSprite);
-      newSprite.setTop(sprite.getTop() + Math.random() * 20 - 10);
-      newSprite.setLeft(sprite.getLeft() + Math.random() * 20 - 10);
+      theta = sprite.getAngle() * Math.PI / 180;
+      sTop = sprite.cloneTranslate.top;
+      sLeft = sprite.cloneTranslate.left;
+      dx = sLeft * Math.cos(theta) - sTop * Math.sin(theta);
+      dy = sLeft * Math.sin(theta) + sTop * Math.cos(theta);
+      newSprite.setTop(sprite.getTop() + dy);
+      newSprite.setLeft(sprite.getLeft() + dx);
+      newSprite.setAngle(sprite.getAngle() + sprite.cloneTranslate.rotate);
       canvas.add(newSprite);
       return canvas.renderAll();
     };
@@ -721,13 +741,11 @@
       var object;
       object = {};
       object.type = 'clone';
-      object.spawnWait = this.spawnWait;
       return object;
     };
 
     CloneAction.prototype.restoreFromJSON = function(data) {
-      CloneAction.__super__.restoreFromJSON.call(this);
-      return this.spawnWait = data.spawnWait;
+      return CloneAction.__super__.restoreFromJSON.call(this);
     };
 
     return CloneAction;
@@ -896,6 +914,8 @@
       oneType.imageObj = type.prototype.imageObj.src;
       oneType.count = type.prototype._count;
       oneType.rules = [];
+      oneType.cloneTranslate = type.prototype.cloneTranslate;
+      oneType.cloneFrequency = type.prototype.cloneFrequency;
       _ref = type.prototype._rules;
       for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
         rule = _ref[_j];
@@ -932,7 +952,7 @@
   };
 
   window.loadSprites = function(dataString) {
-    var imageObjects, img, imgSrc, inObject, iruleData, newSprite, obj, rule, ruleData, sprite, tmpList, typeFactory, typeObj, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _len5, _len6, _m, _n, _o, _ref, _ref1, _ref2, _ref3, _ref4;
+    var idx, imageObjects, img, imgSrc, inObject, iruleData, newSprite, obj, rule, ruleData, sprite, tmpList, typeFactory, typeObj, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2, _ref3, _ref4;
     tmpList = [];
     window.spriteTypeList = [];
     _ref = window.spriteList;
@@ -965,23 +985,25 @@
       }
       typeFactory = SpriteFactory(typeObj.type, typeObj.raw);
       typeFactory.prototype._count = 0;
+      typeFactory.prototype.cloneTranslate = typeObj.cloneTranslate;
+      typeFactory.prototype.cloneFreqency = typeObj.cloneFreqency;
       _ref2 = typeObj.rules;
-      for (_m = 0, _len4 = _ref2.length; _m < _len4; _m++) {
-        ruleData = _ref2[_m];
+      for (idx in _ref2) {
+        ruleData = _ref2[idx];
         rule = Rule.createFromData(ruleData);
-        typeFactory.addClassRule(rule);
+        typeFactory.addClassRule(rule, idx);
       }
       _ref3 = typeObj.irules;
-      for (_n = 0, _len5 = _ref3.length; _n < _len5; _n++) {
-        iruleData = _ref3[_n];
+      for (idx in _ref3) {
+        iruleData = _ref3[idx];
         rule = Rule.createFromData(iruleData);
         typeFactory.addClassIRule(rule, iruleData.targetType);
       }
       window.spriteTypeList.push(typeFactory);
     }
     _ref4 = inObject.objects;
-    for (_o = 0, _len6 = _ref4.length; _o < _len6; _o++) {
-      obj = _ref4[_o];
+    for (_m = 0, _len4 = _ref4.length; _m < _len4; _m++) {
+      obj = _ref4[_m];
       newSprite = new window.spriteTypeList[obj.spriteType];
       newSprite.restoreFromJSON(obj);
       window.spriteList.push(newSprite);

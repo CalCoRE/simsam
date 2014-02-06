@@ -374,19 +374,26 @@ cloneWidgetShow = function(obj) {
     var x = obj.getLeft();
     var y = obj.getTop();
 
+    var theta = obj.getAngle() * Math.PI / 180;
+    var xo = 45;
+    var yo = -45;
+    var startX = x + xo * Math.cos(theta) - yo * Math.sin(theta);
+    var startY = y + xo * Math.sin(theta) + yo * Math.cos(theta);
+
     var imgElement = document.createElement('img');
     imgElement.src = obj.getSrc();
     cloneObj = new fabric.Image(imgElement, {
-        lockRotation: true,
+        lockRotation: false,
         lockScalingX: true,
         lockScalingY: true,
         opacity: 0.7,
-        top: y - 45,
-        left: x + 45,
-        cornerSize: 20
+        top: startY,
+        left: startX,
+        cornerSize: 20,
+        angle: obj.getAngle(),
     });
-    cloneObj.myOriginalTop = y - 45;
-    cloneObj.myOriginalLeft = x + 45;
+    cloneObj.myOriginalTop = startY;
+    cloneObj.myOriginalLeft = startX;
     cloneObj.modified = function() {
         setCloneUILocation(this);
     }
@@ -404,7 +411,23 @@ cloneWidgetShow = function(obj) {
 cloneWidgetHide = function(obj) {
     $('#clone-ui').hide();
     if (cloneObj != null) {
+        var nowTop = cloneObj.getTop();
+        var nowLeft = cloneObj.getLeft();
+        var origTop = cloneObj.myOriginalTop;
+        var origLeft = cloneObj.myOriginalLeft;
         var daddy = cloneObj.daddy;
+
+        var dx = nowLeft - origLeft;
+        var dy = nowTop - origTop;
+        var freq = $('#clone-data').data('value');
+        var theta = daddy.getAngle() * Math.PI / 180;
+        var topDiff = -dx * Math.sin(theta) + dy * Math.cos(theta);
+        var leftDiff = dx * Math.cos(-theta) - dy * Math.sin(-theta);
+
+        var tx = cloneObj.getAngle() - daddy.getAngle();
+
+        daddy.setCloneOffset(topDiff, leftDiff, tx);
+        daddy.setCloneFrequency(freq);
         cloneObj.remove();
         cloneObj = null;
         canvas.setActiveObject(daddy);
