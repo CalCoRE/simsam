@@ -3,6 +3,7 @@ window.initSim = (function(){
     interactionWaiting = false;     // in state of having just dropped measure
     currentTracker = null;          // operating measure object
     currentSimObject = null;
+    cloneObj = null;
 
     /* Create a new fabric.Canvas object that wraps around the original <canvas>
      * DOM element.
@@ -28,6 +29,9 @@ window.initSim = (function(){
         selectedObject = canvas.getActiveObject();
         // if one object is selected this fires
         if (selectedObject !== null && selectedObject !== undefined) { 
+            if (! (typeof selectedObject['learningToggle'] === 'function')) {
+                return;
+            }
             selectedObject.learningToggle();
             if (selectedObject.stateRecording) {
                 selectedObject.bringToFront();
@@ -35,6 +39,9 @@ window.initSim = (function(){
                 if (selectedObject.isRandom()) {
                     $('#uimod_rand').addClass('highlight');
                     randomSliderShow(selectedObject);
+                }
+                if (selectedObject.isClone()) {
+                    $('#uimod_clone').addClass('highlight');
                 }
             } else {
                 modifyingHide(selectedObject);
@@ -117,11 +124,14 @@ getD = function(init , end) {
 }
 
 simObjectSelected = function(options) {
+    if (cloneObj != null && canvas.getActiveObject() != cloneObj) {
+        cloneWidgetHide();
+        return;
+    }
     // We're waiting for a select to occur on a measurement
     if (interactionWaiting) {
         currentTracker.targetSprite = canvas.getActiveObject();
-        canvas.discardActiveObject();
-        interactionWaiting = false;
+        canvas.discardActiveObject(); interactionWaiting = false;
         $('#count_blocker').hide();
         return;
     }
@@ -131,27 +141,16 @@ simObjectSelected = function(options) {
 }
 
 simObjectCleared = function(options) {
+    if (cloneObj != null) {
+        cloneWidgetHide();
+        return;
+    }
     $('#selected').hide(250);
     if (currentSimObject !== undefined) {
         modifyingHide(currentSimObject);
     }
     currentSimObject = null;
     save(); // when I have moved or programmed an object, auto-save it
-}
-
-
-//
-// django functions
-//
-djangoDeleteImage = function(image_hash) {
-    $.ajax({
-        url: 'delete_image',
-        type: 'POST',
-        data: {
-            image_hash: image_hash
-        },
-        dataType: 'json'
-    });
 }
 
 // Called every time a sim object has finished moving so we can see if it
@@ -184,6 +183,21 @@ simObjectModified = function(options) {
         });
     }
 }
+
+//
+// django functions
+//
+djangoDeleteImage = function(image_hash) {
+    $.ajax({
+        url: 'delete_image',
+        type: 'POST',
+        data: {
+            image_hash: image_hash
+        },
+        dataType: 'json'
+    });
+}
+
 
 //
 // User Interface for Modifying Objects
@@ -340,6 +354,7 @@ randomSliderRelease = function(obj) {
     }
 }
 
+// Display the widget for setting random breadth
 randomSliderShow = function(obj) {
     randomSliderPosition(obj);
     $('#random-range').show();
@@ -362,6 +377,95 @@ randomSliderHide = function(obj) {
     randomSliderRelease(obj);
 }
 
+//
+// Cloning functions
+//
+setCloneUILocation = function (clone) {
+    var cui = $('#clone-ui');
+    var myWidth = $(cui).width();
+    var myHeight = $(cui).outerHeight();
+    var objHeight = clone.getHeight();
+    $(cui).css({ 
+        top: clone.getTop() - objHeight/2 - myHeight - 15,
+        left: clone.getLeft() - myWidth/2,
+    });
+}
+
+cloneWidgetShow = function(obj) {
+    var x = obj.getLeft();
+    var y = obj.getTop();
+
+    var theta = obj.getAngle() * Math.PI / 180;
+    var xo = 45;
+    var yo = -45;
+    var startX = x + xo * Math.cos(theta) - yo * Math.sin(theta);
+    var startY = y + xo * Math.sin(theta) + yo * Math.cos(theta);
+
+    var imgElement = document.createElement('img');
+    imgElement.src = obj.getSrc();
+    cloneObj = new fabric.Image(imgElement, {
+        lockRotation: false,
+        lockScalingX: true,
+        lockScalingY: true,
+        opacity: 0.7,
+        top: startY,
+        left: startX,
+        cornerSize: 20,
+        angle: obj.getAngle(),
+    });
+    cloneObj.myOriginalTop = startY;
+    cloneObj.myOriginalLeft = startX;
+    cloneObj.modified = function() {
+        setCloneUILocation(this);
+    }
+    cloneObj.daddy = obj;
+    canvas.add(cloneObj);
+    cloneObj.bringToFront();
+    canvas.setActiveObject(cloneObj);
+
+    setCloneUILocation(cloneObj);
+    $('#clone-data').data('value', 100);
+    $('#clone-data').html('100%');
+    $('#clone-ui').show();
+}
+
+cloneWidgetHide = function(obj) {
+    $('#clone-ui').hide();
+    if (cloneObj != null) {
+        var nowTop = cloneObj.getTop();
+        var nowLeft = cloneObj.getLeft();
+        var origTop = cloneObj.myOriginalTop;
+        var origLeft = cloneObj.myOriginalLeft;
+        var daddy = cloneObj.daddy;
+
+        var dx = nowLeft - origLeft;
+        var dy = nowTop - origTop;
+        var freq = $('#clone-data').data('value');
+        var theta = daddy.getAngle() * Math.PI / 180;
+        var topDiff = -dx * Math.sin(theta) + dy * Math.cos(theta);
+        var leftDiff = dx * Math.cos(-theta) - dy * Math.sin(-theta);
+
+        var tx = cloneObj.getAngle() - daddy.getAngle();
+
+        daddy.setCloneOffset(topDiff, leftDiff, tx);
+        daddy.setCloneFrequency(freq);
+        cloneObj.remove();
+        cloneObj = null;
+        canvas.setActiveObject(daddy);
+    }
+}
+
+cloneWidgetAdd = function(amt) {
+    var ourDiv = $('#clone-data');
+    var value = $(ourDiv).data('value');
+    value += amt;
+    if (value < 10) value = 10;
+    if (value > 100) value = 100;
+    $(ourDiv).data('value', value);
+    $(ourDiv).html('' + value + '%');
+}
+
+// Hide the sidebar menu for when an object is in "modifying" state
 modifyingHide = function(p_obj) {
     var obj = p_obj;
     if (obj == null) {
@@ -369,6 +473,7 @@ modifyingHide = function(p_obj) {
     }
     $('#modifying').hide(250);
     $('#uimod_rand').removeClass('highlight');
+    $('#uimod_clone').removeClass('highlight');
     randomSliderHide(obj);
     // Clear recording if we're in the middle of it.
     if (obj && obj.stateRecording) {
@@ -572,7 +677,16 @@ $(document).ready(function() {
         } else {
             obj.addSimpleClone();
             $(this).addClass('highlight');
+            cloneWidgetShow(obj);
         }
+    });
+
+    $('#clone-minus').click(function() {
+        cloneWidgetAdd(-10);
+    });
+
+    $('#clone-plus').click(function() {
+        cloneWidgetAdd(10);
     });
 
     $('#randomslider').slider({

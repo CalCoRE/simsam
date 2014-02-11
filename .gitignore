@@ -38,3 +38,5 @@ sqlite3_db
 simsam/#settings.py#
 
 temp_data.json
+
+ngrok

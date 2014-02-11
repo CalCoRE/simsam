@@ -14,6 +14,7 @@ class GenericSprite extends fabric.Image
         @tempRandom     = false
         @tempRandomRange = 15
         @prepObj        = {}
+        @prePrepObj     = {}
         @countElement   = null
         # Don't forget to add these to the save/load routines
         sWidth = this.spriteType * 5
@@ -49,7 +50,7 @@ class GenericSprite extends fabric.Image
             @tempRandom = value
             return
         @stateRandom = value
-        if @_rules.length
+        if @_rules.length && @_rules[0] != undefined
             action = @_rules[0].action
             action.stateRandom = value
 
@@ -121,6 +122,11 @@ class GenericSprite extends fabric.Image
             if rule == undefined
                 continue
             @prepObj[key] = rule.prep(this, environment)
+            # Latch if we are still interacting with the same object 
+            if @prepObj[key] == @prePrepObj[key]
+                @prepObj[key] = null
+            else if @prepObj[key] == false
+                @prePrepObj[key] = null
 
     applyIRules: (environment) ->
         if @countElement
@@ -132,6 +138,8 @@ class GenericSprite extends fabric.Image
                 continue
             console.log('Applying an iRule')
             rule.act(this, @prepObj[key], environment)
+            if @prepObj[key]
+                @prePrepObj[key] = @prepObj[key]
             @prepObj[key] = null
         this.historyTick()
 
@@ -221,6 +229,21 @@ class GenericSprite extends fabric.Image
         if obj.isContainedWithinObject(this)
             return true
         return false
+
+    isOnCanvas: ->
+        canvas = $('#container')
+        height = $(canvas).height()
+        width = $(canvas).width()
+        bound = this.getBoundingRect()
+        if (bound.width + bound.left) < 0
+            return false
+        if (bound.height + bound.top) < 0
+            return false
+        if (bound.left > width)
+            return false
+        if (bound.top > height)
+            return false
+        return true
 
     removeFromList: ->
         idx = spriteList.indexOf(this)
@@ -317,6 +340,13 @@ SpriteFactory = (spriteType, imageObj) ->
         # Count history
         _history: []
 
+        # If we're creating a clone, where do we put it
+        cloneTranslate: {top: 0, left: 0, rotate: 0}
+        cloneFrequency: 100
+        
+        # N.B. If you are adding new attributes that should be saved, 
+        # see window.saveSprites for storing those attributes.
+
         constructor: (spriteType) ->
             Sprite::_count = Sprite::_count + 1
             hash = @imageObj.dataset['hash']
@@ -358,6 +388,17 @@ SpriteFactory = (spriteType, imageObj) ->
             if idx == undefined
                 idx = 0
             Sprite::_irules[idx] = rule
+
+        setCloneOffset: (topVal, leftVal, rotate) ->
+            Sprite::cloneTranslate.top = topVal
+            Sprite::cloneTranslate.left = leftVal
+            Sprite::cloneTranslate.rotate = rotate
+
+        # Out of 100, so 1 out of 2 would be 50
+        setCloneFrequency: (freq) ->
+            Sprite::cloneFrequency = freq
+
+        # toJSON see window.saveSprites
 
     return Sprite
 
@@ -499,14 +540,13 @@ class OverlapInteraction extends Interaction
         return false
 
     act: (sprite, iObj, environment) ->
-        if iObj == false
+        if iObj == false or iObj == null
             return false
         @action.act(sprite)
 
     addClone: ->
         super
         # Since we're an interaction, clone each and every time
-        @action.spawnWait = 1
 
     toJSON: ->
         obj = super
@@ -538,32 +578,35 @@ class DeleteAction extends Action
 
 class CloneAction extends Action
     constructor: ->
-        # On average, spawn every spawnWait ticks
-        @spawnWait = 2
 
     act: (sprite) ->
-        console.log('act: CloneAction (spawnWait: ' + @spawnWait + ')')
-        # only act 1 out of ever @spawnWait times
-        if (Math.random() * @spawnWait) > 1
+        # Interact at sprite.CloneFrequency % of the time
+        if (Math.random() * 100) > (sprite.cloneFrequency)
             return
         if window.spriteTypeList[sprite.spriteType]::_count >= window.maxSprites
             return
         newSprite = new window.spriteTypeList[sprite.spriteType]  # make one
         spriteList.push( newSprite )
-        newSprite.setTop(sprite.getTop() + Math.random() * 20 - 10)
-        newSprite.setLeft(sprite.getLeft() + Math.random() * 20 - 10)
+        #newSprite.setTop(sprite.getTop() + Math.random() * 20 - 10)
+        #newSprite.setLeft(sprite.getLeft() + Math.random() * 20 - 10)
+        theta = sprite.getAngle() * Math.PI / 180
+        sTop = sprite.cloneTranslate.top
+        sLeft = sprite.cloneTranslate.left
+        dx = sLeft * Math.cos(theta) - sTop * Math.sin(theta)
+        dy = sLeft * Math.sin(theta) + sTop * Math.cos(theta)
+        newSprite.setTop(sprite.getTop() + dy)
+        newSprite.setLeft(sprite.getLeft() + dx)
+        newSprite.setAngle(sprite.getAngle() + sprite.cloneTranslate.rotate)
         canvas.add(newSprite)
         canvas.renderAll()
 
     toJSON: ->
         object = {}
         object.type = 'clone'
-        object.spawnWait = @spawnWait
         return object
 
     restoreFromJSON: (data) ->
         super()
-        @spawnWait = data.spawnWait
 
 class TransformAction extends Action
     constructor: ->
@@ -642,6 +685,10 @@ window.tick = ->
         sprite.prepIRules()
     for sprite in spriteList
         sprite.applyIRules()
+    for sprite in spriteList
+        if not sprite.isOnCanvas()
+            console.log('He left!!!')
+            spriteDeleteList.push(sprite)
     # post-process removes so we don't kill the list while executing
     for sprite in spriteDeleteList
         sprite.removeFromList()
@@ -691,6 +738,8 @@ window.saveSprites = ->
         oneType.imageObj = type::imageObj.src
         oneType.count = type::_count
         oneType.rules = []
+        oneType.cloneTranslate = type::cloneTranslate
+        oneType.cloneFrequency = type::cloneFrequency
         for rule in type::_rules
             if rule == undefined
                 continue
@@ -717,6 +766,7 @@ window.saveSprites = ->
     console.log(typeObjects)
     return string
 
+# Load sprites from the JSON stored in the database
 window.loadSprites = (dataString) ->
     # Clear everything
     tmpList = []
@@ -741,10 +791,12 @@ window.loadSprites = (dataString) ->
                 break
         typeFactory = SpriteFactory(typeObj.type, typeObj.raw)
         typeFactory::_count = 0
-        for ruleData in typeObj.rules
+        typeFactory::cloneTranslate = typeObj.cloneTranslate
+        typeFactory::cloneFreqency = typeObj.cloneFreqency
+        for idx, ruleData of typeObj.rules
             rule = Rule.createFromData(ruleData)
-            typeFactory.addClassRule(rule)
-        for iruleData in typeObj.irules
+            typeFactory.addClassRule(rule, idx)
+        for idx, iruleData of typeObj.irules
             rule = Rule.createFromData(iruleData)
             typeFactory.addClassIRule(rule, iruleData.targetType)
 
