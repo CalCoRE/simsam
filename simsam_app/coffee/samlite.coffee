@@ -526,6 +526,15 @@ $ ->
         $('#load').show()
         $('.sim_bottom').show()
         $('#sim_min').show()
+        # Show the measurement statistics
+        $(".measure-follow").each (index, thumbnail) ->
+            $(this).show()
+        if measureShowCounts
+            $(".sprite-count").each (index, thumbnail) ->
+                $(this).show()
+        if measureShowCharts
+            $(".sprite-chart").each (index, thumbnail) ->
+                $(this).show()
         window.loadSpriteTypes()
     
     startSamlite = ->
@@ -548,6 +557,13 @@ $ ->
         $('.sim_bottom').hide()
         $('#sim_min').hide()
         $('#sim_max').hide()
+        # Hide the measurement statistics
+        $(".measure-follow").each (index, thumbnail) ->
+            $(this).hide()
+        $(".sprite-count").each (index, thumbnail) ->
+            $(this).hide()
+        $(".sprite-chart").each (index, thumbnail) ->
+            $(this).hide()
         
         #MHWJ
     toggleMenu = ->
