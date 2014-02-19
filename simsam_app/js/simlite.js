@@ -610,7 +610,9 @@ window.load = function() {
                     console.log ('Error(load): ' + data.debug);
                 }
                 if (data.message.length) {
-                    alert('Error: ' + data.message);
+                    //so far just because nothing is there
+                    // mute this for now since save and load is auto for a while
+                    //alert('Error: ' + data.message);
                 }
             }
         },
