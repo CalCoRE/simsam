@@ -105,8 +105,8 @@
     	/*background-image: url(../images/play.png);
     	background-repeat: no-repeat;
     	background-size: 100%;*/
-    	top: -3px;
-    	left: 10px;
+    	bottom: 10px;
+    	left: 5px;
     	position: absolute;
     	cursor: pointer;
     	/*margin: -1em;*/
@@ -117,8 +117,8 @@
     	/*background-image: url(../images/camera.png);
     	background-repeat: no-repeat;
     	background-size: 100%;*/
-    	bottom: 0px;
-    	right: 0px;
+    	bottom: 15px;
+    	right: 5px;
     	position: absolute;
     	cursor: pointer;
     	font-family: 'PeaxDrawnIcons';
@@ -169,7 +169,7 @@
     #trash {
         position: absolute;
     	font-family: 'PeaxDrawnIcons';
-    	text-align: center;
+    	/*text-align: center;*/
         /*background: url('../images/trash.png') no-repeat center;*/
     }
     

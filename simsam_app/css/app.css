@@ -61,13 +61,15 @@ a:hover {
 }
 
 #home_button {
-    /*background-image: url(../images/home.png);*/
+    /*background-image: url(../images/newicons/home.png);*/
     font-family: 'SketchIconsBold';
     color: #62c004;
     cursor: pointer;
     top: 0px;
 	position: fixed;
 	font-size: 5em;
+	width: 62px;
+	height: 62px;
 }
 
 #help_button {
@@ -79,6 +81,8 @@ a:hover {
     right: 0px;
 	position: fixed;
 	font-size: 4em;
+	width: 62px;
+	height: 62px;
 }
 
 .title {
@@ -87,4 +91,9 @@ a:hover {
     left: 85px;
 	position: fixed;
 	font-size: 3.8em;
+}
+
+.icon {
+    position: absolute;
+    max-width: 100%
 }
