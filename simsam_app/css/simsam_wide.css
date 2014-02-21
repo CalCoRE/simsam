@@ -56,15 +56,17 @@
 }
 
 #toggle {
-    width: 120px;
+    width: 125px;
 }
 
 #toggle .small {
-	font-size: 1.5em;
+	width: 26px;
+	height: 26px;
 }
 
 #toggle .big {
-	font-size: 6em;
+	width: 80px;
+	height: 80px;
 }
 
 /**********************/
