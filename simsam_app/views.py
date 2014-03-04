@@ -175,7 +175,9 @@ def make_project(request):
         project = simsam_user.projects.get(name=project_name)
         anim1 = project_name + "-anim0"
         animation = project.animations.get(name=anim1)
-        return HttpResponseRedirect("/app?project={}&animation={}".format(
+        pn = project.id
+        an = animation.id
+        return HttpResponseRedirect("/app?project={0}&animation={1}".format(
             project.id, animation.id))
     else:
         # set up the new project
@@ -185,7 +187,7 @@ def make_project(request):
         project.save()
         animation.save()
         simulation.save()
-        return HttpResponseRedirect("/app?project={}&animation={}".format(
+        return HttpResponseRedirect("/app?project={0}&animation={1}".format(
             project.id, animation.id))
 
 
@@ -202,7 +204,7 @@ def newanim(request):
             animation = project.animations.create(name=animation_name)
             project.save()
             animation.save()
-    return HttpResponseRedirect("/app?project={}&animation={}".format(
+    return HttpResponseRedirect("/app?project={0}&animation={1}".format(
         project.id, animation.id))
 
 
@@ -224,7 +226,7 @@ def chooseproject(request):
     #project = Project.objects.get(name=project_name, owner=simsam_user)
     project = Project.objects.get(id=project_id)
     animation = project.animations.get(project=project_id)
-    return HttpResponseRedirect("/app?project={}&animation={}".format(
+    return HttpResponseRedirect("/app?project={0}&animation={1}".format(
         project.id, animation.id))
 
 
@@ -244,7 +246,7 @@ def chooseanim(request):
     """Open the chosen animation."""
     project_id = request.REQUEST.get('projectId')
     animation_id = request.REQUEST.get('animId')
-    return HttpResponseRedirect("/app?project={}&animation={}".format(
+    return HttpResponseRedirect("/app?project={0}&animation={1}".format(
         project_id, animation_id))
 
 
