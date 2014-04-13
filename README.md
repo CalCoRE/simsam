@@ -1,6 +1,6 @@
 SiMSAM
 ======
-SiMSAM stands for *Si*mulation, *M*easurement, and *S*top *A*ction *M*oviemaking. It combines the playful, expressive, easy-to-use features of [SAM Animation](http://icreatetoeducate.com/) with the precision and testability of programming environments like [NetLogo](http://ccl.northwestern.edu/netlogo) and [StageCast Creator](http://www.stagecast.com/). 
+SiMSAM stands for <b>Si</b>mulation, <b>M</b>easurement, and <b>S</b>top <b>A</b>ction <b>M</b>oviemaking. It combines the playful, expressive, easy-to-use features of [SAM Animation](http://icreatetoeducate.com/) with the precision and testability of programming environments like [NetLogo](http://ccl.northwestern.edu/netlogo) and [StageCast Creator](http://www.stagecast.com/). 
 
 To learn more, visit the [SiMSAM Project Site](http://sites.tufts.edu/simsam).
 To learn more about us, visit the [Expressive Technologies Lab](http://extech.tufts.edu).
