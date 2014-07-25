@@ -186,8 +186,7 @@ def make_project(request):
         project = simsam_user.projects.get(name=project_name)
         anim1 = project_name + "-anim0"
         animation = project.animations.get(name=anim1)
-        return HttpResponseRedirect("/app?project={}&animation={}".format(
-            project.id, animation.id))
+        return HttpResponseRedirect("/app?project={prg}&animation={an}".format(prg=project.id, an=animation.id))
     else:
         # set up the new project
         project = Project.objects.create(name=project_name, owner=simsam_user)
@@ -196,8 +195,7 @@ def make_project(request):
         project.save()
         animation.save()
         simulation.save()
-        return HttpResponseRedirect("/app?project={}&animation={}".format(
-            project.id, animation.id))
+        return HttpResponseRedirect("/app?project={prg}&animation={an}".format(prg=project.id, an=animation.id))
 
 
 @login_required
