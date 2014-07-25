@@ -90,7 +90,7 @@
 	left: 0px;
 	position: absolute;
 	bottom: 0px;
-	height: 150px;
+	height: auto;
 }
 
 #toggle {
@@ -241,7 +241,6 @@
 	border-radius: 4px;
 	opacity:.50;
 	filter:alpha(opacity=50);
-	filter: “alpha(opacity=50)”;
 	cursor: pointer;
 }
 
@@ -277,8 +276,8 @@
 	padding: 4px 5px 4px 5px;
 	margin-top: -50px;
 	margin-left: 20px;
-	border-radius: 6px;
-	box-shadow: 2px 2px 4px;
+	border-radius: 3px;
+	box-shadow: 1px 1px 2px;
 	display: none;
 }
 
@@ -370,7 +369,9 @@
 
 .sim_bottom {
 	display: none;
-	float: left;
+	margin: auto;
+	width: 580px;
+	margin-bottom: 16px;
 }
 
 .sim_buttons, .sim_charts {
@@ -378,24 +379,10 @@
 	margin-top: 20px;
 	text-align: center;
 	float: left;
-	background-color: rgba(180,180,180,0.5);
-	border-radius: 6px;
-}
-
-.sim_bottom > div > div {
-	font-size: 30px;
-	font-weight: 900;
-	text-align: center;
-	color: #666;
-	width: 60px;
-	height: 40px;
-	background-color: white;
-	padding: 15px 0 10px;
-	margin: 20px 20px 10px 20px;
-	border-radius: 6px;
-	box-shadow: 2px 2px 4px;
-	float: left;
-	cursor: pointer;
+	background-color: #fff;
+	border-radius: 4px;
+	width: 210px;
+	height: 110px;
 }
 
 .sim_bottom > div > p {
@@ -452,12 +439,16 @@ a.close {
 	background-image: url(../images/inter.png);
 	background-repeat: no-repeat;
 	background-position: center;
+	box-shadow: 0px 0px 4px 1px;
+	border-radius: 3px;
 }
 #counts,
 #count_chart {
 	background-image: url(../images/hash.png);
 	background-repeat: no-repeat;
 	background-position: center;
+	box-shadow: 1px 1px 4px 0px;
+	border-radius: 3px;
 }
 
 #counts.highlight,
@@ -469,24 +460,29 @@ a.close {
 	background-color: #444;
 	position: absolute;
 	top: 10px;
-	left: 70px;
+	left: auto;
 	font-size: 16px;
 	color: white;
-	width: 180px;
-	height: 60px;
+	width: 480px;
+	height: 80px;
 	display: none;
+	z-index: 1000;
+	border-radius: 4px;
+	padding-top: 10px;
 }
 
 .measure-follow {
-	text-align: center;
-	color: #333;
-	font-size: 20px;
-	font-weight: 900;
-	background-color: white;
-	padding: 10px 0 5px;
-	margin-left: 20px;
-	border-radius: 6px;
-	box-shadow: 2px 2px 4px;
+font-family: Helvetica, Verdana, Arial, sans-serif;
+width: 48px !important;
+height: 38px !important;
+border: 1px solid #bbbbbb;
+border-radius: 4px;
+box-shadow: 2px 0px 9px -3px rgba(0,0,0,0.15);
+margin-left: 12px;
+text-align: right;
+color: #5d5d5d;
+font-size: 27px;
+padding-right: 16px;
 }
 .measure-follow.counts {
 	background-image: url(../images/hash_trans.png);
@@ -649,3 +645,110 @@ a.close {
 	text-decoration: none;
 }
 
+#bottom_frame > div.sim_bottom:after {
+content: " ";
+display: block;
+clear: both;
+}
+
+.common-block:after {
+content: " ";
+display: block;
+clear: both;
+}
+
+.common-block {
+background: #fff;
+border-radius: 4px;
+height: 87px;
+position: relative;
+z-index: 5;
+}
+
+p.descr {
+clear: both;
+background: #d1d1d1;
+margin: 0px !important;
+border-radius: 0px 0px 4px 4px;
+position: relative;
+top: -1px;
+z-index: 1;
+height: 24px;
+}
+
+.clear {
+clear: both;
+}
+
+.left-block,
+.right-block {
+float: left;
+height: 63px;
+width: 104px;
+}
+
+.left-block {
+border-right: 1px solid #bcbcbc;
+margin-top: 14px;
+}
+
+#iact_toggle,
+#counts,
+#iact_chart,
+#count_chart {
+width: 25px;
+height: 20px;
+position: relative;
+left: 40px;
+cursor: pointer;
+}
+
+#iact_toggle,
+#iact_chart{
+background: url('../images/tufts-icon-1.png') 50% 50% no-repeat;
+top: 3px;
+padding: 4px;
+}
+
+#counts,
+#count_chart {
+background: url('../images/tufts-icon-2.png') 50% 50% no-repeat;
+padding: 4px;
+}
+
+.count_one,
+.count_two {
+font-size: 30px;
+}
+
+.count_two,
+.chart_two {
+margin-top: 16px;
+}
+
+.chart_one,
+.chart_two {
+background: url('../images/charticon.png') 0 0 no-repeat;
+height: 35px;
+width: 50px;
+margin-left: 26px;
+}
+
+.measure-follow:before {
+content: " ";
+border-right: 1px solid #bbbbbb;
+display: block;
+height: 38px;
+margin-bottom: -34px;
+background: url('../images/tufts-icon-3.png') 0 center no-repeat;
+background-color: #eee;
+width: 20px;
+}
+
+.measure-follow.iact {
+background: none;
+}
+
+.measure-follow canvas {
+margin-left: 21px;
+}

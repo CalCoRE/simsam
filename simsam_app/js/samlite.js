@@ -599,3 +599,8 @@
   });
 
 }).call(this);
+
+
+jQuery("document").ready(function(){
+jQuery(".measure-follow").wrapInner("<span class='inner-span'>")
+})

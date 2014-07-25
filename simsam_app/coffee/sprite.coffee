@@ -6,6 +6,7 @@ class GenericSprite extends fabric.Image
     # instances.
     constructor: (@spriteId) ->
         @uniqueId       = ''
+        @spriteTypeId = -1
         @stateTranspose = false
         @stateRecording = false
         @stateRandom    = false
@@ -29,6 +30,16 @@ class GenericSprite extends fabric.Image
             cornerSize: 20
         # Call fabric.Image's constructor so it can do its magic.
         super(this.imageObj, shapeParams)
+
+    setSpriteTypeId: (type) ->
+        if(type >= 0 || type != 'undefined')
+            @spriteType = type
+            return true
+        else
+            return false
+    
+    getSpriteTypeId: ->
+        return @spriteType
 
     # States
 
@@ -71,6 +82,9 @@ class GenericSprite extends fabric.Image
             console.log("Error: interactionEvent called during Transpose")
             return
         console.log('Received interaction between ' + this + ' and ' + obj)
+        console.log('This.id = '+@.spriteType)
+        console.log('Obj.id = '+obj.spriteType)
+
         # Clear recording if we thought that's what we were doing
         @stateRecording = false
         @ruleTempObject = obj
@@ -81,7 +95,8 @@ class GenericSprite extends fabric.Image
 
     # User selected the type of interaction via UI widget
     interactionCallback: (choice) ->
-        console.log('Received interaction callback ' + choice)
+        console.log('THIS IS AN INTERACTION CALLBACK ' + choice)
+        console.log('Choice = '+choice+' Line 85 sprite.coffee') 
         if choice == 'transpose'
             @stateTranspose = true
             @initState = getObjectState(this)
@@ -104,6 +119,16 @@ class GenericSprite extends fabric.Image
             @stateRecording = false
             @stateTranspose = false
             this.showNormal()
+        else if choice == 'sprout'
+            console.log('In interactionChoice. Line 109 sprite.coffee') 
+            r = new OverlapInteraction(@ruleTempObject)
+            r.addSprout()
+            this.addIRule(r, @ruleTempObject.spriteType)
+            console.log('@ruleTempObject.spriteTypr = ' + @ruleTempObject.spriteType)
+            @stateRecording = false
+            @stateTranspose = false
+            this.showNormal()
+        console.log('Choice = '+choice+' Line 115 sprite.coffee') 
 
     # Rule execution
     applyRules: (environment) ->
@@ -171,6 +196,20 @@ class GenericSprite extends fabric.Image
 
     isClone: ->
         if @_rules[1] != undefined
+            return true
+        return false
+
+    #Sprouts
+    addSprout: ->
+        r = new Rulw()
+        r.setActionType('sprout')
+        this.setRule(2,r)
+
+    removeSprout: ->
+        delete this._rules[2]
+
+    isSprout: ->
+        if @_rules[2] != undefined
             return true
         return false
 
@@ -345,6 +384,7 @@ SpriteFactory = (spriteType, imageObj) ->
         # see window.saveSprites for storing those attributes.
 
         constructor: (spriteType) ->
+            #console.log('SpriteType = '+spriteType)
             Sprite::_count = Sprite::_count + 1
             hash = @imageObj.dataset['hash']
             $('#' + hash).html(Sprite::_count)
@@ -426,6 +466,7 @@ class Rule
             when 'transform' then TransformAction
             when 'clone' then CloneAction
             when 'delete' then DeleteAction
+            when 'sprout' then SproutAction
         @action = new actClass()
 
     addTransform: (start, end) ->
@@ -446,6 +487,10 @@ class Rule
     addDelete: ->
         @type = 'delete'
         @action = new DeleteAction()
+
+    addSprout: ->
+        @type = 'sprout'
+        @action = new SproutAction()
 
     toJSON: ->
         object = {}
@@ -470,6 +515,7 @@ class Rule
             when 'transform' then TransformAction
             when 'clone' then CloneAction
             when 'delete' then DeleteAction
+            when 'sprout' then SproutAction
         act = new actClass
         act.restoreFromJSON(actionObj)
         obj.action = act
@@ -605,6 +651,41 @@ class CloneAction extends Action
     restoreFromJSON: (data) ->
         super()
 
+#XXX This is simply a slightly modified clone of clone.  Change action
+class SproutAction extends Action
+    constructor: ->
+
+    act: (sprite) ->
+        # Interact at sprite.CloneFrequency % of the time
+        console.log('SproutAction!');
+        if (Math.random() * 100) > (sprite.cloneFrequency)
+            return
+        if window.spriteTypeList[sprite.spriteType]::_count >= window.maxSprites
+            return
+        newSprite = new window.spriteTypeList[sprite.spriteType]  # make one
+        console.log('SpriteType = '+sprite.spriteType)
+        spriteList.push( newSprite )
+        #newSprite.setTop(sprite.getTop() + Math.random() * 20 - 10)
+        #newSprite.setLeft(sprite.getLeft() + Math.random() * 20 - 10)
+        theta = sprite.getAngle() * Math.PI / 180
+        sTop = sprite.cloneTranslate.top
+        sLeft = sprite.cloneTranslate.left
+        dx = sLeft * Math.cos(theta) - sTop * Math.sin(theta)
+        dy = sLeft * Math.sin(theta) + sTop * Math.cos(theta)
+        newSprite.setTop(sprite.getTop() + dy)
+        newSprite.setLeft(sprite.getLeft() + dx)
+        newSprite.setAngle(sprite.getAngle() + sprite.cloneTranslate.rotate)
+        canvas.add(newSprite)
+        canvas.renderAll()
+
+    toJSON: ->
+        object = {}
+        object.type = 'sprout'
+        return object
+
+    restoreFromJSON: (data) ->
+        super()
+
 class TransformAction extends Action
     constructor: ->
         @transform = {dx:0, dy:0, dr:0, dxScale:1, dyScale: 1}
@@ -715,16 +796,20 @@ window.loadSpriteTypes = ->
                         pointWithinElement(ev.pageX, ev.pageY, $('#trash')) )
                     deleteImageFully(i, this)
                     return
-                console.log(i); # tell me which one you are
+                console.log('I am a '+i); # tell me which one you are
                 if window.spriteTypeList[i]::_count >= maxSprites
                     return
+                console.log('Before new window.spriteTypeList[i]'+i)
                 newSprite = new window.spriteTypeList[i]  # make one
+                console.log('After new window.spriteTypeList[i]'+i)
+                console.log('SpriteType Success? = ' + newSprite.setSpriteTypeId( i ))
                 spriteList.push( newSprite )
                 # pos = $(this).position()
                 newSprite.setTop(ev.pageY)
                 newSprite.setLeft(ev.pageX)
                 canvas.add(newSprite)
                 canvas.renderAll();
+                console.log('End window.loadSpriteTypes')
 
 window.saveSprites = ->
     masterObj = {}
