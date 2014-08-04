@@ -223,8 +223,7 @@ def chooseproject(request):
     #project = Project.objects.get(name=project_name, owner=simsam_user)
     project = Project.objects.get(id=project_id)
     animation = project.animations.get(project=project_id)
-    return HttpResponseRedirect("/app?project={}&animation={}".format(
-        project.id, animation.id))
+    return HttpResponseRedirect("/app?project={prg}&animation={an}".format(prg=project.id, an=animation.id))
 
 
 @login_required

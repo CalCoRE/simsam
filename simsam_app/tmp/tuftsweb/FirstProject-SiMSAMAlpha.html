@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<head>
+
+    <title>FirstProject - SiMSAM Alpha</title>
+    <meta charset="UTF-8">
+
+    <script src="FirstProject-SiMSAMAlpha_files/jquery00.js"></script>
+    <script src="FirstProject-SiMSAMAlpha_files/jquery-u.js"></script>
+    <script src="FirstProject-SiMSAMAlpha_files/jquery01.js"></script>
+    <script src="FirstProject-SiMSAMAlpha_files/jquery02.js"></script>
+    <script src="FirstProject-SiMSAMAlpha_files/html5sor.js"></script>
+    <script src="FirstProject-SiMSAMAlpha_files/html5sup.js"></script>
+
+    <!-- hammer is used to detect touches during cropping -->
+    <script src="FirstProject-SiMSAMAlpha_files/hammer00.js"></script>
+
+    <script src="FirstProject-SiMSAMAlpha_files/cropTool.js"></script>
+    <script src="FirstProject-SiMSAMAlpha_files/Fabric00.js"></script>
+    <script src="FirstProject-SiMSAMAlpha_files/tracker0.js"></script>
+    <script src="FirstProject-SiMSAMAlpha_files/sprite00.js"></script>
+    <script src="FirstProject-SiMSAMAlpha_files/simlite0.js"></script>
+    <script src="FirstProject-SiMSAMAlpha_files/samlite0.js"></script>
+    
+
+    <link rel="stylesheet" href="FirstProject-SiMSAMAlpha_files/samlite0.css">
+    <link rel="stylesheet" href="FirstProject-SiMSAMAlpha_files/jquery-u.css">
+    <link rel="stylesheet" href="FirstProject-SiMSAMAlpha_files/iphone-s.css">
+
+    <script type="text/javascript">
+      window.onload = function () {
+        window.animationId = 1;
+		window.simulationId = 1;
+  			window.framesequence = ["8578270825214185119","4579683289912582041","3631885758245142510","8721964220511100443","6034007298944316743","5080871481481435000","5706704871571137045"];
+  			window.projectId = 1;
+  			window.spritecollection = ["5702883784219617588","7219966283618680698","5782407131317495056"];
+			
+  			var cameraMode = true;
+        initSam();
+        initSim();
+      };
+        
+      var simRunning = false;
+        
+      toggleSim = function() {
+        if( !simRunning ) {
+          if( interval = setInterval('tick()',1000) ) { simRunning = true; }
+		  $('#run').html('Stop');
+        } else {
+          clearInterval(interval);
+          simRunning = false;
+		  $('#run').html('Run');
+        }
+      }
+// Fix for Fabric.js 1.2.9 - Issue #781
+$('#wholescreen').scroll(function(){
+	canvas.calcOffset();
+});
+    </script>
+    
+
+</head>
+<body>
+<!-- only display this if the user is logged in -->
+
+
+
+
+<div id="wholescreen">
+  <!-- INTERFACE PANELS HERE -->
+  <div id="construction_frame">
+  	<canvas id="container"></canvas>
+  	<div id="video_frame">
+  		<video id="camera"></video>
+  		<div id="replay"></div>
+  		 <!-- is this allowed? attempting… -->
+  	</div>
+  	<div id="bottom_frame" class="frame">
+		<div id="video_bottom">
+  		<div id="toggle">
+  			<div id="play_mode" class="big"></div>
+  			<div id="record_mode" class="small"></div>
+  		</div>
+  		<div id="video_output"><!-- filmstrip--></div>
+  		<div id="trash"></div>
+		</div> <!-- video_bottom -->
+		<div class="sim_bottom">
+			<div class="sim_buttons">
+				<div class="common-block">
+					<div class="left-block">
+						<div class="count_one">5</div>
+						<div id="iact_toggle"></div>
+					</div>
+					<div class="right-block">
+						<div class="count_two">23</div>
+						<div id="counts"></div>
+					</div>
+					<div class="clear"></div>
+				</div>
+				<div id="count_blocker">Please select interaction target</div>
+				<p class="descr" style="clear: both;">Counters</p>
+			</div>
+			<div class="sim_charts">
+				<div class="common-block">
+					<div class="left-block">
+						<div class="chart_one"></div>
+						<div id="iact_chart"></div>
+					</div>
+					<div class="right-block">
+						<div class="chart_two"></div>
+						<div id="count_chart"></div>
+					</div>
+					<div class="clear"></div>
+				</div>	
+				<p class="descr" style="clear: both;">Charts</p>
+				
+			</div>
+		</div>
+		<a href id="sim_min" class="close">_</a>
+  	</div>
+	<a href id="sim_max" class="close">+</a>
+  </div>
+  <div id="right_frame" class="frame">
+  	<div id="menu_options">
+  		<div id="switch_button">
+  			<div class="menu_button" id="switch_to_sim_button" style="border-top: none;">Make Simulation</div>
+  			<div class="menu_button" id="switch_to_sam_button" style="border-top: none;">Make Animation</div>
+  		</div>
+  		<div id="crop_buttons">
+        <div class="menu_button" id="startcropping" onclick="cropCanvas()">Start Cropping</div>
+				<div class="menu_button" id="savecrop" onclick="getResults()">Save Crop</div>
+				<div class="menu_button" id="cancelcrop" onclick="deleteRect()">Cancel Crop</div>
+    	</div>
+
+    	<div id="sim_buttons">
+    		<div class="menu_button" onclick="tick()">Play Once</div>
+    		<div id="run" class="menu_button" onclick="toggleSim()">Run</div>
+    		<div id="clear" class="menu_button" onclick="clearTrackers()">Clear</div>
+    	</div>
+	  <!-- Selected Chooser -->
+	  <div id="selected">
+		  <h3>Modify Sprite</h3>
+		  <div id="uise_del" class="menu_button">Delete</div>
+		  <div id="uise_delall" class="menu_button">Delete All</div>
+	  </div>
+	  <!-- Modifying Chooser -->
+	  <div id="modifying">
+		  <div id="uimod_rand" class="menu_button">Randomize</div>
+		  <div id="uimod_clone" class="menu_button">Clone</div>
+	  </div>
+  	</div>
+	<div id="sprite_drawer">
+		<div id="count_big_chart"></div>
+	</div>
+	<div id="trash_menu_button" class="floating_button right-button"></div>
+  </div>
+
+  <!-- Interaction Chooser -->
+  <div id="interactions" class="simui">
+	  <h3>Action</h3>
+	  <ul>
+		  <li><a id="uich_trans" class="uich" href="http://127.0.0.1:8000/app?project=1&amp;animation=1#">Translate</a></li>
+		  <li><a id="uich_clone" class="uich" href="http://127.0.0.1:8000/app?project=1&amp;animation=1#">Clone</a></li>
+		  <li><a id="uich_sprout" class="uich" href="http://127.0.0.1:8000/app?project=1&amp;animation=1#">Sprout</a></li>
+		  <li><a id="uich_delete" class="uich" href="http://127.0.0.1:8000/app?project=1&amp;animation=1#">Delete</a></li>
+		  <li><a id="uich_close" class="uich" href="http://127.0.0.1:8000/app?project=1&amp;animation=1#">Close</a></li>
+	  </ul>
+  </div>
+
+  <!-- Random Range Slider -->
+  <div id="random-range" class="ui-hover">
+	  <a href="http://127.0.0.1:8000/app?project=1&amp;animation=1#" onclick="randomSliderHide();">
+		  <img src="FirstProject-SiMSAMAlpha_files/close-24.png">
+	  </a>
+	  <h3>Range</h3>
+	  <div id="randomslider"> </div>
+  </div>
+  <div id="random-ui">
+	  <canvas id="random-arc"></canvas>
+  </div>
+
+  <div id="clone-ui" class="ui-hover">
+	  <a class="op-btn" id="clone-minus" href="http://127.0.0.1:8000/app?project=1&amp;animation=1#">-</a>
+	  <div id="clone-data" data-value="100">100%</div>
+	  <a class="op-btn" id="clone-plus" href="http://127.0.0.1:8000/app?project=1&amp;animation=1#">+</a>
+  </div>
+
+  <div id="dialog-confirm" title="Delete this object?">
+	  <p><span class="ui-icon ui-icon-alert" style="float: left; margin:0 7px 20px 0;"></span><span id="message-text">This item will be permanantly deleted.  Are you sure?</span></p>
+  </div>
+
+  <!-- END INTERFACE PANELS -->
+  
+  <!-- PERSISTENT FLOATING ICONS HERE -->
+  <form action="http://127.0.0.1:8000/openproject" method="post">
+	<input type="submit" value id="home_button" class="floating_button">
+  </form>
+  <div id="right_menu_button" class="floating_button right-button"></div>
+  <a href="http://127.0.0.1:8000/app?project=1&amp;animation=1#" id="save"></a>
+  <a href="http://127.0.0.1:8000/app?project=1&amp;animation=1#" id="load"></a>
+  <!-- END FLOATING ICONS -->
+</div>
+
+<!-- JUST SO IT DOESN'T CRY ABOUT MISSING ELEMENTS -->
+<!-- THEY WILL NEED TO BE INTEGRATED/CONVERTED SOON-->
+
+<!--<input type="text" id="playback_index">-->
+<input type="hidden" id="fps" value="10">
+  
+
+
+<div id="data"></div>
+</body>
+</html>
+
+<!-- This document saved from http://127.0.0.1:8000/app?project=1&animation=1 -->

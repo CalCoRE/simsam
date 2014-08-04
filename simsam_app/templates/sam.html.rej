@@ -1,0 +1,51 @@
+--- sam.html 2014-03-03 11:57:26.488240583 -0500
++++ ../tmp/tuftsweb/FirstProject-SiMSAMAlpha.html 2014-03-05 02:09:18.000000000 -0500
+@@ -86,22 +88,39 @@
+                </div> <!-- video_bottom -->
+                <div class="sim_bottom">
+                        <div class="sim_buttons">
+-                               <div id="iact_toggle">
+-                               </div>
+-                               <div id="counts">
++                               <div class="common-block">
++                                       <div class="left-block">
++                                               <div class="count_one">5</div>
++                                               <div id="iact_toggle"></div>
++                                       </div>
++                                       <div class="right-block">
++                                               <div class="count_two">23</div>
++                                               <div id="counts"></div>
++                                       </div>
++                                       <div class="clear"></div>
+                                </div>
+                                <div id="count_blocker">Please select interaction target</div>
+-                               <p style="clear: both;">Counters</p>
++                               <p class="descr" style="clear: both;">Counters</p>
+                        </div>
+                        <div class="sim_charts">
+-                               <div id="iact_chart"></div>
+-                               <div id="count_chart"></div>
+-                               <p style="clear: both;">Charts</p>
++                               <div class="common-block">
++                                       <div class="left-block">
++                                               <div class="chart_one"></div>
++                                               <div id="iact_chart"></div>
++                                       </div>
++                                       <div class="right-block">
++                                               <div class="chart_two"></div>
++                                               <div id="count_chart"></div>
++                                       </div>
++                                       <div class="clear"></div>
++                               </div>
++                               <p class="descr" style="clear: both;">Charts</p>
++
+                        </div>
+                </div>
+-               <a href="" id="sim_min" class="close">_</a>
++               <a href id="sim_min" class="close">_</a>
+        </div>
+-       <a href="" id="sim_max" class="close">+</a>
++       <a href id="sim_max" class="close">+</a>
+   </div>
+   <div id="right_frame" class="frame">
+        <div id="menu_options">

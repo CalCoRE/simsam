@@ -13,9 +13,11 @@ window.initSim = (function(){
     canvas.on({'object:modified': simObjectModified});
     canvas.on({'object:selected': simObjectSelected});
     canvas.on({'selection:cleared': simObjectCleared});
-    canvas.on("after:render", function(){canvas.calcOffset();}); // for mouse offset issues
     
-    setCanvasSize($(this).width());
+    //HACK - this should be something like css' max-height = 100% etc.
+    // maybe not possible because resizing after setting stretches the canvas img.
+    canvas.setHeight(1000);
+    canvas.setWidth(1000);
     
     // listen for a doubleclick. 
     fabric.util.addListener(fabric.document, 'dblclick', toggleRecord);
@@ -48,28 +50,6 @@ window.initSim = (function(){
             }
         }
     }
-    window.load(); // when I first load the project, load any saved sim stuff
-});
-
-// dynamic canvas size based on browser window
-setCanvasSize = function(width) {
-    browserWidth = parseInt(width);
-    if (width < 910) {
-        canvas.setHeight(420);
-        canvas.setWidth(555);
-    } else if ((width >= 911) && (width < 1210)) {
-        canvas.setHeight(400);
-        canvas.setWidth(650);
-    } else {
-        canvas.setHeight(570);
-        canvas.setWidth(950);
-    }
-}
-
-// check and reset canvas size on resize
-// eventually this should probably scale objects and behaviors too
-$(window).resize(function() {
-    setCanvasSize($(this).width());
 });
 
 // Utility Functions
@@ -150,7 +130,6 @@ simObjectCleared = function(options) {
         modifyingHide(currentSimObject);
     }
     currentSimObject = null;
-    save(); // when I have moved or programmed an object, auto-save it
 }
 
 // Called every time a sim object has finished moving so we can see if it
@@ -577,48 +556,6 @@ spriteChartClick = function(obj, ev) {
     ev.stopPropagation();
 }
 
-window.save = function() {
-    rawData = saveSprites();
-    $.ajax({
-        url: 'save_sim_state',
-        type: 'POST',
-        data: {
-            serialized: rawData,
-            name: 'default',
-            simid: window.simulationId,
-        },
-        dataType: 'json'
-    });
-}
-
-window.load = function() {
-    console.log('load');
-    //loadSprites($('#data').html());
-    $.ajax({
-        url: 'load_sim_state',
-        type: 'POST',
-        data: {
-            name: 'default',
-            sim_id: window.simulationId,
-        },
-        dataType: 'json',
-        success: function(data) {
-            if (data.status == 'Success') {
-                loadSprites(data.serialized);
-            } else if (data.status == 'Failed') {
-                if (data.debug.length) {
-                    console.log ('Error(load): ' + data.debug);
-                }
-                if (data.message.length) {
-                    //so far just because nothing is there
-                    // mute this for now since save and load is auto for a while
-                    //alert('Error: ' + data.message);
-                }
-            }
-        },
-    });
-}
-
 // UI Setup for events
 $(document).ready(function() {
 
@@ -627,7 +564,6 @@ $(document).ready(function() {
     });
     interMap = { 'uich_trans': 'transpose',
         'uich_clone': 'clone',
-        'uich_sprout': 'sprout',
         'uich_delete': 'delete',
         'uich_close': 'close',
     };
@@ -705,13 +641,43 @@ $(document).ready(function() {
     });
 
     $('#save').click(function() {
-        console.log('save')
-        window.save();
+        rawData = saveSprites();
+        $.ajax({
+            url: 'save_sim_state',
+            type: 'POST',
+            data: {
+                serialized: rawData,
+                name: 'default',
+                simid: window.simulationId,
+            },
+            dataType: 'json'
+        });
     });
 
     $('#load').click(function() {
-        console.log('load')
-        window.load();
+        console.log('load');
+        //loadSprites($('#data').html());
+        $.ajax({
+            url: 'load_sim_state',
+            type: 'POST',
+            data: {
+                name: 'default',
+                sim_id: window.simulationId,
+            },
+            dataType: 'json',
+            success: function(data) {
+                if (data.status == 'Success') {
+                    loadSprites(data.serialized);
+                } else if (data.status == 'Failed') {
+                    if (data.debug.length) {
+                        console.log ('Error(load): ' + data.debug);
+                    }
+                    if (data.message.length) {
+                        alert('Error: ' + data.message);
+                    }
+                }
+            },
+        });
     });
 
     // Measurable panel

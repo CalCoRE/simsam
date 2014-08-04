@@ -1,0 +1,94 @@
+--- samlite.css	2014-03-04 18:07:28.816240025 -0500
++++ ../tmp/tuftsweb/FirstProject-SiMSAMAlpha_files/samlite0.css	2014-03-05 02:14:14.000000000 -0500
+@@ -637,3 +637,91 @@
+ 	text-decoration: none;
+ }
+ 
++#bottom_frame > div.sim_bottom:after {
++content: " ";
++display: block;
++clear: both;
++}
++
++.common-block:after {
++content: " ";
++display: block;
++clear: both;
++}
++
++.common-block {
++background: #fff;
++border-radius: 4px;
++height: 87px;
++position: relative;
++z-index: 5;
++}
++
++p.descr {
++clear: both;
++background: #d1d1d1;
++margin: 0px !important;
++border-radius: 0px 0px 4px 4px;
++position: relative;
++top: -1px;
++z-index: 1;
++height: 24px;
++}
++
++.clear {
++clear: both;
++}
++
++.left-block,
++.right-block {
++float: left;
++height: 63px;
++width: 104px;
++}
++
++.left-block {
++border-right: 1px solid #bcbcbc;
++margin-top: 14px;
++}
++
++#iact_toggle,
++#counts,
++#iact_chart,
++#count_chart {
++width: 25px;
++height: 20px;
++position: relative;
++left: 40px;
++cursor: pointer;
++}
++
++#iact_toggle,
++#iact_chart{
++background: url('tufts-icon-1.png') 0 0 no-repeat;
++top: 9px;
++}
++
++#counts,
++#count_chart {
++background: url('tufts-icon-2.png') 0 0 no-repeat;
++top: 6px;
++}
++
++.count_one,
++.count_two {
++font-size: 30px;
++}
++
++.count_two,
++.chart_two {
++margin-top: 16px;
++}
++
++.chart_one,
++.chart_two {
++background: url('charticon.png') 0 0 no-repeat;
++height: 35px;
++width: 50px;
++margin-left: 26px;
++}
++

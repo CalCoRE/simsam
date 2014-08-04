@@ -105,6 +105,13 @@ class GenericSprite extends fabric.Image
             @stateRecording = false
             @stateTranspose = false
             this.showNormal()
+        else if choice == 'sprout'
+            r = new OverlapInteraction(@ruleTempObject)
+            r.addSprout()
+            this.addIRule(r, @ruleTempObject.spriteType)
+            @stateTranspose = false
+            @stateRecording = false
+            this.showNormal()
 
     # Rule execution
     applyRules: (environment) ->
@@ -118,7 +125,9 @@ class GenericSprite extends fabric.Image
             rule.act(this, environment)
 
     prepIRules: (environment) ->
+        console.log('RULES')
         for key, rule of @_irules
+            console.log('Rule = '+rule)
             if rule == undefined
                 continue
             @prepObj[key] = rule.prep(this, environment)
@@ -286,8 +295,8 @@ class GenericSprite extends fabric.Image
         @tempRandomRange = 15
         @prepObj = null
         
-        console.log(jsonObj)
-        console.log("L: " + this.getLeft() + " T: " + this.getTop())
+        #console.log(jsonObj)
+        #console.log("L: " + this.getLeft() + " T: " + this.getTop())
         return jsonObj
 
     restoreFromJSON: (json) ->
@@ -428,6 +437,7 @@ class Rule
         actClass = switch type
             when 'transform' then TransformAction
             when 'clone' then CloneAction
+            when 'sprout' then SproutAction
             when 'delete' then DeleteAction
         @action = new actClass()
 
@@ -445,6 +455,10 @@ class Rule
     addClone: ->
         @type = 'clone'
         @action = new CloneAction()
+
+    addSprout: ->
+        @type = 'sprout'
+        @action = new SproutAction()
 
     addDelete: ->
         @type = 'delete'
@@ -472,6 +486,7 @@ class Rule
         actClass = switch actionObj.type
             when 'transform' then TransformAction
             when 'clone' then CloneAction
+            when 'sprout' then SproutAction
             when 'delete' then DeleteAction
         act = new actClass
         act.restoreFromJSON(actionObj)
@@ -603,6 +618,38 @@ class CloneAction extends Action
     toJSON: ->
         object = {}
         object.type = 'clone'
+        return object
+
+    restoreFromJSON: (data) ->
+        super()
+
+class SproutAction extends Action
+    constructor: ->
+
+    act: (sprite) ->
+        # Interact at sprite.CloneFrequency % of the time
+        if (Math.random() * 100) > (sprite.cloneFrequency)
+            return
+        if window.spriteTypeList[sprite.spriteType]::_count >= window.maxSprites
+            return
+        newSprite = new window.spriteTypeList[sprite.ruleTempObject.spriteType]  # make one
+        spriteList.push( newSprite )
+        #newSprite.setTop(sprite.getTop() + Math.random() * 20 - 10)
+        #newSprite.setLeft(sprite.getLeft() + Math.random() * 20 - 10)
+        theta = sprite.getAngle() * Math.PI / 180
+        sTop = sprite.cloneTranslate.top
+        sLeft = sprite.cloneTranslate.left
+        dx = sLeft * Math.cos(theta) - sTop * Math.sin(theta)
+        dy = sLeft * Math.sin(theta) + sTop * Math.cos(theta)
+        newSprite.setTop(sprite.getTop() + dy)
+        newSprite.setLeft(sprite.getLeft() + dx)
+        newSprite.setAngle(sprite.getAngle() + sprite.cloneTranslate.rotate)
+        canvas.add(newSprite)
+        canvas.renderAll()
+
+    toJSON: ->
+        object = {}
+        object.type = 'sprout'
         return object
 
     restoreFromJSON: (data) ->
