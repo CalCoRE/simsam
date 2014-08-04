@@ -11,6 +11,7 @@
       var sWidth, shapeParams;
       this.spriteId = spriteId;
       this.uniqueId = '';
+      this.spriteTypeId = -1;
       this.stateTranspose = false;
       this.stateRecording = false;
       this.stateRandom = false;
@@ -33,6 +34,19 @@
       };
       GenericSprite.__super__.constructor.call(this, this.imageObj, shapeParams);
     }
+
+    GenericSprite.prototype.setSpriteTypeId = function(type) {
+      if (type >= 0 || type !== 'undefined') {
+        this.spriteType = type;
+        return true;
+      } else {
+        return false;
+      }
+    };
+
+    GenericSprite.prototype.getSpriteTypeId = function() {
+      return this.spriteType;
+    };
 
     GenericSprite.prototype.isRandom = function() {
       var action;
@@ -82,6 +96,8 @@
         return;
       }
       console.log('Received interaction between ' + this + ' and ' + obj);
+      console.log('This.id = ' + this.spriteType);
+      console.log('Obj.id = ' + obj.spriteType);
       this.stateRecording = false;
       this.ruleTempObject = obj;
       surviveObj = this;
@@ -92,7 +108,8 @@
 
     GenericSprite.prototype.interactionCallback = function(choice) {
       var r;
-      console.log('Received interaction callback ' + choice);
+      console.log('THIS IS AN INTERACTION CALLBACK ' + choice);
+      console.log('Choice = ' + choice + ' Line 85 sprite.coffee');
       if (choice === 'transpose') {
         this.stateTranspose = true;
         this.initState = getObjectState(this);
@@ -214,6 +231,24 @@
 
     GenericSprite.prototype.isClone = function() {
       if (this._rules[1] !== void 0) {
+        return true;
+      }
+      return false;
+    };
+
+    GenericSprite.prototype.addSprout = function() {
+      var r;
+      r = new Rulw();
+      r.setActionType('sprout');
+      return this.setRule(2, r);
+    };
+
+    GenericSprite.prototype.removeSprout = function() {
+      return delete this._rules[2];
+    };
+
+    GenericSprite.prototype.isSprout = function() {
+      if (this._rules[2] !== void 0) {
         return true;
       }
       return false;
@@ -499,6 +534,8 @@
             return SproutAction;
           case 'delete':
             return DeleteAction;
+          case 'sprout':
+            return SproutAction;
         }
       })();
       return this.action = new actClass();
@@ -530,6 +567,11 @@
     Rule.prototype.addDelete = function() {
       this.type = 'delete';
       return this.action = new DeleteAction();
+    };
+
+    Rule.prototype.addSprout = function() {
+      this.type = 'sprout';
+      return this.action = new SproutAction();
     };
 
     Rule.prototype.toJSON = function() {
@@ -569,6 +611,8 @@
             return SproutAction;
           case 'delete':
             return DeleteAction;
+          case 'sprout':
+            return SproutAction;
         }
       })();
       act = new actClass;
@@ -940,16 +984,20 @@
             deleteImageFully(i, this);
             return;
           }
-          console.log(i);
+          console.log('I am a ' + i);
           if (window.spriteTypeList[i].prototype._count >= maxSprites) {
             return;
           }
+          console.log('Before new window.spriteTypeList[i]' + i);
           newSprite = new window.spriteTypeList[i];
+          console.log('After new window.spriteTypeList[i]' + i);
+          console.log('SpriteType Success? = ' + newSprite.setSpriteTypeId(i));
           spriteList.push(newSprite);
           newSprite.setTop(ev.pageY);
           newSprite.setLeft(ev.pageX);
           canvas.add(newSprite);
-          return canvas.renderAll();
+          canvas.renderAll();
+          return console.log('End window.loadSpriteTypes');
         }
       });
     });

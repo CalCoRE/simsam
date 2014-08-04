@@ -494,6 +494,19 @@
       $('.sim_bottom').show();
       $('#sim_buttons').show();
       $('#sim_min').show();
+      $(".measure-follow").each(function(index, thumbnail) {
+        return $(this).show();
+      });
+      if (measureShowCounts) {
+        $(".sprite-count").each(function(index, thumbnail) {
+          return $(this).show();
+        });
+      }
+      if (measureShowCharts) {
+        $(".sprite-chart").each(function(index, thumbnail) {
+          return $(this).show();
+        });
+      }
       return window.loadSpriteTypes();
     };
     startSamlite = function() {
@@ -514,7 +527,16 @@
       $('.sim_bottom').hide();
       $('#sim_buttons').hide();
       $('#sim_min').hide();
-      return $('#sim_max').hide();
+      $('#sim_max').hide();
+      $(".measure-follow").each(function(index, thumbnail) {
+        return $(this).hide();
+      });
+      $(".sprite-count").each(function(index, thumbnail) {
+        return $(this).hide();
+      });
+      return $(".sprite-chart").each(function(index, thumbnail) {
+        return $(this).hide();
+      });
     };
     toggleMenu = function() {
       if (menu) {

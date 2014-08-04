@@ -172,9 +172,14 @@ simObjectModified = function(options) {
         // If we're in recording mode and we are dropped on another object,
         //   then begin the creation of an interaction rule.
         canvas.forEachObject(function(obj) {
-            if (obj === target) return;
+            if (obj === target){
+               console.log('obj === target. Line 155 simlite.js');  
+                return;
+            }
             if (obj.trueIntersectsWithObject(target)) {
+                console.log('obj intersected.  Line 159 simlite.js');
                 if (typeof(target.interactionEvent) != "undefined") {
+                    console.log('interactionEvent not undefined.  Line 161 simlite.js');
                     // XXX Now add a UI and add the interactionEvent after
                     // the user selects which type of action to take
                     target.interactionEvent(obj);

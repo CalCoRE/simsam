@@ -8,7 +8,6 @@ from django.conf import settings
 
 import util
 
-
 class Project(models.Model):
     """A project containing an animation, a simulation, and associated data."""
     name = models.CharField(max_length=100)
