@@ -85,10 +85,6 @@
       return this.randomRange = range;
     };
 
-    GenericSprite.prototype.isEditing = function() {
-      return this.stateRecording;
-    };
-
     GenericSprite.prototype.interactionEvent = function(obj) {
       var surviveObj;
       if (this.stateTranspose) {
@@ -132,13 +128,6 @@
         this.stateRecording = false;
         this.stateTranspose = false;
         return this.showNormal();
-      } else if (choice === 'sprout') {
-        r = new OverlapInteraction(this.ruleTempObject);
-        r.addSprout();
-        this.addIRule(r, this.ruleTempObject.spriteType);
-        this.stateTranspose = false;
-        this.stateRecording = false;
-        return this.showNormal();
       }
     };
 
@@ -169,6 +158,8 @@
         if (rule === void 0) {
           continue;
         }
+        console.log('@prepObj = ' + this.prepObj);
+        this.prepObj = this;
         this.prepObj[key] = rule.prep(this, environment);
         if (this.prepObj[key] === this.prePrepObj[key]) {
           _results.push(this.prepObj[key] = null);
@@ -238,17 +229,17 @@
 
     GenericSprite.prototype.addSprout = function() {
       var r;
-      r = new Rulw();
-      r.setActionType('sprout');
-      return this.setRule(2, r);
+      r = new Rule();
+      r.setActionType('clone');
+      return this.setRule(1, r);
     };
 
     GenericSprite.prototype.removeSprout = function() {
-      return delete this._rules[2];
+      return delete this._rules[1];
     };
 
     GenericSprite.prototype.isSprout = function() {
-      if (this._rules[2] !== void 0) {
+      if (this._rules[1] !== void 0) {
         return true;
       }
       return false;
@@ -534,8 +525,6 @@
             return SproutAction;
           case 'delete':
             return DeleteAction;
-          case 'sprout':
-            return SproutAction;
         }
       })();
       return this.action = new actClass();
@@ -567,11 +556,6 @@
     Rule.prototype.addDelete = function() {
       this.type = 'delete';
       return this.action = new DeleteAction();
-    };
-
-    Rule.prototype.addSprout = function() {
-      this.type = 'sprout';
-      return this.action = new SproutAction();
     };
 
     Rule.prototype.toJSON = function() {
@@ -611,8 +595,6 @@
             return SproutAction;
           case 'delete':
             return DeleteAction;
-          case 'sprout':
-            return SproutAction;
         }
       })();
       act = new actClass;
@@ -715,6 +697,10 @@
 
     OverlapInteraction.prototype.addClone = function() {
       return OverlapInteraction.__super__.addClone.apply(this, arguments);
+    };
+
+    OverlapInteraction.prototype.addSprout = function() {
+      return OverlapInteraction.__super__.addSprout.apply(this, arguments);
     };
 
     OverlapInteraction.prototype.toJSON = function() {
@@ -820,7 +806,7 @@
       if (window.spriteTypeList[sprite.spriteType].prototype._count >= window.maxSprites) {
         return;
       }
-      newSprite = new window.spriteTypeList[sprite.ruleTempObject.spriteType];
+      newSprite = new window.spriteTypeList[sprite.spriteType];
       spriteList.push(newSprite);
       theta = sprite.getAngle() * Math.PI / 180;
       sTop = sprite.cloneTranslate.top;
@@ -938,6 +924,7 @@
     }
     for (_j = 0, _len1 = spriteList.length; _j < _len1; _j++) {
       sprite = spriteList[_j];
+      console.log('ABOUT TO CALL SPRITELIST' + spriteList[0]);
       sprite.prepIRules();
     }
     for (_k = 0, _len2 = spriteList.length; _k < _len2; _k++) {
