@@ -73,9 +73,6 @@ class GenericSprite extends fabric.Image
         # Normal Transpose
         @randomRange = range
 
-    isEditing: ->
-        return @stateRecording
-
     # Whatever UI event we decide should create an interaction, has occurred
     interactionEvent: (obj) ->
         # Don't create another event if we're recording a transpose
@@ -120,13 +117,6 @@ class GenericSprite extends fabric.Image
             @stateRecording = false
             @stateTranspose = false
             this.showNormal()
-        else if choice == 'sprout'
-            r = new OverlapInteraction(@ruleTempObject)
-            r.addSprout()
-            this.addIRule(r, @ruleTempObject.spriteType)
-            @stateTranspose = false
-            @stateRecording = false
-            this.showNormal()
 
     # Rule execution
     applyRules: (environment) ->
@@ -145,6 +135,8 @@ class GenericSprite extends fabric.Image
             console.log('Rule = '+rule)
             if rule == undefined
                 continue
+            console.log('@prepObj = '+@prepObj)
+            @prepObj = this
             @prepObj[key] = rule.prep(this, environment)
             # Latch if we are still interacting with the same object 
             if @prepObj[key] == @prePrepObj[key]
@@ -199,17 +191,16 @@ class GenericSprite extends fabric.Image
             return true
         return false
 
-    #Sprouts
     addSprout: ->
-        r = new Rulw()
-        r.setActionType('sprout')
-        this.setRule(2,r)
+        r = new Rule()
+        r.setActionType('clone')
+        this.setRule(1, r)
 
     removeSprout: ->
-        delete this._rules[2]
+        delete this._rules[1]
 
     isSprout: ->
-        if @_rules[2] != undefined
+        if @_rules[1] != undefined
             return true
         return false
 
@@ -469,7 +460,6 @@ class Rule
             when 'clone' then CloneAction
             when 'sprout' then SproutAction
             when 'delete' then DeleteAction
-            when 'sprout' then SproutAction
         @action = new actClass()
 
     addTransform: (start, end) ->
@@ -495,10 +485,6 @@ class Rule
         @type = 'delete'
         @action = new DeleteAction()
 
-    addSprout: ->
-        @type = 'sprout'
-        @action = new SproutAction()
-
     toJSON: ->
         object = {}
         object.type = 'default'
@@ -523,7 +509,6 @@ class Rule
             when 'clone' then CloneAction
             when 'sprout' then SproutAction
             when 'delete' then DeleteAction
-            when 'sprout' then SproutAction
         act = new actClass
         act.restoreFromJSON(actionObj)
         obj.action = act
@@ -599,6 +584,9 @@ class OverlapInteraction extends Interaction
         super
         # Since we're an interaction, clone each and every time
 
+    addSprout: ->
+        super
+
     toJSON: ->
         obj = super
         obj.type = 'overlap'
@@ -659,7 +647,6 @@ class CloneAction extends Action
     restoreFromJSON: (data) ->
         super()
 
-#XXX This is simply a slightly modified clone of clone.  Change action
 class SproutAction extends Action
     constructor: ->
 
@@ -669,7 +656,7 @@ class SproutAction extends Action
             return
         if window.spriteTypeList[sprite.spriteType]::_count >= window.maxSprites
             return
-        newSprite = new window.spriteTypeList[sprite.ruleTempObject.spriteType]  # make one
+        newSprite = new window.spriteTypeList[sprite.spriteType]  # make one
         spriteList.push( newSprite )
         #newSprite.setTop(sprite.getTop() + Math.random() * 20 - 10)
         #newSprite.setLeft(sprite.getLeft() + Math.random() * 20 - 10)
@@ -766,6 +753,7 @@ window.tick = ->
     for sprite in spriteList
         sprite.applyRules()
     for sprite in spriteList
+        console.log('ABOUT TO CALL SPRITELIST'+ spriteList[0])
         sprite.prepIRules()
     for sprite in spriteList
         sprite.applyIRules()

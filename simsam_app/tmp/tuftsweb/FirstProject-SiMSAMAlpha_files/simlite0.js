@@ -45,6 +45,9 @@ window.initSim = (function(){
                 if (selectedObject.isClone()) {
                     $('#uimod_clone').addClass('highlight');
                 }
+                if (selectedObject.isSprout()) {
+                    $('#uimod_sprout').addClass('highlight');
+                }
             } else {
                 modifyingHide(selectedObject);
             }
@@ -608,6 +611,18 @@ $(document).ready(function() {
     });
 
     $('#uimod_clone').click(function() {
+        obj = canvas.getActiveObject();
+        if (!obj.isEditing) return;
+        if (obj.isClone()) {
+            obj.removeClone();
+            $(this).removeClass('highlight');
+        } else {
+            obj.addSimpleClone();
+            $(this).addClass('highlight');
+            cloneWidgetShow(obj);
+        }
+    });
+    $('#uimod_sprout').click(function() {
         obj = canvas.getActiveObject();
         if (!obj.isEditing) return;
         if (obj.isClone()) {

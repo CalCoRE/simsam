@@ -43,6 +43,9 @@ window.initSim = (function(){
                 if (selectedObject.isClone()) {
                     $('#uimod_clone').addClass('highlight');
                 }
+                if (selectedObject.isRandom()){
+                    $('#uimod_sprout').addClass('highlight');
+                }
             } else {
                 modifyingHide(selectedObject);
             }
@@ -632,7 +635,6 @@ $(document).ready(function() {
     });
     interMap = { 'uich_trans': 'transpose',
         'uich_clone': 'clone',
-        'uich_sprout': 'sprout',
         'uich_delete': 'delete',
         'uich_close': 'close',
     };
@@ -684,6 +686,19 @@ $(document).ready(function() {
             $(this).removeClass('highlight');
         } else {
             obj.addSimpleClone();
+            $(this).addClass('highlight');
+            cloneWidgetShow(obj);
+        }
+    });
+
+    $('#uimod_sprout').click(function() {
+        obj = canvas.getActiveObject();
+        if (!obj.isEditing) return;
+        if (obj.isSprout()) {
+            obj.removeSprout();
+            $(this).removeClass('highlight');
+        } else {
+            obj.addSprout();
             $(this).addClass('highlight');
             cloneWidgetShow(obj);
         }
