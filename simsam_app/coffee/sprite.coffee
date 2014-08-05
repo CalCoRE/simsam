@@ -73,6 +73,9 @@ class GenericSprite extends fabric.Image
         # Normal Transpose
         @randomRange = range
 
+    isEditing: ->
+        return @stateRecording
+
     # Whatever UI event we decide should create an interaction, has occurred
     interactionEvent: (obj) ->
         # Don't create another event if we're recording a transpose

@@ -85,6 +85,10 @@
       return this.randomRange = range;
     };
 
+    GenericSprite.prototype.isEditing = function() {
+      return this.stateRecording;
+    };
+
     GenericSprite.prototype.interactionEvent = function(obj) {
       var surviveObj;
       if (this.stateTranspose) {
