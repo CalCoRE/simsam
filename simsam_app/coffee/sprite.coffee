@@ -179,6 +179,7 @@ class GenericSprite extends fabric.Image
 
     # This could go in simlite.js, but wanted to keep it with learningToggle
     addSimpleClone: ->
+        console.log("Adding Simple Clone")
         r = new Rule()
         r.setActionType('clone')
         this.setRule(1, r)
@@ -187,6 +188,7 @@ class GenericSprite extends fabric.Image
         delete this._rules[1]
 
     isClone: ->
+        console.log("Checks if is Clone")
         if @_rules[1] != undefined
             return true
         return false

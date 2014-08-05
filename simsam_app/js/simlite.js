@@ -389,6 +389,7 @@ randomSliderHide = function(obj) {
 // Cloning functions
 //
 setCloneUILocation = function (clone) {
+    console.log("setCloneUILocation");
     var cui = $('#clone-ui');
     var myWidth = $(cui).width();
     var myHeight = $(cui).outerHeight();
@@ -400,6 +401,7 @@ setCloneUILocation = function (clone) {
 }
 
 cloneWidgetShow = function(obj) {
+    console.log("cloneWidgetShow");
     var x = obj.getLeft();
     var y = obj.getTop();
 
@@ -679,12 +681,20 @@ $(document).ready(function() {
     });
 
     $('#uimod_clone').click(function() {
+        console.log('Onclick');
         obj = canvas.getActiveObject();
-        if (!obj.isEditing) return;
+        console.log('Object click =' + obj);
+        if (!obj.isEditing) {
+            console.log('isEditing returns '+ obj.isEditing);
+            console.log('Object not being edited');
+            return;
+        }
         if (obj.isClone()) {
+            console.log('Object is clone');
             obj.removeClone();
             $(this).removeClass('highlight');
         } else {
+            console.log('Object is not clone, add simple clone');
             obj.addSimpleClone();
             $(this).addClass('highlight');
             cloneWidgetShow(obj);
