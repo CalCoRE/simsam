@@ -215,18 +215,19 @@
 
     GenericSprite.prototype.addSimpleClone = function() {
       var r;
-      console.log("Adding Simple Clone");
+      console.log('Adding Simple Clone');
       r = new Rule();
       r.setActionType('clone');
       return this.setRule(1, r);
     };
 
     GenericSprite.prototype.removeClone = function() {
+      console.log('Removing Clone');
       return delete this._rules[1];
     };
 
     GenericSprite.prototype.isClone = function() {
-      console.log("Checks if is Clone");
+      console.log('Checks if is Clone');
       if (this._rules[1] !== void 0) {
         return true;
       }
