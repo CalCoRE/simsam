@@ -100,6 +100,7 @@ $ ->
         #switchToRecordMode()
     
     loadSprites = (sprite) ->
+        console.log($("#sprite_drawer").get(0));
         output = $("#sprite_drawer").get(0) 
         #canvas = document.createElement('canvas')
         #ctx = canvas.getContext('2d')

@@ -475,6 +475,82 @@ cloneWidgetAdd = function(amt) {
     $(ourDiv).html('' + value + '%');
 }
 
+//Sprout Functions
+
+setSproutUILocation = function (sprout) {
+    console.log("setSproutUILocation");
+    var cui = $('#sprout-ui');
+    var myWidth = $(cui).width();
+    var myHeight = $(cui).outerHeight();
+    var objHeight = sprout.getHeight();
+    $(cui).css({ 
+        top: sprout.getTop() - objHeight/2 - myHeight - 15,
+        left: sprout.getLeft() - myWidth/2,
+    });
+}
+
+
+sproutWidgetShow = function(obj) {
+    console.log("sproutWidgitShow");
+    var x = obj.getLeft();
+    var y = obj.getTop();
+
+    var theta = obj.getAngle() * Math.PI / 180;
+    var xo = 45;
+    var yo = -45;
+    var startX = x + xo * Math.cos(theta) - yo * Math.sin(theta);
+    var startY = y + xo * Math.sin(theta) + yo * Math.cos(theta);
+
+    var imgElement = document.createElement('img');
+    imgElement.src = obj.getSrc();
+    cloneObj = new fabric.Image(imgElement, {
+        lockRotation: false,
+        lockScalingX: true,
+        lockScalingY: true,
+        opacity: 0.7,
+        top: startY,
+        left: startX,
+        cornerSize: 20,
+        angle: obj.getAngle(),
+    });
+    cloneObj.myOriginalTop = startY;
+    cloneObj.myOriginalLeft = startX;
+    cloneObj.modified = function() {
+        setSproutUILocation(this);
+    }
+    cloneObj.daddy = obj;
+    canvas.add(cloneObj);
+    cloneObj.bringToFront();
+    canvas.setActiveObject(cloneObj);
+
+    setSproutUILocation(cloneObj);
+    $('#sprout-ui').show();
+}
+
+sproutWidgetHide = function(obj) {
+    $('#sprout-ui').hide();
+    if (cloneObj != null) {
+        var nowTop = cloneObj.getTop();
+        var nowLeft = cloneObj.getLeft();
+        var origTop = cloneObj.myOriginalTop;
+        var origLeft = cloneObj.myOriginalLeft;
+        var daddy = cloneObj.daddy;
+
+        var dx = nowLeft - origLeft;
+        var dy = nowTop - origTop;
+        var theta = daddy.getAngle() * Math.PI / 180;
+        var topDiff = -dx * Math.sin(theta) + dy * Math.cos(theta);
+        var leftDiff = dx * Math.cos(-theta) - dy * Math.sin(-theta);
+
+        var tx = cloneObj.getAngle() - daddy.getAngle();
+
+        daddy.setCloneOffset(topDiff, leftDiff, tx);
+        cloneObj.remove();
+        cloneObj = null;
+        canvas.setActiveObject(daddy);
+    }
+}
+
 // Hide the sidebar menu for when an object is in "modifying" state
 modifyingHide = function(p_obj) {
     var obj = p_obj;
@@ -710,7 +786,7 @@ $(document).ready(function() {
         } else {
             obj.addSprout();
             $(this).addClass('highlight');
-            cloneWidgetShow(obj);
+            sproutWidgetShow(obj);
         }
     });
 

@@ -88,6 +88,7 @@
     };
     loadSprites = function(sprite) {
       var chrt, cnt, img, output;
+      console.log($("#sprite_drawer").get(0));
       output = $("#sprite_drawer").get(0);
       img = new Image();
       img.src = 'http://' + window.location.host + '/media/sprites/' + sprite + '.jpg';
