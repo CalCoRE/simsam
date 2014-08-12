@@ -51,6 +51,7 @@
       _ref = window.spritecollection;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         element = _ref[_i];
+        console.log('element in window.spritecollection = ' + element);
         loadSprites(element);
       }
       _ref1 = window.framesequence;
@@ -91,7 +92,7 @@
       console.log($("#sprite_drawer").get(0));
       output = $("#sprite_drawer").get(0);
       img = new Image();
-      img.src = 'http://' + window.location.host + '/media/sprites/' + sprite + '.jpg';
+      img.src = '/media/sprites/' + sprite + '.jpg';
       img.className = "sprite";
       img.setAttribute('data-hash', sprite);
       output.appendChild(img);
@@ -122,7 +123,7 @@
         canvas.height = img.height;
         return ctx.drawImage(img, 0, 0, img.width, img.height);
       };
-      img.src = 'http://' + window.location.host + '/media/sam_frames/' + frame + '.jpg';
+      img.src = '/media/sam_frames/' + frame + '.jpg';
       frameOrdinal = playbackFrames.push(canvas);
       thumbnail = document.createElement('canvas');
       context = thumbnail.getContext('2d');
@@ -132,7 +133,7 @@
         thumbnail.height = thumb.height * thumbnailScaleFactor;
         return context.drawImage(thumb, 0, 0, thumbnail.width, thumbnail.height);
       };
-      thumb.src = 'http://' + window.location.host + '/media/sam_frames/' + frame + '.jpg';
+      thumb.src = '/media/sam_frames/' + frame + '.jpg';
       frameId = frameIndex = frameOrdinal - 1;
       $(thumbnail).attr("data-frame-id", frame);
       $(canvas).attr("data-frame-id", frame);

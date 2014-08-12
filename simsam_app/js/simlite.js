@@ -14,6 +14,7 @@ window.initSim = (function(){
     canvas.on({'object:selected': simObjectSelected});
     canvas.on({'selection:cleared': simObjectCleared});
     canvas.on("after:render", function(){canvas.calcOffset();}); // for mouse offset issues
+    window.globalPos = $('#construction_frame').offset();
     
     setCanvasSize($(this).width());
     
@@ -43,7 +44,7 @@ window.initSim = (function(){
                 if (selectedObject.isClone()) {
                     $('#uimod_clone').addClass('highlight');
                 }
-                if (selectedObject.isRandom()){
+                if (selectedObject.isSprout()){
                     $('#uimod_sprout').addClass('highlight');
                 }
             } else {
@@ -492,6 +493,27 @@ setSproutUILocation = function (sprout) {
 
 sproutWidgetShow = function(obj) {
     console.log("sproutWidgitShow");
+    // First, we should choose the object we're going to interact with.
+    $('#sprout-ui').empty();
+    $('#sprout-ui').html('<p>BANANZA</p>');
+
+    for (var i = 0; i < spriteTypeList.length; i++) {
+        console.log('In interacting for loop');
+        var spImage = new window.spriteTypeList[i];
+        var imgSrc = spImage.getSrc();
+        var iEl = document.createElement('img');
+        iEl.src = imgSrc;
+        $('#sprout-ui').append(iEl);
+        delete spImage;
+    }
+    
+   // $('#sprout-ui').click(function() {
+        console.log('sprout src = '+this.src);
+        sproutCloningWidgetShow(obj);
+    //}
+}
+
+sproutCloningWidgetShow = function(obj) {
     var x = obj.getLeft();
     var y = obj.getTop();
 
@@ -560,6 +582,7 @@ modifyingHide = function(p_obj) {
     $('#modifying').hide(250);
     $('#uimod_rand').removeClass('highlight');
     $('#uimod_clone').removeClass('highlight');
+    $('#uimod_sprout').removeClass('highlight');
     randomSliderHide(obj);
     // Clear recording if we're in the middle of it.
     if (obj && obj.stateRecording) {
@@ -689,7 +712,9 @@ window.load = function() {
         },
         dataType: 'json',
         success: function(data) {
+            //console.log('data.simState = '+data.simState);
             if (data.status == 'Success') {
+                console.log('data.serialized = '+data.serialized);
                 loadSprites(data.serialized);
             } else if (data.status == 'Failed') {
                 if (data.debug.length) {

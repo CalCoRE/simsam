@@ -156,6 +156,7 @@ class GenericSprite extends fabric.Image
             if (rule == undefined)
                 continue
             console.log('Applying an iRule')
+            console.log('window.spriteTypeList '+window.spriteTypeList[0])
             rule.act(this, @prepObj[key], environment)
             if @prepObj[key]
                 @prePrepObj[key] = @prepObj[key]
@@ -199,14 +200,14 @@ class GenericSprite extends fabric.Image
 
     addSprout: ->
         r = new Rule()
-        r.setActionType('clone')
-        this.setRule(1, r)
+        r.setActionType('sprout')
+        this.setRule(2, r)
 
     removeSprout: ->
-        delete this._rules[1]
+        delete this._rules[2]
 
     isSprout: ->
-        if @_rules[1] != undefined
+        if @_rules[2] != undefined
             return true
         return false
 
@@ -342,7 +343,7 @@ class GenericSprite extends fabric.Image
 
 # makes classes for different types of sprites
 SpriteFactory = (spriteType, imageObj) ->
-    console.log "sprite factory" + spriteType + imageObj
+    console.log "sprite factory" + spriteType + imageObj.src
     # a particular kind of sprite, with its own name and image file
     class Sprite extends GenericSprite
     
@@ -675,6 +676,7 @@ class SproutAction extends Action
         newSprite.setLeft(sprite.getLeft() + dx)
         newSprite.setAngle(sprite.getAngle() + sprite.cloneTranslate.rotate)
         canvas.add(newSprite)
+        newSprite.setCoords()
         canvas.renderAll()
 
     toJSON: ->
@@ -777,11 +779,11 @@ window.tick = ->
 window.loadSpriteTypes = ->
     window.maxSprites = 25
     console.log "loading sprite types"
-    spriteTypeList = [] # re-init. hmm, this could get messy TODO
+    window.spriteTypeList = [] # re-init. hmm, this could get messy TODO
     $("#sprite_drawer > img").each (i, sprite) -> # all sprites in the drawer
         console.log "loading sprite type" + i
         window.spriteTypeList.push( SpriteFactory( i , sprite ) ) #make a factory
-        
+
         $(sprite).draggable # this sprite is draggable
             revert: false, # dont bounce back after drop
             helper: "clone", # make a copy when pulled off the dragsource
@@ -791,12 +793,14 @@ window.loadSpriteTypes = ->
             start: (e, ui) ->
                 $(ui.helper).addClass("ui-draggable-helper")
             stop: (ev, ui) -> # when dropped
-                if (pointWithinElement(ev.pageX, ev.pageY,
-                        $('#trash_menu_button')) ||
-                        pointWithinElement(ev.pageX, ev.pageY, $('#trash')) )
-                    deleteImageFully(i, this)
-                    return
+                #if (pointWithinElement(ev.pageX, ev.pageY,
+                #$('#trash_menu_button')) ||
+                #pointWithinElement(ev.pageX, ev.pageY, $('#trash')) )
+                #deleteImageFully(i, this)
+                #return
                 console.log('I am a '+i); # tell me which one you are
+                dropX = ev.pageX - window.globalPos.left
+                dropY = ev.pageY - window.globalPos.top
                 if window.spriteTypeList[i]::_count >= maxSprites
                     return
                 console.log('Before new window.spriteTypeList[i]'+i)
@@ -806,10 +810,11 @@ window.loadSpriteTypes = ->
                 spriteList.push( newSprite )
                 # pos = $(this).position()
                 newSprite.setTop(ev.pageY)
-                newSprite.setLeft(ev.pageX)
+                newSprite.setLeft(dropX)
                 canvas.add(newSprite)
                 canvas.renderAll();
                 console.log('End window.loadSpriteTypes')
+    console.log("--- Loaded sprite type list: " + window.spriteTypeList.length)
 
 window.saveSprites = ->
     masterObj = {}
@@ -868,9 +873,11 @@ window.loadSprites = (dataString) ->
     for typeObj in inObject.classObjects
         imgSrc = typeObj.imageObj
         for img in imageObjects
+            console.log("ImgSrc: " + imgSrc + " img.src: " + img.src)
             if imgSrc == img.src
                 typeObj.raw = img
                 break
+        console.log('typeObj.type = '+typeObj.type+' typeObj.raw = '+typeObj.raw)
         typeFactory = SpriteFactory(typeObj.type, typeObj.raw)
         typeFactory::_count = 0
         typeFactory::cloneTranslate = typeObj.cloneTranslate
@@ -882,10 +889,15 @@ window.loadSprites = (dataString) ->
             rule = Rule.createFromData(iruleData)
             typeFactory.addClassIRule(rule, iruleData.targetType)
 
+        console.log('sprite added to factory')
         window.spriteTypeList.push(typeFactory)
     for obj in inObject.objects
         newSprite = new window.spriteTypeList[obj.spriteType]  # make one
         newSprite.restoreFromJSON(obj)
         window.spriteList.push(newSprite)
+
+    console.log("---- Here are our sprites ----")
+    for obj in window.spriteTypeList
+        console.log(obj.src())
 
     canvas.renderAll()

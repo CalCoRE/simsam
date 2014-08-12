@@ -67,6 +67,7 @@ $ ->
         # on the body tag
         # see http://stackoverflow.com/questions/2326004/prevent-selection-in-html
         for element in window.spritecollection
+            console.log('element in window.spritecollection = '+element)
             loadSprites(element)
         for element in window.framesequence
             loadFrames(element)
@@ -109,7 +110,8 @@ $ ->
         #    canvas.width = img.width
         #    canvas.height = img.height
         #    ctx.drawImage(img, 0, 0, img.width, img.height)
-        img.src = 'http://' + window.location.host + '/media/sprites/' + sprite + '.jpg'
+        #img.src = 'http://' + window.location.host + '/media/sprites/' + sprite + '.jpg'
+        img.src = '/media/sprites/' + sprite + '.jpg'
         img.className = "sprite"
         img.setAttribute('data-hash', sprite)
         #$(canvas).attr("data-frame-id", sprite)
@@ -143,7 +145,8 @@ $ ->
             canvas.width = img.width
             canvas.height = img.height
             ctx.drawImage(img, 0, 0, img.width, img.height)
-        img.src = 'http://' + window.location.host + '/media/sam_frames/' + frame + '.jpg'
+        #img.src = 'http://' + window.location.host + '/media/sam_frames/' + frame + '.jpg'
+        img.src = '/media/sam_frames/' + frame + '.jpg'
     
         frameOrdinal = playbackFrames.push canvas
         thumbnail = document.createElement('canvas')
@@ -153,7 +156,8 @@ $ ->
             thumbnail.width = thumb.width * thumbnailScaleFactor
             thumbnail.height = thumb.height * thumbnailScaleFactor
             context.drawImage(thumb, 0, 0, thumbnail.width, thumbnail.height)
-        thumb.src = 'http://' + window.location.host + '/media/sam_frames/' + frame + '.jpg'
+        #thumb.src = 'http://' + window.location.host + '/media/sam_frames/' + frame + '.jpg'
+        thumb.src =  '/media/sam_frames/' + frame + '.jpg'
         frameId = frameIndex = frameOrdinal - 1
         $(thumbnail).attr "data-frame-id", frame
         $(canvas).attr "data-frame-id", frame

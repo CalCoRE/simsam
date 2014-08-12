@@ -189,6 +189,7 @@
           continue;
         }
         console.log('Applying an iRule');
+        console.log('window.spriteTypeList ' + window.spriteTypeList[0]);
         rule.act(this, this.prepObj[key], environment);
         if (this.prepObj[key]) {
           this.prePrepObj[key] = this.prepObj[key];
@@ -237,16 +238,16 @@
     GenericSprite.prototype.addSprout = function() {
       var r;
       r = new Rule();
-      r.setActionType('clone');
-      return this.setRule(1, r);
+      r.setActionType('sprout');
+      return this.setRule(2, r);
     };
 
     GenericSprite.prototype.removeSprout = function() {
-      return delete this._rules[1];
+      return delete this._rules[2];
     };
 
     GenericSprite.prototype.isSprout = function() {
-      if (this._rules[1] !== void 0) {
+      if (this._rules[2] !== void 0) {
         return true;
       }
       return false;
@@ -407,7 +408,7 @@
 
   SpriteFactory = function(spriteType, imageObj) {
     var Sprite;
-    console.log("sprite factory" + spriteType + imageObj);
+    console.log("sprite factory" + spriteType + imageObj.src);
     Sprite = (function(_super) {
       __extends(Sprite, _super);
 
@@ -824,6 +825,7 @@
       newSprite.setLeft(sprite.getLeft() + dx);
       newSprite.setAngle(sprite.getAngle() + sprite.cloneTranslate.rotate);
       canvas.add(newSprite);
+      newSprite.setCoords();
       return canvas.renderAll();
     };
 
@@ -955,11 +957,10 @@
   };
 
   window.loadSpriteTypes = function() {
-    var spriteTypeList;
     window.maxSprites = 25;
     console.log("loading sprite types");
-    spriteTypeList = [];
-    return $("#sprite_drawer > img").each(function(i, sprite) {
+    window.spriteTypeList = [];
+    $("#sprite_drawer > img").each(function(i, sprite) {
       console.log("loading sprite type" + i);
       window.spriteTypeList.push(SpriteFactory(i, sprite));
       return $(sprite).draggable({
@@ -973,12 +974,10 @@
           return $(ui.helper).addClass("ui-draggable-helper");
         },
         stop: function(ev, ui) {
-          var newSprite;
-          if (pointWithinElement(ev.pageX, ev.pageY, $('#trash_menu_button')) || pointWithinElement(ev.pageX, ev.pageY, $('#trash'))) {
-            deleteImageFully(i, this);
-            return;
-          }
+          var dropX, dropY, newSprite;
           console.log('I am a ' + i);
+          dropX = ev.pageX - window.globalPos.left;
+          dropY = ev.pageY - window.globalPos.top;
           if (window.spriteTypeList[i].prototype._count >= maxSprites) {
             return;
           }
@@ -988,13 +987,14 @@
           console.log('SpriteType Success? = ' + newSprite.setSpriteTypeId(i));
           spriteList.push(newSprite);
           newSprite.setTop(ev.pageY);
-          newSprite.setLeft(ev.pageX);
+          newSprite.setLeft(dropX);
           canvas.add(newSprite);
           canvas.renderAll();
           return console.log('End window.loadSpriteTypes');
         }
       });
     });
+    return console.log("--- Loaded sprite type list: " + window.spriteTypeList.length);
   };
 
   window.saveSprites = function() {
@@ -1046,7 +1046,7 @@
   };
 
   window.loadSprites = function(dataString) {
-    var idx, imageObjects, img, imgSrc, inObject, iruleData, newSprite, obj, rule, ruleData, sprite, tmpList, typeFactory, typeObj, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2, _ref3, _ref4;
+    var idx, imageObjects, img, imgSrc, inObject, iruleData, newSprite, obj, rule, ruleData, sprite, tmpList, typeFactory, typeObj, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _len5, _m, _n, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
     tmpList = [];
     window.spriteTypeList = [];
     _ref = window.spriteList;
@@ -1072,11 +1072,13 @@
       imgSrc = typeObj.imageObj;
       for (_l = 0, _len3 = imageObjects.length; _l < _len3; _l++) {
         img = imageObjects[_l];
+        console.log("ImgSrc: " + imgSrc + " img.src: " + img.src);
         if (imgSrc === img.src) {
           typeObj.raw = img;
           break;
         }
       }
+      console.log('typeObj.type = ' + typeObj.type + ' typeObj.raw = ' + typeObj.raw);
       typeFactory = SpriteFactory(typeObj.type, typeObj.raw);
       typeFactory.prototype._count = 0;
       typeFactory.prototype.cloneTranslate = typeObj.cloneTranslate;
@@ -1093,6 +1095,7 @@
         rule = Rule.createFromData(iruleData);
         typeFactory.addClassIRule(rule, iruleData.targetType);
       }
+      console.log('sprite added to factory');
       window.spriteTypeList.push(typeFactory);
     }
     _ref4 = inObject.objects;
@@ -1101,6 +1104,12 @@
       newSprite = new window.spriteTypeList[obj.spriteType];
       newSprite.restoreFromJSON(obj);
       window.spriteList.push(newSprite);
+    }
+    console.log("---- Here are our sprites ----");
+    _ref5 = window.spriteTypeList;
+    for (_n = 0, _len5 = _ref5.length; _n < _len5; _n++) {
+      obj = _ref5[_n];
+      console.log(obj.src());
     }
     return canvas.renderAll();
   };
