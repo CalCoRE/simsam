@@ -237,7 +237,7 @@ deleteImageInternal = function(messageInfo, onSuccess) {
 // Remove only the individual object
 deleteImageSingle = function(obj) {
     messageInfo = {
-        message: 'This item will be permanantly deleted.  Are you sure?',
+        message: 'This item will be permanently deleted.  Are you sure?',
         title: 'Delete this object?',
         button: 'Delete',
     };
@@ -252,7 +252,7 @@ deleteImageSingle = function(obj) {
 deleteImageClass = function(spriteType, classImage) {
 
     messageInfo = {
-        message: 'All items of this type will be permanantly deleted.  Are you sure?',
+        message: 'All items of this type will be permanently deleted.  Are you sure?',
         title: 'Delete all objects of this type?',
         button: 'Delete All',
     };
@@ -303,9 +303,10 @@ randomDrawArc = function(ang) {
     height = $(rarc).attr('height');
     ctx = $(rarc)[0].getContext('2d');
     ctx.clearRect(0,0, width, height);
+    ctx.fillStyle = '#62c004';
 
     //pct = 80;
-    lineWidth = 4;
+    lineWidth = 0;
     pm = (ang/180.1) * Math.PI; // extra .1 keeps arc a circle at 100%
     max = (Math.PI*1.5) + pm;
     max = max % (Math.PI*2);
@@ -313,7 +314,7 @@ randomDrawArc = function(ang) {
     radius = Math.max(width/2, height/2) - lineWidth / 2;
     ctx.moveTo(width/2, height/2);
     ctx.beginPath();
-    ctx.strokeStyle = 'black';
+    ctx.strokeStyle = '#62c004';
     ctx.lineWidth = lineWidth;
     ctx.arc(width/2, height/2, radius, min, max, false);
     ctx.lineTo(width/2, height/2);
@@ -350,7 +351,6 @@ randomSliderPosition = function(obj) {
     arcObj.css({left: arcLeft, top: arcTop});
     $('#random-arc').attr('width', arcWidth);
     $('#random-arc').attr('height', arcHeight);
-
     randomDrawArc(obj.randomRange);
 }
 

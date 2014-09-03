@@ -1,0 +1,312 @@
+.sim_buttons, .sim_charts {
+	background-color:transparent !important;
+	display:inline-block;
+	float:none;
+	margin:8px 5px 0 10px;
+}
+
+.sim_bottom {
+	width: 100%;
+	text-align:right;
+}
+
+#video_output {
+	border-right-color: transparent;
+	border-left-color: transparent;
+	background-color: transparent;
+	border-right-style: solid;
+	border-left-style: solid;
+	border-right-width: 0px;
+	border-left-width: 0px;
+}
+.sim_bottom > div > div {
+	background-image:url('../images/buttons.png');
+	height:45px !important;
+	width:49px !important;
+	background-position:-53px 0;
+	margin:5px 10px !important;
+}
+
+.sim_charts {
+	padding-right:20px;
+}
+.sim_bottom > div > p {
+	margin:0;
+}
+
+.sim_charts .ui-draggable, .sim_charts .ui-draggable-dragging {
+	background-image:url('../images/buttons.png');
+	height:45px !important;
+	width:49px !important;
+	background-position:-106px 0;
+}
+
+.sim_buttons, .sim_charts {
+	color:#23374b;
+}
+
+#sprite_drawer {
+	height:62.3%;
+	
+}
+
+
+#iact_toggle, #iact_chart, #counts, #count_chart {
+	background-image:url('../images/buttons.png');
+	height:45px;
+	width:49px;
+	box-shadow:0px 0px 2px 0px !important;
+}
+
+#iact_toggle {
+	background-position:-53px 0px;
+}
+
+#iact_chart {
+	background-position:-106px 0px;
+}
+
+#counts {
+	background-position:0px 0px;
+}
+
+#count_chart {
+	background-position:-160px 0px;
+}
+
+#iact_toggle:hover {
+	background-position:-53px -54px;
+}
+
+#iact_chart:hover {
+	background-position:-106px -54px;
+}
+
+#counts:hover {
+	background-position:0px -54px;
+}
+
+#count_chart:hover {
+	background-position:-160px -54px;
+}
+
+.animation-head {
+	background-color:#62c004 !important;
+	padding:0 5px 5px 5px;
+	text-align:left;
+	min-width:160px;
+}
+
+.ui-dialog .ui-dialog-buttonpane {
+	background:none !important;
+	border:none;
+}
+
+.ui-widget-header {
+	background:#62c004 !important;
+	border:0;
+	padding:0 0 8px 8px;
+	text-align:left;
+	min-width:160px;
+	border-radius:0;
+	color:white;
+	font-family:"Averia Sans Libre", Helvetica;
+	font-size:12pt;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+	padding:0 0 3px 5px;
+}
+
+.ui-dialog-titlebar-close {
+	margin-top:-12px !important;
+}
+
+.ui-icon-alert {
+	margin:4px 4px 0 0 !important;
+	padding:0;
+}
+
+#dialog-confirm p {
+	font-family:"Averia Sans Libre", Helvetica;
+	color:#23374b;
+}
+
+.close-btn, .ui-dialog .ui-dialog-titlebar-close {
+	background:white !important;
+	border-radius:15px;
+	width:19px;
+	height:19px;
+	text-align:center;
+	display:inline;
+	float:right;
+	line-height:13pt;
+	padding:0 0 2px 0;
+	color:#62c004;
+	text-shadow:0 -1px 0 #397002;
+	border-color:white;
+	padding:2px 0px 0px 2px;
+	margin:0px -3px;
+}
+
+.ui-button-icon-only .ui-icon {
+	margin-left:-9px;
+	margin-top:-9px;
+}
+
+
+div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button {
+	background:#23374b;
+	border:0;
+	color:white;
+	font-family:"Averia Sans Libre", Helvetica;
+}
+
+div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:hover {
+	background:#62c004;
+	border:0;
+}
+
+#dialog-confirm {
+	height:auto !important;
+}
+
+.ui-background, .ui-widget-content, #interactions {
+	background-color:white;
+	border:4px solid #62c004;
+	border-radius:10px;
+	padding:0;
+	box-shadow:0;
+}
+.ui-background h4 {
+	margin:0 !important;
+	padding:0;
+	display:inline;
+	color:white;
+}
+
+.simui h4 {
+	-webkit-margin-before:0 !important;
+	-webkit-margin-after:0 !important;
+	width:inherit;
+	color:white;
+} 
+
+.simui h3 {
+	margin:10px 0;
+	color:#23374b;
+}
+
+.simui ul li {
+	padding:5px 0;
+	margin:0 auto;
+	background:#89d043;
+	color:white;
+	text-shadow:0 1px 0 #62c004;
+	border-width:1px 0px 0px 0px;
+	border-color:#62c004;
+}
+
+.simui ul li:first-child {
+	border:0;
+}
+
+.simui ul li:hover {
+	background:#4e9903;
+}
+
+.simui a {
+	border:0;
+	color:white;
+}
+
+
+
+/* Random UI */
+
+
+.ui-background .container {
+	padding:0 20px 20px 20px;
+	border-radius:10px;
+}
+
+.ui-background h3 {
+	text-align:center;
+	color:#23374b;
+	margin:.5em 0 .8em 0;
+}
+
+
+
+#random-range .ui-widget-content {
+	background:#23374b !important;
+	border:0px solid black;
+	-moz-box-shadow: inset 0 0 5px #000;
+	-webkit-box-shadow: inset 0 0 5px #000;
+	box-shadow: inner 0 0 5px #000;
+	height:5px;
+	margin-top:15px;
+}
+
+#random-range .ui-slider-horizontal .ui-slider-handle {
+	margin-top:-4px;
+	width:20px;
+	border-radius:20px;
+	background:#62c004;
+	border:0;
+	background-image: -ms-radial-gradient(center, circle farthest-corner, #9DDE64 0%, #62C004 100%);
+	background-image: -moz-radial-gradient(center, circle farthest-corner, #9DDE64 0%, #62C004 100%);
+	background-image: -o-radial-gradient(center, circle farthest-corner, #9DDE64 0%, #62C004 100%);
+	background-image: -webkit-gradient(radial, center center, 0, center center, 497, color-stop(0, #9DDE64), color-stop(1, #62C004));
+	background-image: -webkit-radial-gradient(center, circle farthest-corner, #9DDE64 0%, #62C004 100%);
+	background-image: radial-gradient(circle farthest-corner at center, #9DDE64 0%, #62C004 100%);
+}
+
+#random-ui {
+	top:120px !important;
+	left:20px !important;
+}
+
+/* Clone UI */
+
+
+#clone-minus {
+	background-color:#23374b;
+	border-radius:10px 0 0 10px;
+	padding:5px 10px;
+	color: #fff;
+	display:inline;
+	margin-right:12px;
+	-moz-box-shadow: inset inset 0px 2px 3px #A9BBCC, inset 0px -2px 5px #06192C;
+	-webkit-box-shadow: inset 0px 2px 3px #A9BBCC, inset 0px -2px 5px #06192C;
+	box-shadow: inset 0px 2px 3px #A9BBCC, inset 0px -2px 5px #06192C;
+}
+
+#clone-plus {
+	background-color:#23374b;
+	border-radius:0px 10px 10px 0;
+	padding:5px 10px;
+	color: #fff;
+	display:inline;
+	margin-left:10px;
+	-moz-box-shadow: inset inset 0px 2px 3px #A9BBCC, inset 0px -2px 5px #06192C;
+	-webkit-box-shadow: inset 0px 2px 3px #A9BBCC, inset 0px -2px 5px #06192C;
+	box-shadow: inset 0px 2px 3px #A9BBCC, inset 0px -2px 5px #06192C;
+
+}
+
+
+#clone-plus:hover, #clone-minus:hover {
+	background:#1e2e3f;
+	box-shadow: inset 0px -2px 5px #06192C;
+}
+
+#clone-data {
+	display:inline;
+}
+
+#clone-ui .container {
+	text-align:center;
+}
+
+

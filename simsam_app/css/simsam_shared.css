@@ -504,7 +504,7 @@ a.close {
 	display: none;
 }
 
-#clone-ui *:first-child {
+/*#clone-ui *:first-child {
 	border-top-left-radius: 20px;
 	border-bottom-left-radius: 20px;
 	margin-left: 0;
@@ -534,7 +534,7 @@ a.close {
 #clone-ui .op-btn {
 	font-weight: 900;
 	color: #333;
-}
+}*/
 
 #clone-ui div {
 	background: #ffffff;

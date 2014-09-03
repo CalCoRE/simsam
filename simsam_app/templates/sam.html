@@ -34,6 +34,11 @@
 	
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
 
+
+
+    <link rel='stylesheet' type='text/css' href='{{ STATIC_URL }}css/jenny.css' />
+
+
     <script type="text/javascript">
       window.onload = function () {
         window.animationId = {{ animation_id }};
@@ -136,17 +141,17 @@
             	</div> <!-- video_bottom -->
             	<div class="sim_bottom">
             		<div class="sim_buttons">
+            			<p style="clear: both;">Counters</p>
             			<div id="iact_toggle">
             			</div>
             			<div id="counts">
             			</div>
             			<div id="count_blocker">Please select interaction target</div>
-            			<p style="clear: both;">Counters</p>
             		</div>
             		<div class="sim_charts">
+            			<p style="clear: both;">Charts</p>
             			<div id="iact_chart"></div>
             			<div id="count_chart"></div>
-            			<p style="clear: both;">Charts</p>
             		</div>
             	</div>
             	<!--<a href="" id="sim_min" class="close" style="display: none;">_</a>-->
@@ -155,32 +160,54 @@
     <!-- secret speed slider -->
     <input type="hidden" id="fps" value="10">
     
-      <!-- Interaction Chooser -->
-    <div id="interactions" class="simui">
+<!-- Interaction Chooser -->
+    <div id="interactions" class="simui ui-backround">
+        <div class="animation-head"><h4>Animation Menu</h4>
+            <a id ="uich_close" class="uich" href="#">
+	        <span class="close-btn" style="margin-top:-20px; margin-right:-5px;"><span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span></span>
+	    </a>
+        </div>
+	<div class="container">
+
       <h3>Action</h3>
       <ul>
     	  <li><a id="uich_trans" class="uich" href="#">Translate</a></li>
     	  <li><a id="uich_clone" class="uich" href="#">Clone</a></li>
     	  <li><a id="uich_delete" class="uich" href="#">Delete</a></li>
-    	  <li><a id="uich_close" class="uich" href="#">Close</a></li>
       </ul>
+      </div>
     </div>
-    <!-- Random Range Slider -->
-    <div id="random-range">
-      <a href="#" onclick="randomSliderHide();">
-    	  <img src="{{ STATIC_URL }}/images/close-24.png"/>
-      </a>
-      <h3>Range</h3>
-      <div id="randomslider"> </div>
-    </div>
-    <div id="random-ui">
-      <canvas id="random-arc"></canvas>
+
+<!-- Random Range Slider -->
+    <div id="random-range" class="ui-background">
+        <div class="animation-head"><h4>Animation Menu</h4>
+            <a href="#" onclick="randomSliderHide();">
+	        <span class="close-btn"><span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span></span>
+	    </a>
+        </div>
+	<div class="container">
+            <h3>Range</h3>
+            <div id="randomslider"></div>
+        </div>
+        <div id="random-ui">
+            <canvas id="random-arc"></canvas>
+        </div>
     </div>
     
-    <div id="clone-ui" class="ui-hover">
-        <a class="op-btn" id="clone-minus" href="#">-</a>
-        <div id="clone-data" data-value="100">100%</div>
-        <a class="op-btn" id="clone-plus" href="#">+</a>
+<!-- Clone -->
+    <div id="clone-ui" class="ui-hover ui-background">
+	<div class="animation-head"><h4>Animation Menu</h4>
+            <a href="#" onclick="cloneWidgetHide();">
+	        <span class="close-btn"><span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span></span>
+	    </a>
+        </div>
+	<div class="container">
+            <h3>Clone</h3>
+
+            <a class="op-btn" id="clone-minus" href="#">-</a>
+            <div id="clone-data" data-value="100">100%</div>
+            <a class="op-btn" id="clone-plus" href="#">+</a>
+        </div>
     </div>
 
     <div id="sprout-ui" class="ui-hover">
