@@ -395,9 +395,10 @@ setCloneUILocation = function (clone) {
     var myWidth = $(cui).width();
     var myHeight = $(cui).outerHeight();
     var objHeight = clone.getHeight();
+    var offset = $('#construction_frame').offset();
     $(cui).css({ 
-        top: clone.getTop() - objHeight/2 - myHeight - 15,
-        left: clone.getLeft() - myWidth/2,
+        top: clone.getTop() - objHeight/2 - myHeight - 15 + offset.top,
+        left: clone.getLeft() - myWidth/2 + offset.left,
     });
 }
 
@@ -440,6 +441,8 @@ cloneWidgetShow = function(obj) {
     $('#clone-ui').show();
 }
 
+// Remove the widget that allows for adjusting clones and set the values
+// into the original object and clone.
 cloneWidgetHide = function(obj) {
     $('#clone-ui').hide();
     if (cloneObj != null) {
@@ -481,39 +484,65 @@ cloneWidgetAdd = function(amt) {
 setSproutUILocation = function (sprout) {
     console.log("setSproutUILocation");
     var cui = $('#sprout-ui');
+    $(cui).width(canvas.getWidth() - 60);
+    var offset = $('#construction_frame').offset();
+
     var myWidth = $(cui).width();
     var myHeight = $(cui).outerHeight();
-    var objHeight = sprout.getHeight();
+    ////var objHeight = sprout.getHeight();
+    var left = offset.left;
     $(cui).css({ 
+        left: left + 10,
+        top: 70 /* top margin */ + 20,
+        /*
         top: sprout.getTop() - objHeight/2 - myHeight - 15,
         left: sprout.getLeft() - myWidth/2,
+        */
     });
+    /*
+        top: sprout.getTop() - objHeight/2 - myHeight - 15,
+        left: sprout.getLeft() - myWidth/2,
+        */
 }
-
 
 sproutWidgetShow = function(obj) {
     console.log("sproutWidgitShow");
     // First, we should choose the object we're going to interact with.
     $('#sprout-ui').empty();
-    $('#sprout-ui').html('<p>BANANZA</p>');
+    $('#sprout-ui').html('<h1>Select object to sprout</h1>');
 
+    // Insert images
     for (var i = 0; i < spriteTypeList.length; i++) {
         console.log('In interacting for loop');
         var spImage = new window.spriteTypeList[i];
         var imgSrc = spImage.getSrc();
         var iEl = document.createElement('img');
         iEl.src = imgSrc;
+        iEl.setAttribute('data-target-type', i);
+        //$(iEl).data('targetType', i);
+        // This function calls back to setup the SproutAction with the
+        // appropriate target
+        $(iEl).click(function () {
+            console.log('sprout src = '+this.src);
+            var tType = $(this).data('target-type');
+            obj.setSproutTarget(tType);
+            tType = obj.getSproutTarget();
+            sproutCloningWidgetShow(obj);
+            $('#sprout-ui').hide();
+        });
         $('#sprout-ui').append(iEl);
         delete spImage;
     }
+    setSproutUILocation(cloneObj);
+    $('#sprout-ui').show();
     
-   // $('#sprout-ui').click(function() {
-        console.log('sprout src = '+this.src);
-        sproutCloningWidgetShow(obj);
-    //}
 }
 
 sproutCloningWidgetShow = function(obj) {
+    // Sprout is a little different. Show the clone widget now that we've
+    // finished selecting the object to sprout.
+    setCloneUILocation(obj);
+    $('#clone-ui').show();
     var x = obj.getLeft();
     var y = obj.getTop();
 
@@ -523,8 +552,11 @@ sproutCloningWidgetShow = function(obj) {
     var startX = x + xo * Math.cos(theta) - yo * Math.sin(theta);
     var startY = y + xo * Math.sin(theta) + yo * Math.cos(theta);
 
+    var targetType = obj.getSproutTarget();
+    var targetObj = new window.spriteTypeList[targetType];
+
     var imgElement = document.createElement('img');
-    imgElement.src = obj.getSrc();
+    imgElement.src = targetObj.getSrc();
     cloneObj = new fabric.Image(imgElement, {
         lockRotation: false,
         lockScalingX: true,
@@ -545,8 +577,6 @@ sproutCloningWidgetShow = function(obj) {
     cloneObj.bringToFront();
     canvas.setActiveObject(cloneObj);
 
-    setSproutUILocation(cloneObj);
-    $('#sprout-ui').show();
 }
 
 sproutWidgetHide = function(obj) {

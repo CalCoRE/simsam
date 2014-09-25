@@ -317,7 +317,10 @@
 }
 
 .sim_buttons > #iact_toggle,
-.sim_charts > #iact_chart {
+.sim_charts > #iact_chart,
+.sim_charts > #step,
+.sim_charts > #run,
+.sim_charts > #clear {
 	box-shadow: 0px 0px 4px 2px;
 	/*display: none;*/
 }
@@ -380,6 +383,18 @@ a.close {
         background-image: url(../images/hash.png);
         background-repeat: no-repeat;
         background-position: center;
+}
+
+#step {
+        background-position:-219px 3px;
+}
+
+#run {
+        background-position:-331px 3px;
+}
+
+#clear {
+        background-position:-386px 2px;
 }
 
 #counts.highlight,
@@ -591,4 +606,35 @@ a.close {
 .simui a {
 	color: #444;
 	text-decoration: none;
+}
+
+/******************************************/
+/***** Floating Menu for sprout ***********/
+/******************************************/
+
+#sprout-ui {
+	position: absolute;
+	top: 20px;
+	left; 100px; /* Change this */
+	width: 400px;
+	background: white;
+	box-shadow: 2px 2px 4px;
+	border: solid 1px #777;
+	border-radius: 15px;
+	padding: 20px;
+	display: none;
+	text-align: center;
+}
+
+#sprout-ui img {
+	vertical-align: middle;
+	margin: 10px;
+	border-color: #62c004;
+	border-width: 5px;
+	border-radius: 15px;
+	border-style: solid;
+}
+
+#data {
+	display: none;
 }

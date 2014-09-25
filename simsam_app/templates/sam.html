@@ -57,11 +57,13 @@
       toggleSim = function() {
         if( !simRunning ) {
           if( interval = setInterval('tick()',1000) ) { simRunning = true; }
-		  $('#run').html('Stop');
+		  //$('#run').html('Stop');
+		  $('#run').css("background-position", "-275px 3px");
         } else {
           clearInterval(interval);
           simRunning = false;
-		  $('#run').html('Run');
+		  //$('#run').html('Run');
+		  $('#run').css("background-position", "-331px 3px");
         }
       }
     // Fix for Fabric.js 1.2.9 - Issue #781
@@ -102,12 +104,6 @@
                         <div class="menu_button" id="savecrop" onclick="getResults()">Save Crop</div>
                         <div class="menu_button" id="cancelcrop" onclick="deleteRect()">Cancel Crop</div>
                 	</div>
-            
-                	<div id="sim_buttons" style="display:none;">
-                		<div class="menu_button" onclick="tick()">One Step</div>
-                		<div id="run" class="menu_button" onclick="toggleSim()">Run</div>
-                        <div id="clear" class="menu_button" onclick="clearTrackers()">Clear</div>
-                	</div>
             	  <!-- Selected Chooser -->
             	  <div id="selected" >
             		  <h3>Modify Sprite</h3>
@@ -139,7 +135,12 @@
             		<div id="video_output"><!-- filmstrip--></div>
             		<div id="trash"><img class="icon" src="static/images/newicons/trash.png"></div>
             	</div> <!-- video_bottom -->
-            	<div class="sim_bottom">
+				<div class="sim_bottom">
+					<div id="sim_buttons" style="display:none;">
+						<div id="step" onclick="tick()"></div>
+						<div id="run" onclick="toggleSim()"></div>
+						<div id="clear" onclick="clearTrackers()"></div>
+					</div>
             		<div class="sim_buttons">
             			<p style="clear: both;">Counters</p>
             			<div id="iact_toggle">

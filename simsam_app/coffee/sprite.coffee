@@ -193,7 +193,6 @@ class GenericSprite extends fabric.Image
         delete this._rules[1]
 
     isClone: ->
-        console.log('Checks if is Clone')
         if @_rules[1] != undefined
             return true
         return false
@@ -202,6 +201,14 @@ class GenericSprite extends fabric.Image
         r = new Rule()
         r.setActionType('sprout')
         this.setRule(2, r)
+
+    setSproutTarget: (targetValue) ->
+        r = this._rules[2]
+        r.action.setTarget(targetValue)
+
+    getSproutTarget: ->
+        r = this._rules[2]
+        return r.action.getTarget()
 
     removeSprout: ->
         delete this._rules[2]
@@ -655,15 +662,20 @@ class CloneAction extends Action
         super()
 
 class SproutAction extends Action
+    @targetClassType = null     # This should be an int
     constructor: ->
 
+    # This is similar to CloneAction's act, but in our case we spawn a
+    # different object (as specified in targetClassType).
     act: (sprite) ->
         # Interact at sprite.CloneFrequency % of the time
         if (Math.random() * 100) > (sprite.cloneFrequency)
             return
         if window.spriteTypeList[sprite.spriteType]::_count >= window.maxSprites
             return
-        newSprite = new window.spriteTypeList[sprite.spriteType]  # make one
+        sType = @targetClassType
+        newSprite = new window.spriteTypeList[sType]  # make one
+        console.log('Creating new object of type ' + sType)
         spriteList.push( newSprite )
         #newSprite.setTop(sprite.getTop() + Math.random() * 20 - 10)
         #newSprite.setLeft(sprite.getLeft() + Math.random() * 20 - 10)
@@ -678,6 +690,13 @@ class SproutAction extends Action
         canvas.add(newSprite)
         newSprite.setCoords()
         canvas.renderAll()
+
+    # Parameter should be an int representing the SpriteType
+    setTarget: (targetValue) ->
+        @targetClassType = targetValue
+
+    getTarget: ->
+        return @targetClassType
 
     toJSON: ->
         object = {}
@@ -898,6 +917,7 @@ window.loadSprites = (dataString) ->
 
     console.log("---- Here are our sprites ----")
     for obj in window.spriteTypeList
-        console.log(obj.src())
+        if (obj.src != undefined)
+            console.log(obj.src())
 
     canvas.renderAll()

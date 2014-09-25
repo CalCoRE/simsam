@@ -46,7 +46,8 @@
 }
 
 #sprite_drawer {
-	height:62.3%;
+	height:87%;
+	overflow:auto;
 	
 }
 
