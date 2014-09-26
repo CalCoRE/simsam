@@ -36,16 +36,16 @@ window.initSim = (function(){
             selectedObject.learningToggle();
             if (selectedObject.stateRecording) {
                 selectedObject.bringToFront();
-                $('#modifying').show(250);
+                modifyingShow(selectedObject);
                 if (selectedObject.isRandom()) {
-                    $('#uimod_rand').addClass('highlight');
+                    $('#uimod_rand').parent().addClass('highlight');
                     randomSliderShow(selectedObject);
                 }
                 if (selectedObject.isClone()) {
-                    $('#uimod_clone').addClass('highlight');
+                    $('#uimod_clone').parent().addClass('highlight');
                 }
                 if (selectedObject.isSprout()){
-                    $('#uimod_sprout').addClass('highlight');
+                    $('#uimod_sprout').parent().addClass('highlight');
                 }
             } else {
                 modifyingHide(selectedObject);
@@ -326,18 +326,19 @@ randomDrawArc = function(ang) {
 }
 
 randomSliderPosition = function(obj) {
-    leftPos = obj.getLeft();
-    topPos = obj.getTop();
-    width = obj.getWidth();
-    height = obj.getHeight();
-    sliderWidth = 150; // from CSS
+    var leftPos = obj.getLeft();
+    var topPos = obj.getTop();
+    var width = obj.getWidth();
+    var height = obj.getHeight();
+    var sliderWidth = 150; // from CSS
+    var offset = window.globalPos;
 
     posEl = $('#random-range');
 
     // + width/2 if left-aligned object
-    cpos = leftPos - sliderWidth/2;
-    tpos = topPos - height - 80;
-    if (tpos < 0) tpos = 0;
+    cpos = leftPos - sliderWidth/2 + offset.left;
+    tpos = topPos - (106 + 150) + offset.top;
+    if (tpos < offset.top) tpos = offset.top;
     $(posEl).css({ top: tpos, left: cpos });
 
     arcWidth = 150; // or = width
@@ -438,6 +439,7 @@ cloneWidgetShow = function(obj) {
     setCloneUILocation(cloneObj);
     $('#clone-data').data('value', 100);
     $('#clone-data').html('100%');
+    $('#clone-name').html('Clone');
     $('#clone-ui').show();
 }
 
@@ -534,6 +536,7 @@ sproutWidgetShow = function(obj) {
         delete spImage;
     }
     setSproutUILocation(cloneObj);
+    $('#clone-name').html('Sprout');
     $('#sprout-ui').show();
     
 }
@@ -610,15 +613,31 @@ modifyingHide = function(p_obj) {
         obj = canvas.getActiveObject();
     }
     $('#modifying').hide(250);
-    $('#uimod_rand').removeClass('highlight');
-    $('#uimod_clone').removeClass('highlight');
-    $('#uimod_sprout').removeClass('highlight');
+    $('#uimod_rand').parent().removeClass('highlight');
+    $('#uimod_clone').parent().removeClass('highlight');
+    $('#uimod_sprout').parent().removeClass('highlight');
     randomSliderHide(obj);
     // Clear recording if we're in the middle of it.
     if (obj && obj.stateRecording) {
         // if we should abort recording, just clear stateRecording
         obj.learningToggle();
     }
+}
+
+modifyingShow = function(obj) {
+    var offset = window.globalPos;
+    var posLeft = obj.getLeft();
+    var width = obj.getWidth();
+    var posTop = obj.getTop() + offset.top;
+    var height = obj.getHeight();
+    // Right now we're using centered positions.  Adjust.
+    posLeft += width / 2  + offset.left + 15; // +15 padding
+    posTop -= height;
+    $('#modifying').css({
+        top: posTop,
+        left: posLeft,
+    });
+    $('#modifying').show(250);
 }
 
 // Sim Measurables
@@ -682,15 +701,19 @@ uiInteractionCB = null;
 
 uiInteractionChoose = function(sprite, callback) {
     uiInteractionCB = callback;
-    posLeft = sprite.getLeft();
-    width = sprite.getWidth();
-    posTop = sprite.getTop();
-    height = sprite.getHeight();
+    var offset = window.globalPos;
+    var posLeft = sprite.getLeft();
+    var width = sprite.getWidth();
+    var posTop = sprite.getTop() + offset.top;
+    var height = sprite.getHeight();
     // Right now we're using centered positions.  Adjust.
-    posLeft += width / 2 + 15; // +15 padding
+    posLeft += width / 2  + offset.left + 15; // +15 padding
     posTop -= height;
     $('#interactions').css("top", posTop);
     $('#interactions').css("left", posLeft);
+
+    // Hide Individual behaviors (if shown) and show our menu
+    modifyingHide(sprite);
     $('#interactions').show();
 }
 
@@ -803,10 +826,10 @@ $(document).ready(function() {
         obj.setRandom(!random);
 
         if (obj.showRandom()) {
-            $(this).addClass('highlight');
+            $(this).parent().addClass('highlight');
             randomSliderShow(obj);
         } else {
-            $(this).removeClass('highlight');
+            $(this).parent().removeClass('highlight');
             randomSliderHide(obj);
         }
     });

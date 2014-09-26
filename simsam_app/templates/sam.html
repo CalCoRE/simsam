@@ -108,13 +108,7 @@
             	  <div id="selected" >
             		  <h3>Modify Sprite</h3>
             		  <div id="uise_del" class="menu_button">Delete</div>
-            		  <div id="uise_delall" class="menu_button">Delete All</div>
-            	  </div>
-            	  <!-- Modifying Chooser -->
-            	  <div id="modifying" >
-            		  <div id="uimod_rand" class="menu_button">Randomize</div>
-            		  <div id="uimod_clone" class="menu_button">Clone</div>
-                      <div id="uimod_sprout" class="menu_button">Sprout</div>
+            		  <div style="display: none; /* only hide to preserve functionality for future if needed */" id="uise_delall" class="menu_button">Delete All</div>
             	  </div>
                 </div>
                 <div id="sprite_drawer">
@@ -163,25 +157,37 @@
     
 <!-- Interaction Chooser -->
     <div id="interactions" class="simui ui-backround">
-        <div class="animation-head"><h4>Animation Menu</h4>
+        <div class="animation-head"><h4>Interaction Menu</h4>
             <a id ="uich_close" class="uich" href="#">
-	        <span class="close-btn" style="margin-top:-20px; margin-right:-5px;"><span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span></span>
-	    </a>
+                <span class="close-btn" style="margin-top:-20px; margin-right:-5px;"><span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span></span>
+            </a>
         </div>
-	<div class="container">
+        <div class="container">
 
-      <h3>Action</h3>
-      <ul>
-    	  <li><a id="uich_trans" class="uich" href="#">Translate</a></li>
-    	  <li><a id="uich_clone" class="uich" href="#">Clone</a></li>
-    	  <li><a id="uich_delete" class="uich" href="#">Delete</a></li>
-      </ul>
-      </div>
+            <h3>Action</h3>
+            <ul>
+                <li><a id="uich_trans" class="uich" href="#">Translate</a></li>
+                <li><a id="uich_clone" class="uich" href="#">Clone</a></li>
+                <li><a id="uich_delete" class="uich" href="#">Delete</a></li>
+            </ul>
+        </div>
+    </div> <!-- #interactions -->
+
+    <!-- Modifying Chooser -->
+    <div id="modifying" class="ui-background simui">
+        <div class="animation-head" unselectable="on">
+            <h4 unselectable="on">Individual Actions</h4>
+        </div>
+        <ul>
+            <li><a id="uimod_rand" >Randomize</a></li>
+            <li><a id="uimod_clone" >Clone</a></li>
+            <li><a id="uimod_sprout">Sprout</a></li>
+        </ul>
     </div>
 
 <!-- Random Range Slider -->
     <div id="random-range" class="ui-background">
-        <div class="animation-head"><h4>Animation Menu</h4>
+        <div class="animation-head"><h4>Random Range Value</h4>
             <a href="#" onclick="randomSliderHide();">
 	        <span class="close-btn"><span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span></span>
 	    </a>
@@ -197,13 +203,13 @@
     
 <!-- Clone -->
     <div id="clone-ui" class="ui-hover ui-background">
-	<div class="animation-head"><h4>Animation Menu</h4>
+	<div class="animation-head"><h4>Frequency Setting</h4>
             <a href="#" onclick="cloneWidgetHide();">
 	        <span class="close-btn"><span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span></span>
 	    </a>
         </div>
 	<div class="container">
-            <h3>Clone</h3>
+            <h3 id="clone-name">Clone</h3>
 
             <a class="op-btn" id="clone-minus" href="#">-</a>
             <div id="clone-data" data-value="100">100%</div>
@@ -222,7 +228,7 @@
     <!-- END INTERFACE PANELS -->
     
     <!-- PERSISTENT FLOATING ICONS HERE -->
-    <div id="home_button" onclick="window.location = '/'"><img class="icon" src="static/images/newicons/home.png"></div>
+    <div id="home_button" unselectable="on" onclick="window.location = '/'"><img class="icon" src="static/images/newicons/home.png"></div>
     <div class="title">SiMSAM</div>
     <div id="help_button" onclick="window.location = 'about/'"><img class="icon" src="static/images/newicons/help.png"></div></div>
     <a href="#" id="save"></a>

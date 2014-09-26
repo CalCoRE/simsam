@@ -566,6 +566,11 @@ a.close {
 #modifying {
 	display: none;
 	text-align: center;
+	position: fixed;
+	top: 100px;
+	left: 100px;
+	box-shadow: 2px 2px 4px;
+	z-index: 30;
 }
 
 #dialog-confirm {
@@ -624,6 +629,7 @@ a.close {
 	padding: 20px;
 	display: none;
 	text-align: center;
+	z-index: 100;
 }
 
 #sprout-ui img {

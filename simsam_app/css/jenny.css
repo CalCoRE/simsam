@@ -208,6 +208,13 @@ div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:hov
 	border-color:#62c004;
 }
 
+.simui ul li.highlight {
+	background: white;
+}
+.simui ul li.highlight a {
+	color: black;
+}
+
 .simui ul li:first-child {
 	border:0;
 }
