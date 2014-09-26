@@ -28,7 +28,7 @@
       });
       this.closeButton = cb;
       canvas.bringToFront(cb);
-      this.group = new CoffeeGroup(this, [this, cb], {
+      this.group = new TextGroup(this, [this, cb], {
         left: 100,
         top: 100
       });
@@ -78,36 +78,47 @@
 
   })(fabric.Text);
 
-  window.CoffeeGroup = (function(_super) {
+  window.TextGroup = (function(_super) {
 
-    __extends(CoffeeGroup, _super);
+    __extends(TextGroup, _super);
 
-    function CoffeeGroup(text, list, object) {
+    function TextGroup(text, list, object) {
       this.text = text;
-      CoffeeGroup.__super__.constructor.call(this, list, object);
+      TextGroup.__super__.constructor.call(this, list, object);
     }
 
-    CoffeeGroup.prototype.modified = function() {
+    TextGroup.prototype.modified = function() {
       return this.text.modified();
     };
 
-    CoffeeGroup.prototype.selected = function() {
+    TextGroup.prototype.selected = function() {
       return this.text.selected();
     };
 
-    CoffeeGroup.prototype.cleared = function() {
+    TextGroup.prototype.cleared = function() {
       return this.text.cleared();
     };
 
-    CoffeeGroup.prototype.setText = function(text) {
+    TextGroup.prototype.setText = function(text) {
       return this.text.setText(text);
     };
 
-    CoffeeGroup.prototype.getText = function() {
+    TextGroup.prototype.getText = function() {
       return this.text.getText();
     };
 
-    return CoffeeGroup;
+    TextGroup.prototype.shouldClose = function(point) {
+      var cb;
+      cb = this.text.closeButton;
+      console.log('closeClick test: L: ' + cb.getLeft() + ' T: ' + cb.getTop() + ' point: ' + point.x + ', ' + point.y);
+      if (cb.containsPoint(point)) {
+        canvas.remove(this.text);
+        canvas.remove(cb);
+        return canvas.remove(this);
+      }
+    };
+
+    return TextGroup;
 
   })(fabric.Group);
 

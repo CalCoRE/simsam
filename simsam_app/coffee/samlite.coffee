@@ -544,6 +544,7 @@ $ ->
             $(".sprite-chart").each (index, thumbnail) ->
                 $(this).show()
         window.loadSpriteTypes()
+        canvas.renderAll()
     
     startSamlite = ->
         # show SAM containers

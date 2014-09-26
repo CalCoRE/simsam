@@ -13,6 +13,7 @@ window.initSim = (function(){
     canvas.on({'object:modified': simObjectModified});
     canvas.on({'object:selected': simObjectSelected});
     canvas.on({'selection:cleared': simObjectCleared});
+    canvas.on({'mouse:down': simObjectClicked});
     canvas.on("after:render", function(){canvas.calcOffset();}); // for mouse offset issues
     window.globalPos = $('#construction_frame').offset();
     
@@ -30,7 +31,7 @@ window.initSim = (function(){
         selectedObject = canvas.getActiveObject();
 
         // If double-click a text object
-        if (selectedObject instanceof CoffeeGroup) {
+        if (selectedObject instanceof TextGroup) {
             textBeginEditing(selectedObject);
             return;
         }
@@ -133,8 +134,34 @@ getD = function(init , end) {
     }
 }
 
+// Mouse-down detection. Only used for 'close' button detection.
+simObjectClicked = function(options) {
+    if (options.target && options.e) {
+        var e = options.e;
+        var target = options.target;
+        var clickTime = (new Date()).getTime();
+
+        var adjustedX = e.layerX - target.getLeft();
+        var adjustedY = e.layerY - target.getTop();
+
+        var point = new fabric.Point(adjustedX, adjustedY);
+        // N.B. If you stop in a debugger, this will always pass
+        if (clickTime < (g_clickTime + 100)) {
+            // If we were selected w/i last 100ms, it's the same click
+            return;
+        }
+
+        if (currentSimObject instanceof TextGroup){
+            currentSimObject.shouldClose(point);
+        }
+    }
+
+}
+
+// Handler for any object in Fabric.js that is selected (single clicked).
 simObjectSelected = function(options) {
     if (typeof options.target.selected === 'function') {
+        g_clickTime = (new Date()).getTime();
         options.target.selected();
     }
     if (cloneObj != null && canvas.getActiveObject() != cloneObj) {
@@ -733,6 +760,8 @@ uiInteractionChoose = function(sprite, callback) {
 // 
 // Text Editing Functions
 //
+// See toolTextClick for creation
+
 textBeginEditing = function(obj) {
     currentTextObject = obj;
 
@@ -794,8 +823,8 @@ toolTextClick = function(obj, ev) {
     //var text = new fabric.Text('default text', {textAlign: 'center'});
     text.set('originX', 'center');
     text.set('originY', 'center');
-    //text.setLeft(canvas.getWidth() / 2);
-    //text.setTop(canvas.getHeight() / 2);
+    text.setLeft(canvas.getWidth() / 2);
+    text.setTop(canvas.getHeight() / 2);
 
     /*
     var imgElement = document.createElement('img');

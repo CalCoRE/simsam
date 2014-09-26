@@ -25,7 +25,7 @@ class window.TextLabel extends fabric.Text
         @closeButton = cb
         canvas.bringToFront(cb)
 
-        @group = new CoffeeGroup(this, [this, cb], {left: 100, top: 100})
+        @group = new TextGroup(this, [this, cb], {left: 100, top: 100})
 
     # Methods
     addToCanvas: ->
@@ -62,7 +62,7 @@ class window.TextLabel extends fabric.Text
         canvas.add(this)
         this.setCoords()
 
-class window.CoffeeGroup extends fabric.Group
+class window.TextGroup extends fabric.Group
     constructor: (text, list, object) ->
         @text = text
         super(list, object)
@@ -81,3 +81,12 @@ class window.CoffeeGroup extends fabric.Group
 
     getText: () ->
         @text.getText()
+
+    shouldClose: (point) ->
+        cb = @text.closeButton
+        console.log ('closeClick test: L: ' + cb.getLeft() + ' T: ' + cb.getTop() + ' point: ' + point.x + ', ' + point.y)
+        if (cb.containsPoint(point))
+            canvas.remove(@text)
+            canvas.remove(cb)
+            canvas.remove(this)
+
