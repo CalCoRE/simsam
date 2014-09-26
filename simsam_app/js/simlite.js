@@ -28,6 +28,12 @@ window.initSim = (function(){
         if (loc.x > width || loc.y > height) return;
         console.log('toggleRecord');
         selectedObject = canvas.getActiveObject();
+
+        // If double-click a text object
+        if (selectedObject instanceof CoffeeGroup) {
+            textBeginEditing(selectedObject);
+            return;
+        }
         // if one object is selected this fires
         if (selectedObject !== null && selectedObject !== undefined) { 
             if (! (typeof selectedObject['learningToggle'] === 'function')) {
@@ -128,6 +134,9 @@ getD = function(init , end) {
 }
 
 simObjectSelected = function(options) {
+    if (typeof options.target.selected === 'function') {
+        options.target.selected();
+    }
     if (cloneObj != null && canvas.getActiveObject() != cloneObj) {
         cloneWidgetHide();
         return;
@@ -145,6 +154,9 @@ simObjectSelected = function(options) {
 }
 
 simObjectCleared = function(options) {
+    if (typeof currentSimObject.cleared === 'function') {
+        currentSimObject.cleared();
+    }
     if (cloneObj != null) {
         cloneWidgetHide();
         return;
@@ -162,6 +174,7 @@ simObjectCleared = function(options) {
 simObjectModified = function(options) {
     if (options.target) {
         target = options.target;
+
         if (typeof target.modified === 'function') {
             target.modified();
         }
@@ -717,6 +730,43 @@ uiInteractionChoose = function(sprite, callback) {
     $('#interactions').show();
 }
 
+// 
+// Text Editing Functions
+//
+textBeginEditing = function(obj) {
+    currentTextObject = obj;
+
+    var offset = window.globalPos;
+    var textbox = $('#text-modify');
+    var textValue = obj.getText();
+    $('#text-alter-field').val(textValue);
+
+    $(textbox).css({
+        top: globalPos.top + canvas.getHeight() / 2 - $(textbox).height() / 2,
+        left: globalPos.left + canvas.getWidth() / 2 - $(textbox).width() / 2,
+    });
+    $(textbox).show(250);
+}
+
+textEditSet = function(obj, ev) {
+    var textbox = $('#text-alter-field');
+    currentTextObject.setText($(textbox).val());
+    console.log('Text: ' + $(textbox).val());
+    canvas.renderAll();
+    $('#text-modify').hide(250);
+}
+
+textEditCancel = function(obj, ev) {
+    $('#text-modify').hide(250);
+}
+
+textEditDelete = function(obj, ev) {
+}
+
+//
+// Click Event Handlers
+//
+
 spriteChartClick = function(obj, ev) {
     var i;
     var sprite = null;
@@ -737,6 +787,24 @@ spriteChartClick = function(obj, ev) {
     ourOpt['height'] = '50px';
     $('#count_big_chart').sparkline(sprite.prototype.getHistory(), ourOpt);
     ev.stopPropagation();
+}
+
+toolTextClick = function(obj, ev) {
+    var text = new TextLabel('default text');
+    //var text = new fabric.Text('default text', {textAlign: 'center'});
+    text.set('originX', 'center');
+    text.set('originY', 'center');
+    //text.setLeft(canvas.getWidth() / 2);
+    //text.setTop(canvas.getHeight() / 2);
+
+    /*
+    var imgElement = document.createElement('img');
+    imgElement.src = '/static/images/close-24.png';
+    var close = new fabric.Image(imgElement, {originY: 'bottom', originX: 'right'});
+    var group = new fabric.Group([text, close]);
+    */
+    text.addToCanvas();
+    //canvas.add(group);
 }
 
 window.save = function() {

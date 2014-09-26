@@ -397,6 +397,10 @@ a.close {
         background-position:-386px 2px;
 }
 
+#text_tool {
+	background-position: -496px 2px;
+}
+
 #counts.highlight,
 #count_chart.highlight {
 	background-color: #ffff80;
@@ -639,6 +643,30 @@ a.close {
 	border-width: 5px;
 	border-radius: 15px;
 	border-style: solid;
+}
+
+#text-modify {
+	position: absolute;
+	top: 20px;
+	left; 100px; /* Change this */
+	z-index: 100;
+	font-size: 120%;
+	display: none;
+}
+
+#text-modify input {
+	font-size: 24px;
+}
+.text-buttons a {
+	float: right;
+	border: none;
+}
+.text-buttons .text-set {
+	margin-right: 10px;
+	margin-left: 10px;
+}
+.text-buttons .text-cancel {
+	margin-right: 10px;
 }
 
 #data {

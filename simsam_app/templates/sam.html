@@ -22,6 +22,7 @@
     <script src="{{ STATIC_URL }}js/cropTool.js"></script>
     <script src="{{ STATIC_URL }}js/Fabric.js"></script>
     <script src="{{ STATIC_URL }}js/tracker.js"></script>
+    <script src="{{ STATIC_URL }}js/text.js"></script>
     <script src="{{ STATIC_URL }}js/sprite.js"></script>
     <script src="{{ STATIC_URL }}js/simlite.js"></script>
     <script src="{{ STATIC_URL }}js/samlite.js"></script>
@@ -130,11 +131,14 @@
             		<div id="trash"><img class="icon" src="static/images/newicons/trash.png"></div>
             	</div> <!-- video_bottom -->
 				<div class="sim_bottom">
-					<div id="sim_buttons" style="display:none;">
+					<div class="play_buttons" id="sim_buttons" style="display:none;">
 						<div id="step" onclick="tick()"></div>
 						<div id="run" onclick="toggleSim()"></div>
 						<div id="clear" onclick="clearTrackers()"></div>
 					</div>
+                    <div id="sim_tools" class="sim_buttons">
+                        <div id="text_tool" onclick="toolTextClick();"></div>
+                    </div>
             		<div class="sim_buttons">
             			<p style="clear: both;">Counters</p>
             			<div id="iact_toggle">
@@ -204,10 +208,10 @@
 <!-- Clone -->
     <div id="clone-ui" class="ui-hover ui-background">
 	<div class="animation-head"><h4>Frequency Setting</h4>
-            <a href="#" onclick="cloneWidgetHide();">
-	        <span class="close-btn"><span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span></span>
-	    </a>
-        </div>
+        <a href="#" onclick="cloneWidgetHide();">
+            <span class="close-btn"><span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span></span>
+        </a>
+    </div>
 	<div class="container">
             <h3 id="clone-name">Clone</h3>
 
@@ -223,6 +227,21 @@
 
     <div id="dialog-confirm" title="Delete this object?">
       <p><span class="ui-icon ui-icon-alert" style="float: left; margin:0 7px 20px 0;"></span><span id="message-text">This item will be permanently deleted.  Are you sure?</span></p>
+    </div>
+
+    <div id="text-modify" class="ui-background" >
+	<div class="animation-head"><h4>Set Text</h4>
+        <a href="#" onclick="textEditCancel();">
+            <span class="close-btn"><span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span></span>
+        </a>
+    </div>
+    <div>
+        <input id="text-alter-field" />
+    </div>
+    <div class="text-buttons">
+        <a class="text-cancel" href="#" onclick="textEditCancel();">Cancel</a>
+        <a class="text-set" href="#" onclick="textEditSet();">Set</a>
+    </div>
     </div>
     
     <!-- END INTERFACE PANELS -->
