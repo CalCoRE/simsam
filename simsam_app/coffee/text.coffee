@@ -6,6 +6,8 @@ class window.TextLabel extends fabric.Text
     constructor: (textBody) ->
         @closeButton = null
         @group = null
+        @load_left = null
+        @load_top = null
 
         super(textBody, {
             textAlign: 'center',
@@ -14,6 +16,7 @@ class window.TextLabel extends fabric.Text
             fontFamily: 'Averia Sans Libre',
         })
 
+    init: ->
         imgElement = document.createElement('img')
         imgElement.src = '/static/images/close-24.png'
         cb = new fabric.Image(imgElement, {
@@ -24,8 +27,15 @@ class window.TextLabel extends fabric.Text
         })
         @closeButton = cb
         canvas.bringToFront(cb)
-
-        @group = new TextGroup(this, [this, cb], {left: 100, top: 100})
+        # Some simple defaults
+        if (@load_left == null)
+            @load_left = 100
+        if (@load_top == null)
+            @load_top = 100
+        @group = new TextGroup(this, [this, cb], {left: @load_left, top: @load_top})
+        #@group = new TextGroup(this, [this, cb], {left: 100, top: 100})
+        window.textList.push(this)
+        console.log ('Total number of text elements ' + window.textList.length)
 
     # Methods
     addToCanvas: ->
@@ -42,7 +52,6 @@ class window.TextLabel extends fabric.Text
     modified: ->
 
     selected: ->
-        console.log('I was selected: opacity 1')
         @closeButton.set('opacity', 1)
         canvas.renderAll()
 
@@ -53,14 +62,20 @@ class window.TextLabel extends fabric.Text
     # Save and Load functions
     saveToJSON: ->
         jsonObj = {}
-        jsonObj['fabric'] = JSON.stringify(this.toJSON())
+        #jsonObj['fabric'] = JSON.stringify(this.toJSON())
+        jsonObj['text'] = this.getText()
+        jsonObj['left'] = @group.getLeft()
+        jsonObj['top'] = @group.getTop()
+        console.log(jsonObj)
+        return jsonObj
 
     restoreFromJSON: (json) ->
-        fabricObj = JSON.parse(json['fabric'])
-        this.constructor.fromObject(fabricObj)
-        this._initConfig(fabricObj)
-        canvas.add(this)
+        @load_left = json['left']
+        @load_top = json['top']
+        this.setText(json['text'])
         this.setCoords()
+        this.init()
+        this.addToCanvas()
 
 class window.TextGroup extends fabric.Group
     constructor: (text, list, object) ->
@@ -82,11 +97,28 @@ class window.TextGroup extends fabric.Group
     getText: () ->
         @text.getText()
 
+    # Delete the group and objects if the close button was clicked.
     shouldClose: (point) ->
         cb = @text.closeButton
-        console.log ('closeClick test: L: ' + cb.getLeft() + ' T: ' + cb.getTop() + ' point: ' + point.x + ', ' + point.y)
         if (cb.containsPoint(point))
             canvas.remove(@text)
             canvas.remove(cb)
             canvas.remove(this)
 
+            # Remove from global list
+            idx = window.textList.indexOf(@text)
+            if idx >= 0
+                window.textList.splice(idx, 1)
+
+    # Save and Load functions
+    # N.B. We might not need this right now
+    saveToJSON: ->
+        jsonObj = {}
+        jsonObj['left'] = this.getLeft()
+        jsonObj['top'] = this.getTop()
+
+    restoreFromJSON: (json) ->
+        this.setLeft(json['left'])
+        this.setTop(json['top'])
+        canvas.add(this)
+        this.setCoords()

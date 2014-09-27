@@ -355,7 +355,6 @@
       var idx;
       idx = spriteList.indexOf(this);
       if (idx >= 0) {
-        console.log('splicing ' + idx);
         spriteList.splice(idx, 1);
         return this.subtractCount();
       }
@@ -958,6 +957,8 @@
 
   window.spriteDeleteList = [];
 
+  window.textList = [];
+
   window.tick = function() {
     var sprite, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m;
     for (_i = 0, _len = spriteList.length; _i < _len; _i++) {
@@ -1031,7 +1032,7 @@
   };
 
   window.saveSprites = function() {
-    var masterObj, obj, objects, oneType, rule, ruleJSON, string, type, typeObjects, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1;
+    var masterObj, obj, objects, oneType, rule, ruleJSON, string, textElements, type, typeObjects, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1;
     masterObj = {};
     typeObjects = [];
     for (_i = 0, _len = spriteTypeList.length; _i < _len; _i++) {
@@ -1072,6 +1073,12 @@
       objects.push(obj.saveToJSON());
     }
     masterObj.objects = objects;
+    textElements = [];
+    for (_m = 0, _len4 = textList.length; _m < _len4; _m++) {
+      obj = textList[_m];
+      textElements.push(obj.saveToJSON());
+    }
+    masterObj.textElements = textElements;
     string = JSON.stringify(masterObj);
     $('#data').html(string);
     console.log(typeObjects);
@@ -1079,7 +1086,7 @@
   };
 
   window.loadSprites = function(dataString) {
-    var idx, imageObjects, img, imgSrc, inObject, iruleData, newSprite, obj, rule, ruleData, sprite, tmpList, typeFactory, typeObj, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _len5, _m, _n, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
+    var idx, imageObjects, img, imgSrc, inObject, iruleData, newSprite, newText, obj, rule, ruleData, sprite, tmpList, txt, typeFactory, typeObj, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _len5, _len6, _m, _n, _o, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
     tmpList = [];
     window.spriteTypeList = [];
     _ref = window.spriteList;
@@ -1138,10 +1145,18 @@
       newSprite.restoreFromJSON(obj);
       window.spriteList.push(newSprite);
     }
+    if (inObject.textElements !== void 0) {
+      _ref5 = inObject.textElements;
+      for (_n = 0, _len5 = _ref5.length; _n < _len5; _n++) {
+        txt = _ref5[_n];
+        newText = new TextLabel('Default');
+        newText.restoreFromJSON(txt);
+      }
+    }
     console.log("---- Here are our sprites ----");
-    _ref5 = window.spriteTypeList;
-    for (_n = 0, _len5 = _ref5.length; _n < _len5; _n++) {
-      obj = _ref5[_n];
+    _ref6 = window.spriteTypeList;
+    for (_o = 0, _len6 = _ref6.length; _o < _len6; _o++) {
+      obj = _ref6[_o];
       if (obj.src !== void 0) {
         console.log(obj.src());
       }

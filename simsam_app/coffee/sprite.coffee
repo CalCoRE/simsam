@@ -291,7 +291,6 @@ class GenericSprite extends fabric.Image
     removeFromList: ->
         idx = spriteList.indexOf(this)
         if idx >= 0
-            console.log('splicing ' + idx)
             spriteList.splice(idx, 1)
             this.subtractCount()
 
@@ -771,6 +770,7 @@ class TransformAction extends Action
 window.spriteList = []
 window.spriteTypeList = []
 window.spriteDeleteList = []
+window.textList = []
 
 # Take another simulation step
 #  First, apply simple rules
@@ -866,6 +866,11 @@ window.saveSprites = ->
         objects.push(obj.saveToJSON())
     masterObj.objects = objects
 
+    textElements = []
+    for obj in textList
+        textElements.push(obj.saveToJSON())
+    masterObj.textElements = textElements
+
     string = JSON.stringify(masterObj)
     $('#data').html(string)
 
@@ -914,6 +919,12 @@ window.loadSprites = (dataString) ->
         newSprite = new window.spriteTypeList[obj.spriteType]  # make one
         newSprite.restoreFromJSON(obj)
         window.spriteList.push(newSprite)
+
+    if (inObject.textElements != undefined)
+        for txt in inObject.textElements
+            newText = new TextLabel('Default')
+            newText.restoreFromJSON(txt)
+            # Don't push to the list, constructor does it
 
     console.log("---- Here are our sprites ----")
     for obj in window.spriteTypeList

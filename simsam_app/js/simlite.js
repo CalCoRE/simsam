@@ -4,6 +4,7 @@ window.initSim = (function(){
     currentTracker = null;          // operating measure object
     currentSimObject = null;
     cloneObj = null;
+    g_clickTime = 0;
 
     /* Create a new fabric.Canvas object that wraps around the original <canvas>
      * DOM element.
@@ -220,7 +221,8 @@ simObjectModified = function(options) {
                console.log('obj === target. Line 155 simlite.js');  
                 return;
             }
-            if (obj.trueIntersectsWithObject(target)) {
+            if (typeof obj.trueIntersectsWithObject === 'function' &&
+                obj.trueIntersectsWithObject(target)) {
                 console.log('obj intersected.  Line 159 simlite.js');
                 if (typeof(target.interactionEvent) != "undefined") {
                     console.log('interactionEvent not undefined.  Line 161 simlite.js');
@@ -820,9 +822,8 @@ spriteChartClick = function(obj, ev) {
 
 toolTextClick = function(obj, ev) {
     var text = new TextLabel('default text');
+    text.init()
     //var text = new fabric.Text('default text', {textAlign: 'center'});
-    text.set('originX', 'center');
-    text.set('originY', 'center');
     text.setLeft(canvas.getWidth() / 2);
     text.setTop(canvas.getHeight() / 2);
 
@@ -837,6 +838,7 @@ toolTextClick = function(obj, ev) {
 }
 
 window.save = function() {
+    console.log("Saving!");
     rawData = saveSprites();
     $.ajax({
         url: 'save_sim_state',

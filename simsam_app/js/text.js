@@ -8,15 +8,20 @@
     __extends(TextLabel, _super);
 
     function TextLabel(textBody) {
-      var cb, imgElement;
       this.closeButton = null;
       this.group = null;
+      this.load_left = null;
+      this.load_top = null;
       TextLabel.__super__.constructor.call(this, textBody, {
         textAlign: 'center',
         originX: 'center',
         originY: 'center',
         fontFamily: 'Averia Sans Libre'
       });
+    }
+
+    TextLabel.prototype.init = function() {
+      var cb, imgElement;
       imgElement = document.createElement('img');
       imgElement.src = '/static/images/close-24.png';
       cb = new fabric.Image(imgElement, {
@@ -28,11 +33,19 @@
       });
       this.closeButton = cb;
       canvas.bringToFront(cb);
+      if (this.load_left === null) {
+        this.load_left = 100;
+      }
+      if (this.load_top === null) {
+        this.load_top = 100;
+      }
       this.group = new TextGroup(this, [this, cb], {
-        left: 100,
-        top: 100
+        left: this.load_left,
+        top: this.load_top
       });
-    }
+      window.textList.push(this);
+      return console.log('Total number of text elements ' + window.textList.length);
+    };
 
     TextLabel.prototype.addToCanvas = function() {
       return canvas.add(this.group);
@@ -49,7 +62,6 @@
     TextLabel.prototype.modified = function() {};
 
     TextLabel.prototype.selected = function() {
-      console.log('I was selected: opacity 1');
       this.closeButton.set('opacity', 1);
       return canvas.renderAll();
     };
@@ -62,16 +74,20 @@
     TextLabel.prototype.saveToJSON = function() {
       var jsonObj;
       jsonObj = {};
-      return jsonObj['fabric'] = JSON.stringify(this.toJSON());
+      jsonObj['text'] = this.getText();
+      jsonObj['left'] = this.group.getLeft();
+      jsonObj['top'] = this.group.getTop();
+      console.log(jsonObj);
+      return jsonObj;
     };
 
     TextLabel.prototype.restoreFromJSON = function(json) {
-      var fabricObj;
-      fabricObj = JSON.parse(json['fabric']);
-      this.constructor.fromObject(fabricObj);
-      this._initConfig(fabricObj);
-      canvas.add(this);
-      return this.setCoords();
+      this.load_left = json['left'];
+      this.load_top = json['top'];
+      this.setText(json['text']);
+      this.setCoords();
+      this.init();
+      return this.addToCanvas();
     };
 
     return TextLabel;
@@ -108,14 +124,31 @@
     };
 
     TextGroup.prototype.shouldClose = function(point) {
-      var cb;
+      var cb, idx;
       cb = this.text.closeButton;
-      console.log('closeClick test: L: ' + cb.getLeft() + ' T: ' + cb.getTop() + ' point: ' + point.x + ', ' + point.y);
       if (cb.containsPoint(point)) {
         canvas.remove(this.text);
         canvas.remove(cb);
-        return canvas.remove(this);
+        canvas.remove(this);
+        idx = window.textList.indexOf(this.text);
+        if (idx >= 0) {
+          return window.textList.splice(idx, 1);
+        }
       }
+    };
+
+    TextGroup.prototype.saveToJSON = function() {
+      var jsonObj;
+      jsonObj = {};
+      jsonObj['left'] = this.getLeft();
+      return jsonObj['top'] = this.getTop();
+    };
+
+    TextGroup.prototype.restoreFromJSON = function(json) {
+      this.setLeft(json['left']);
+      this.setTop(json['top']);
+      canvas.add(this);
+      return this.setCoords();
     };
 
     return TextGroup;
