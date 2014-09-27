@@ -617,6 +617,15 @@ a.close {
 	text-decoration: none;
 }
 
+#select-action {
+	width: 220px;
+	position: absolute;
+}
+
+#select-action ul li {
+	font-size: 22px;
+}
+
 /******************************************/
 /***** Floating Menu for sprout ***********/
 /******************************************/

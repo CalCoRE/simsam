@@ -21,45 +21,35 @@ window.initSim = (function(){
     setCanvasSize($(this).width());
     
     // listen for a doubleclick. 
-    fabric.util.addListener(fabric.document, 'dblclick', toggleRecord);
-    function toggleRecord(ev) {
+    fabric.util.addListener(fabric.document, 'dblclick', handleDoubleClick);
+    function handleDoubleClick(ev) {
         // Assert we're at least clicking on the canvas
-        loc = canvas.getPointer(ev);
-        width = canvas.getWidth();
-        height = canvas.getHeight();
+        var loc = canvas.getPointer(ev);
+        var width = canvas.getWidth();
+        var height = canvas.getHeight();
         if (loc.x > width || loc.y > height) return;
-        console.log('toggleRecord');
-        selectedObject = canvas.getActiveObject();
+
+        var selectedObject = canvas.getActiveObject();
 
         // If double-click a text object
         if (selectedObject instanceof TextGroup) {
             textBeginEditing(selectedObject);
             return;
         }
-        // if one object is selected this fires
         if (selectedObject !== null && selectedObject !== undefined) { 
             if (! (typeof selectedObject['learningToggle'] === 'function')) {
                 return;
             }
-            selectedObject.learningToggle();
             if (selectedObject.stateRecording) {
-                selectedObject.bringToFront();
-                modifyingShow(selectedObject);
-                if (selectedObject.isRandom()) {
-                    $('#uimod_rand').parent().addClass('highlight');
-                    randomSliderShow(selectedObject);
-                }
-                if (selectedObject.isClone()) {
-                    $('#uimod_clone').parent().addClass('highlight');
-                }
-                if (selectedObject.isSprout()){
-                    $('#uimod_sprout').parent().addClass('highlight');
-                }
+                endRecording(selectedObject);
             } else {
-                modifyingHide(selectedObject);
+                // Change to menu
+                showSelectAction(selectedObject);
             }
         }
     }
+
+    // Last things to do when we load
     window.load(); // when I first load the project, load any saved sim stuff
 });
 
@@ -218,7 +208,7 @@ simObjectModified = function(options) {
         //   then begin the creation of an interaction rule.
         canvas.forEachObject(function(obj) {
             if (obj === target){
-               console.log('obj === target. Line 155 simlite.js');  
+                console.log('obj === target. Line 155 simlite.js');  
                 return;
             }
             if (typeof obj.trueIntersectsWithObject === 'function' &&
@@ -232,6 +222,60 @@ simObjectModified = function(options) {
                 }
             }
         });
+    }
+}
+
+showSelectAction = function(selectedObject) {
+    var menu_width = 220;
+    var menu_height = 138;
+    // Position select-action 
+    var cX = selectedObject.getLeft() + globalPos.left;
+    var cY = selectedObject.getTop()+ globalPos.top;
+
+    var sa = $('#select-action');
+
+    var pX = cX - menu_width / 2;
+    var pY = cY - menu_height / 2;
+    $(sa).css({
+        top: pY,
+        left: pX,
+    });
+
+    $('#select-action').show();
+    $('#select-behavior').click(function(ev){
+        $('#select-action').hide();
+        startRecording(selectedObject);
+    });
+    $('#select-delete').click(function(ev){
+        $('#select-action').hide();
+        deleteImageSingle(selectedObject);
+    });
+}
+
+// Behavior recording functions
+function endRecording(selectedObject) {
+    selectedObject.learningToggle();
+    modifyingHide(selectedObject);
+}
+
+function startRecording(selectedObject) {
+    console.log('startRecording');
+
+    // if one object is selected this fires
+    selectedObject.learningToggle();
+    if (selectedObject.stateRecording) {
+        selectedObject.bringToFront();
+        modifyingShow(selectedObject);
+        if (selectedObject.isRandom()) {
+            $('#uimod_rand').parent().addClass('highlight');
+            randomSliderShow(selectedObject);
+        }
+        if (selectedObject.isClone()) {
+            $('#uimod_clone').parent().addClass('highlight');
+        }
+        if (selectedObject.isSprout()){
+            $('#uimod_sprout').parent().addClass('highlight');
+        }
     }
 }
 
