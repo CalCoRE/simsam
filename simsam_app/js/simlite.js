@@ -159,6 +159,11 @@ simObjectSelected = function(options) {
         cloneWidgetHide();
         return;
     }
+    
+    // If a text element is selected and we click something else, clear it
+    if (currentSimObject && typeof currentSimObject.cleared === 'function') {
+        currentSimObject.cleared();
+    }
     // We're waiting for a select to occur on a measurement
     if (interactionWaiting) {
         currentTracker.targetSprite = canvas.getActiveObject();
@@ -936,18 +941,10 @@ spriteChartClick = function(obj, ev) {
 toolTextClick = function(obj, ev) {
     var text = new TextLabel('default text');
     text.init()
-    //var text = new fabric.Text('default text', {textAlign: 'center'});
     text.setLeft(canvas.getWidth() / 2);
     text.setTop(canvas.getHeight() / 2);
 
-    /*
-    var imgElement = document.createElement('img');
-    imgElement.src = '/static/images/close-24.png';
-    var close = new fabric.Image(imgElement, {originY: 'bottom', originX: 'right'});
-    var group = new fabric.Group([text, close]);
-    */
     text.addToCanvas();
-    //canvas.add(group);
 }
 
 window.save = function() {
