@@ -40,7 +40,7 @@ window.initSim = (function(){
             if (! (typeof selectedObject['learningToggle'] === 'function')) {
                 return;
             }
-            if (selectedObject.stateRecording) {
+            if (selectedObject.stateRecording || interactionWaiting ) {
                 endRecording(selectedObject);
             } else {
                 // Change to menu
@@ -250,11 +250,18 @@ showSelectAction = function(selectedObject) {
         $('#select-action').hide();
         deleteImageSingle(selectedObject);
     });
+    $('#select-interaction').click(function(ev){
+        $('#select-action').hide();
+        // show the object picker next
+        // Install click handlers for the objects
+        integrationBehaviorChoose(selectedObject);
+    });
 }
 
 // Behavior recording functions
 function endRecording(selectedObject) {
     selectedObject.learningToggle();
+    interactionWaiting = false;
     modifyingHide(selectedObject);
 }
 
@@ -277,6 +284,68 @@ function startRecording(selectedObject) {
             $('#uimod_sprout').parent().addClass('highlight');
         }
     }
+}
+
+// Interaction chosen from Action Menu. Popup window to select interaction tgt.
+integrationBehaviorChoose = function(obj) {
+    console.log("Choose object for interaction behavior");
+    obj.learningToggle();
+    // First, we should choose the object we're going to interact with.
+    $('#interaction-ui').empty();
+    $('#interaction-ui').html('<h1>Select Target of Interaction<h1>');
+
+    var typeList = [];
+    window.oneOfEach = [];
+    canvas.forEachObject(function (iterObj) {
+        var t = iterObj.spriteType;
+
+        if (typeof iterObj.interactionCallback === 'function' && 
+            t != obj.spriteType && typeList.indexOf(t) == -1) {
+            typeList.push(t);
+            oneOfEach.push(iterObj);
+        }
+    });
+
+    // Insert only images on the canvas and not our image
+    for (var i = 0; i < oneOfEach.length; i++) {
+        var spImage = oneOfEach[i];
+        var imgSrc = spImage.getSrc();
+        var iEl = document.createElement('img');
+        iEl.src = imgSrc;
+        iEl.setAttribute('data-target-idx', i);
+
+        $(iEl).click(function () {
+            console.log('sprout src = '+this.src);
+            var tIdx = $(this).data('target-idx');
+            obj.interactionEvent(window.oneOfEach[tIdx]);
+            $('#interaction-ui').hide();
+        });
+        $('#interaction-ui').append(iEl);
+        delete spImage;
+    }
+    interactionWaiting = true;
+    setInteractionUILocation(cloneObj);
+    $('#clone-name').html('Sprout');
+    $('#interaction-ui').show();
+}
+
+setInteractionUILocation = function (sprout) {
+    var cui = $('#interaction-ui');
+    $(cui).width(canvas.getWidth() - 60);
+    var offset = globalPos;
+
+    var myWidth = $(cui).width();
+    var myHeight = $(cui).outerHeight();
+    ////var objHeight = sprout.getHeight();
+    var left = offset.left;
+    $(cui).css({ 
+        left: left + 10,
+        top: 70 /* top margin */ + 20,
+        /*
+        top: sprout.getTop() - objHeight/2 - myHeight - 15,
+        left: sprout.getLeft() - myWidth/2,
+        */
+    });
 }
 
 //

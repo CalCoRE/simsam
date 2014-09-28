@@ -630,7 +630,7 @@ a.close {
 /***** Floating Menu for sprout ***********/
 /******************************************/
 
-#sprout-ui {
+.object-select {
 	position: absolute;
 	top: 20px;
 	left; 100px; /* Change this */
@@ -645,7 +645,7 @@ a.close {
 	z-index: 100;
 }
 
-#sprout-ui img {
+.object-select img {
 	vertical-align: middle;
 	margin: 10px;
 	border-color: #62c004;
