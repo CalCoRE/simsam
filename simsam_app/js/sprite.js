@@ -1083,7 +1083,7 @@
     }
     masterObj.textElements = textElements;
     string = JSON.stringify(masterObj);
-    $('#data').html(string);
+    $('#data').html(JSON.stringify(masterObj, null, 4));
     console.log(typeObjects);
     return string;
   };

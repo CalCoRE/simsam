@@ -680,4 +680,9 @@ a.close {
 
 #data {
 	display: none;
+	font-family: "Courier New", monospace;
+	white-space: pre;
+	background: white;
+	width: 800px;
+	height: 800px;
 }

@@ -151,7 +151,7 @@ simObjectClicked = function(options) {
 // Handler for any object in Fabric.js that is selected (single clicked).
 simObjectSelected = function(options) {
     console.log('Selected: ' + ((currentSimObject != null) ? 'true' : 'false'));
-    console.log('Interaction: ' + ((interactionWaiting != null) ? 'true' : 'false'));
+    console.log('Interaction: ' + ((interactionWaiting) ? 'true' : 'false'));
     if (typeof options.target.selected === 'function') {
         g_clickTime = (new Date()).getTime();
         options.target.selected();
@@ -1011,6 +1011,10 @@ $(document).ready(function() {
         if (action === undefined) {
             console.log('Error: You have included a UI element with no action');
             return false;
+        }
+        // Transpose still needs a double-click to exit, the rest exit now
+        if (action != 'transpose') {
+            interactionWaiting = false;
         }
         uiInteractionCB(action);
         return false;
