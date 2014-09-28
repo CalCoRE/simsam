@@ -219,6 +219,7 @@ class GenericSprite extends fabric.Image
         return false
 
     learningToggle: ->
+        console.log('learningToggle was: ' + @stateRecording ? 'true' : 'false')
         if @stateTranspose
             @stateTranspose = false
             this.showNormal()

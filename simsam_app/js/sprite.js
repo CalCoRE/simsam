@@ -266,7 +266,10 @@
     };
 
     GenericSprite.prototype.learningToggle = function() {
-      var endState, r;
+      var endState, r, _ref;
+      console.log((_ref = 'learningToggle was: ' + this.stateRecording) != null ? _ref : {
+        'true': 'false'
+      });
       if (this.stateTranspose) {
         this.stateTranspose = false;
         this.showNormal();

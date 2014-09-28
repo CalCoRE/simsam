@@ -109,7 +109,6 @@ getObjectState = function(object) {
         angle: object.getAngle()
     }
 
-    console.log ('top: ' + retObj.top + ' left: ' + retObj.left);
     return retObj;
 }
 
@@ -151,6 +150,8 @@ simObjectClicked = function(options) {
 
 // Handler for any object in Fabric.js that is selected (single clicked).
 simObjectSelected = function(options) {
+    console.log('Selected: ' + ((currentSimObject != null) ? 'true' : 'false'));
+    console.log('Interaction: ' + ((interactionWaiting != null) ? 'true' : 'false'));
     if (typeof options.target.selected === 'function') {
         g_clickTime = (new Date()).getTime();
         options.target.selected();
@@ -247,18 +248,19 @@ showSelectAction = function(selectedObject) {
     });
 
     $('#select-action').show();
-    $('#select-behavior').click(function(ev){
+    $('#select-behavior').off('click').on('click', function(ev){
         $('#select-action').hide();
         startRecording(selectedObject);
     });
-    $('#select-delete').click(function(ev){
+    $('#select-delete').off('click').on('click', function(ev){
         $('#select-action').hide();
         deleteImageSingle(selectedObject);
     });
-    $('#select-interaction').click(function(ev){
+    $('#select-interaction').off('click').on('click', function(ev){
         $('#select-action').hide();
         // show the object picker next
         // Install click handlers for the objects
+        console.log('calling from click');
         integrationBehaviorChoose(selectedObject);
     });
 }
