@@ -994,9 +994,10 @@
   };
 
   window.loadSpriteTypes = function() {
+    var spriteTypeList;
     window.maxSprites = 25;
     console.log("loading sprite types");
-    window.spriteTypeList = [];
+    spriteTypeList = [];
     $("#sprite_drawer > img").each(function(i, sprite) {
       console.log("loading sprite type" + i);
       window.spriteTypeList.push(SpriteFactory(i, sprite));

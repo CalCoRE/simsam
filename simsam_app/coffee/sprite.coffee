@@ -799,7 +799,9 @@ window.tick = ->
 window.loadSpriteTypes = ->
     window.maxSprites = 25
     console.log "loading sprite types"
-    window.spriteTypeList = [] # re-init. hmm, this could get messy TODO
+    # Adding window. fixes a bug I can't remember. However, adding it
+    # causes sprite behaviors to apply to objects not classes.
+    spriteTypeList = [] # re-init. hmm, this could get messy TODO
     $("#sprite_drawer > img").each (i, sprite) -> # all sprites in the drawer
         console.log "loading sprite type" + i
         window.spriteTypeList.push( SpriteFactory( i , sprite ) ) #make a factory
