@@ -203,15 +203,18 @@
     GenericSprite.prototype.addRule = function(rule) {
       this._rules[0] = rule;
       rule.action.stateRandom = this.stateRandom;
+      window.save();
       return this._rules.length - 1;
     };
 
     GenericSprite.prototype.setRule = function(index, rule) {
+      window.save();
       return this._rules[index] = rule;
     };
 
     GenericSprite.prototype.addIRule = function(rule, index) {
       this._irules[index] = rule;
+      window.save();
       return this._irules.length - 1;
     };
 
@@ -298,7 +301,8 @@
           r.addRandom(this.randomRange);
         }
         this.addRule(r);
-        return this.stateRecording = false;
+        this.stateRecording = false;
+        return window.save();
       }
     };
 
@@ -867,10 +871,12 @@
       var object;
       object = {};
       object.type = 'sprout';
+      object.targetType = this.targetClassType;
       return object;
     };
 
     SproutAction.prototype.restoreFromJSON = function(data) {
+      this.targetClassType = data.targetType;
       return SproutAction.__super__.restoreFromJSON.call(this);
     };
 
@@ -994,10 +1000,9 @@
   };
 
   window.loadSpriteTypes = function() {
-    var spriteTypeList;
     window.maxSprites = 25;
     console.log("loading sprite types");
-    spriteTypeList = [];
+    window.spriteTypeList = [];
     $("#sprite_drawer > img").each(function(i, sprite) {
       console.log("loading sprite type" + i);
       window.spriteTypeList.push(SpriteFactory(i, sprite));
@@ -1013,6 +1018,11 @@
         },
         stop: function(ev, ui) {
           var dropX, dropY, newSprite;
+          if (pointWithinElement(ev.pageX, ev.pageY, $('#trash_menu_button')) || pointWithinElement(ev.pageX, ev.pageY, $('#trash'))) {
+            console.log('I am within the Trash Sprite Button');
+            deleteImageFully(i, this);
+            return;
+          }
           console.log('I am a ' + i);
           dropX = ev.pageX - window.globalPos.left;
           dropY = ev.pageY - window.globalPos.top;
@@ -1028,6 +1038,7 @@
           newSprite.setLeft(dropX);
           canvas.add(newSprite);
           canvas.renderAll();
+          window.save();
           return console.log('End window.loadSpriteTypes');
         }
       });

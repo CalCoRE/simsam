@@ -335,4 +335,41 @@ def load_sim_state(request):
     return response
 
 
-# Also we may want a list_sim_states or some such thing.
+# Gather a list of all available simulation states
+@login_required
+def list_sim_state(request):
+    """Load the Simulation state of all objects, rules, etc."""
+    message = ''
+    debug = ''
+    status = 'Success'
+
+    #name        = request.POST['name']
+    simId       = int(request.POST['sim_id'])
+
+    serial = ''
+    response = HttpResponse();
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate';
+    response['Pragma'] = 'no-cache';
+    response['Expires'] = 0;
+    simlist = []
+
+    try:
+        simState = SimulationState.objects.filter(simulation_id=simId)
+        simlist = [obj.name for obj in simState]
+    except SimulationState.DoesNotExist:
+        message = 'No named states have been saved for this simulation.'
+        debug = 'No objects found in simsam_app_simulationstate for simId %d' \
+                % (simId)
+    except SimulationState.MultipleObjectsReturned:
+        message = 'Multiple objects returned for %d, "%s". ' % (simId, name)
+        debug = 'There is an issue with simsam_app_simulationstate.'
+        status = 'Failed'
+        
+    response.content = json.dumps({
+        'status': status,
+        'message': message,
+        'debug': debug,
+        'serialized': serial,
+        'list': simlist,
+    })
+    return response

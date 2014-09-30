@@ -5,6 +5,7 @@ window.initSim = (function(){
     currentSimObject = null;
     cloneObj = null;
     g_clickTime = 0;
+    window.g_currentSaveName = 'default';
 
     /* Create a new fabric.Canvas object that wraps around the original <canvas>
      * DOM element.
@@ -66,6 +67,15 @@ setCanvasSize = function(width) {
         canvas.setHeight(570);
         canvas.setWidth(950);
     }
+
+    $('#saved').css(globalPos);
+    var w = $('#canceled').width();
+    $('#canceled').css({
+        top:globalPos.top,
+        left: globalPos.left + canvas.getWidth() - w - 10,
+    });
+    $('#saved').hide(0);
+    $('#canceled').hide(0);
 }
 
 // check and reset canvas size on resize
@@ -174,7 +184,7 @@ simObjectSelected = function(options) {
     }
 
     currentSimObject = canvas.getActiveObject();
-    $('#selected').show(250);
+    //$('#selected').show(250);
 }
 
 simObjectCleared = function(options) {
@@ -185,12 +195,17 @@ simObjectCleared = function(options) {
         cloneWidgetHide();
         return;
     }
-    $('#selected').hide(250);
+    //$('#selected').hide(250);
     if (currentSimObject !== undefined) {
+        rec = currentSimObject.hasOwnProperty('stateRecording') && currentSimObject.stateRecording;
+        tran = currentSimObject.hasOwnProperty('stateTranspose') && currentSimObject.stateTranspose;
+        if (rec || tran) {
+            showCanceled();
+        }
         modifyingHide(currentSimObject);
+        hideRecording();
     }
     currentSimObject = null;
-    save(); // when I have moved or programmed an object, auto-save it
 }
 
 // Called every time a sim object has finished moving so we can see if it
@@ -205,6 +220,7 @@ simObjectModified = function(options) {
         rec = target.hasOwnProperty('stateRecording') && target.stateRecording;
         tran = target.hasOwnProperty('stateTranspose') && target.stateTranspose;
         if (!rec & !tran) {
+            window.save();
             console.log("Our target isn't being edited");
             return;
         }
@@ -250,7 +266,7 @@ showSelectAction = function(selectedObject) {
     $('#select-action').show();
     $('#select-behavior').off('click').on('click', function(ev){
         $('#select-action').hide();
-        startRecording(selectedObject);
+        startRecording(selectedObject, 'Individual');
     });
     $('#select-delete').off('click').on('click', function(ev){
         $('#select-action').hide();
@@ -262,6 +278,7 @@ showSelectAction = function(selectedObject) {
         // Install click handlers for the objects
         console.log('calling from click');
         integrationBehaviorChoose(selectedObject);
+        showRecording('Interaction');
     });
 }
 
@@ -270,9 +287,10 @@ function endRecording(selectedObject) {
     selectedObject.learningToggle();
     interactionWaiting = false;
     modifyingHide(selectedObject);
+    hideRecording();
 }
 
-function startRecording(selectedObject) {
+function startRecording(selectedObject, recType) {
     console.log('startRecording');
 
     // if one object is selected this fires
@@ -280,6 +298,7 @@ function startRecording(selectedObject) {
     if (selectedObject.stateRecording) {
         selectedObject.bringToFront();
         modifyingShow(selectedObject);
+        showRecording(recType);
         if (selectedObject.isRandom()) {
             $('#uimod_rand').parent().addClass('highlight');
             randomSliderShow(selectedObject);
@@ -291,6 +310,29 @@ function startRecording(selectedObject) {
             $('#uimod_sprout').parent().addClass('highlight');
         }
     }
+}
+
+//
+// Functions that alter display based on state
+//
+// Called after a successful return message from an Ajax save
+showSaved = function(data, textStatus, jqXHR) {
+    $('#saved').show();
+    $('#saved').fadeOut(1000);
+}
+showCanceled = function(data, textStatus, jqXHR) {
+    $('#canceled').show();
+    $('#canceled').fadeOut(1000);
+}
+
+showRecording = function(recType) {
+    $('#record-type').html(recType);
+    $('#record_status').addClass('is-recording');
+}
+
+hideRecording = function() {
+    $('#record-type').html('Not Recording');
+    $('#record_status').removeClass('is-recording');
 }
 
 // Interaction chosen from Action Menu. Popup window to select interaction tgt.
@@ -451,6 +493,15 @@ deleteImageFully = function(spriteType, classImage) {
         image_hash = $(classImage).attr('data-hash');
         $(classImage).remove();
         djangoDeleteImage(image_hash);
+		for(i = 0; i < spriteTypeList.length; i++){
+			tempobj = new spriteTypeList[i];
+			if(tempobj.spriteType == spriteType){
+				spriteTypeList.splice(i, 1);
+				save();
+				break;
+			}
+		}
+		
     }
     deleteImageInternal(messageInfo, onSuccess);
 }
@@ -800,6 +851,7 @@ modifyingShow = function(obj) {
         left: posLeft,
     });
     $('#modifying').show(250);
+    showRecording('Individual');
 }
 
 // Sim Measurables
@@ -905,13 +957,66 @@ textEditSet = function(obj, ev) {
     console.log('Text: ' + $(textbox).val());
     canvas.renderAll();
     $('#text-modify').hide(250);
+    window.save();
 }
 
 textEditCancel = function(obj, ev) {
     $('#text-modify').hide(250);
 }
 
-textEditDelete = function(obj, ev) {
+//
+// SaveAs Handlers
+//
+saveasBeginEditing = function(obj) {
+    currentTextObject = obj;
+
+    var offset = window.globalPos;
+    var textbox = $('#saveas-name');
+    var textValue = window.g_currentSaveName;
+    $('#saveas-alter-field').val(textValue);
+
+    $(textbox).css({
+        top: globalPos.top + canvas.getHeight() / 2 - $(textbox).height() / 2,
+        left: globalPos.left + canvas.getWidth() / 2 - $(textbox).width() / 2,
+    });
+    $(textbox).show(250);
+
+    window.listSims();
+}
+saveAsEditSet = function() {
+    var textbox = $('#saveas-alter-field');
+    window.g_currentSaveName = $(textbox).val();
+    $('#saveas-name').hide();
+}
+saveAsCancel = function() {
+    $('#saveas-name').hide();
+}
+
+//
+// load file Handlers
+//
+listBeginEditing = function(obj) {
+    currentTextObject = obj;
+
+    var offset = window.globalPos;
+    var textbox = $('#list-states');
+    var textValue = window.g_currentSaveName;
+
+    $(textbox).css({
+        top: globalPos.top + canvas.getHeight() / 2 - $(textbox).height() / 2,
+        left: globalPos.left + canvas.getWidth() / 2 - $(textbox).width() / 2,
+    });
+    $(textbox).show(250);
+
+    window.listSims();
+}
+listEditSet = function() {
+    var textbox = $('#saveas-alter-field');
+    window.g_currentSaveName = $(textbox).val();
+    $('#saveas-name').hide();
+}
+listCancel = function() {
+    $('#list-states').hide();
 }
 
 //
@@ -947,6 +1052,7 @@ toolTextClick = function(obj, ev) {
     text.setTop(canvas.getHeight() / 2);
 
     text.addToCanvas();
+    window.save();
 }
 
 window.save = function() {
@@ -957,10 +1063,11 @@ window.save = function() {
         type: 'POST',
         data: {
             serialized: rawData,
-            name: 'default',
+            name: window.g_currentSaveName,
             simid: window.simulationId,
         },
-        dataType: 'json'
+        dataType: 'json',
+        success: showSaved,
     });
 }
 
@@ -971,7 +1078,7 @@ window.load = function() {
         url: 'load_sim_state',
         type: 'POST',
         data: {
-            name: 'default',
+            name: window.g_currentSaveName, // set this before calling
             sim_id: window.simulationId,
         },
         dataType: 'json',
@@ -980,6 +1087,47 @@ window.load = function() {
             if (data.status == 'Success') {
                 console.log('data.serialized = '+data.serialized);
                 loadSprites(data.serialized);
+            } else if (data.status == 'Failed') {
+                if (data.debug.length) {
+                    console.log ('Error(load): ' + data.debug);
+                }
+                if (data.message.length) {
+                    //so far just because nothing is there
+                    // mute this for now since save and load is auto for a while
+                    //alert('Error: ' + data.message);
+                }
+            }
+        },
+    });
+}
+
+window.listSims = function() {
+    console.log('listSims');
+    //loadSprites($('#data').html());
+    $.ajax({
+        url: 'list_sim_state',
+        type: 'POST',
+        data: {
+            sim_id: window.simulationId,
+        },
+        dataType: 'json',
+        success: function(data) {
+            if (data.status == 'Success') {
+                var listDiv = $('#list-text-list');
+                var stateList = data.list;
+                $(listDiv).html('');
+                for(i=0; i < stateList.length; i++) {
+                    var cName = stateList[i];
+                    var a = document.createElement('a');
+                    a.innerHTML = cName;
+                    $(a).data('name', cName);
+                    $(a).on('click', function(i){
+                        window.g_currentSaveName = $(this).data('name');
+                        window.load();
+                        $('#list-states').hide();
+                    });
+                    $(listDiv).append(a);
+                }
             } else if (data.status == 'Failed') {
                 if (data.debug.length) {
                     console.log ('Error(load): ' + data.debug);
@@ -1013,8 +1161,10 @@ $(document).ready(function() {
             return false;
         }
         // Transpose still needs a double-click to exit, the rest exit now
-        if (action != 'transpose') {
+        if (action == 'transpose') {
+        } else {
             interactionWaiting = false;
+            hideRecording();
         }
         uiInteractionCB(action);
         return false;

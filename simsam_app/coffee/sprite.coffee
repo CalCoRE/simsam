@@ -168,15 +168,18 @@ class GenericSprite extends fabric.Image
         # Try switching to a single rule XXX
         @_rules[0] = rule
         rule.action.stateRandom = @stateRandom
+        window.save()
         return @_rules.length - 1
 
     # will complain if given a bad index
     setRule: (index, rule) ->
+        window.save()
         @_rules[index] = rule
 
     # index of the irule so we overwrite duplicates
     addIRule: (rule, index) ->
         @_irules[index] = rule
+        window.save()
         return @_irules.length - 1
 
     # Clones
@@ -247,6 +250,7 @@ class GenericSprite extends fabric.Image
                 r.addRandom(@randomRange)
             this.addRule(r)
             @stateRecording = false
+            window.save()
 
     showLearning: ->
         this.set({
@@ -701,9 +705,11 @@ class SproutAction extends Action
     toJSON: ->
         object = {}
         object.type = 'sprout'
+        object.targetType = @targetClassType
         return object
 
     restoreFromJSON: (data) ->
+        @targetClassType = data.targetType
         super()
 
 class TransformAction extends Action
@@ -801,7 +807,7 @@ window.loadSpriteTypes = ->
     console.log "loading sprite types"
     # Adding window. fixes a bug I can't remember. However, adding it
     # causes sprite behaviors to apply to objects not classes.
-    spriteTypeList = [] # re-init. hmm, this could get messy TODO
+    window.spriteTypeList = [] # re-init. hmm, this could get messy TODO
     $("#sprite_drawer > img").each (i, sprite) -> # all sprites in the drawer
         console.log "loading sprite type" + i
         window.spriteTypeList.push( SpriteFactory( i , sprite ) ) #make a factory
@@ -815,11 +821,12 @@ window.loadSpriteTypes = ->
             start: (e, ui) ->
                 $(ui.helper).addClass("ui-draggable-helper")
             stop: (ev, ui) -> # when dropped
-                #if (pointWithinElement(ev.pageX, ev.pageY,
-                #$('#trash_menu_button')) ||
-                #pointWithinElement(ev.pageX, ev.pageY, $('#trash')) )
-                #deleteImageFully(i, this)
-                #return
+                if (pointWithinElement(ev.pageX, ev.pageY,
+                $('#trash_menu_button')) ||
+                pointWithinElement(ev.pageX, ev.pageY, $('#trash')) )
+                    console.log('I am within the Trash Sprite Button')
+                    deleteImageFully(i, this)
+                    return
                 console.log('I am a '+i); # tell me which one you are
                 dropX = ev.pageX - window.globalPos.left
                 dropY = ev.pageY - window.globalPos.top
@@ -834,7 +841,8 @@ window.loadSpriteTypes = ->
                 newSprite.setTop(ev.pageY)
                 newSprite.setLeft(dropX)
                 canvas.add(newSprite)
-                canvas.renderAll();
+                canvas.renderAll()
+                window.save()
                 console.log('End window.loadSpriteTypes')
     console.log("--- Loaded sprite type list: " + window.spriteTypeList.length)
 

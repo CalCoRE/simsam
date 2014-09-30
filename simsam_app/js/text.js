@@ -132,8 +132,9 @@
         canvas.remove(this);
         idx = window.textList.indexOf(this.text);
         if (idx >= 0) {
-          return window.textList.splice(idx, 1);
+          window.textList.splice(idx, 1);
         }
+        return window.save();
       }
     };
 

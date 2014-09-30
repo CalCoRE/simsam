@@ -401,6 +401,14 @@ a.close {
 	background-position: -496px 2px;
 }
 
+#record_status {
+	background-position: -440px 2px;
+	cursor: auto;
+}
+#record_status.is-recording {
+	background-position: -440px 50px;
+}
+
 #counts.highlight,
 #count_chart.highlight {
 	background-color: #ffff80;
@@ -654,7 +662,7 @@ a.close {
 	border-style: solid;
 }
 
-#text-modify {
+.textbox {
 	position: absolute;
 	top: 20px;
 	left; 100px; /* Change this */
@@ -663,7 +671,7 @@ a.close {
 	display: none;
 }
 
-#text-modify input {
+.textbox input {
 	font-size: 24px;
 }
 .text-buttons a {
@@ -678,6 +686,23 @@ a.close {
 	margin-right: 10px;
 }
 
+.text-list {
+	margin: 10px 10px 20px 10px;
+	overflow-y: scroll;
+	height: 200px;
+	width: 250px;
+}
+
+.text-list a {
+	font-size: 125%;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	text-decoration: none;
+	border: none;
+	cursor: pointer;
+	display: block;
+}
+
 #data {
 	display: none;
 	font-family: "Courier New", monospace;
@@ -685,4 +710,14 @@ a.close {
 	background: white;
 	width: 800px;
 	height: 800px;
+}
+
+.save_status {
+	/* display: none; */
+	position: absolute;
+}
+
+.save_status h2 {
+	margin-top: 15px;
+	margin-left: 15px;
 }

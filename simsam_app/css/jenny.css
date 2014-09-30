@@ -46,6 +46,12 @@
 	margin-left: 50px;
 }
 
+#sim_status {
+	margin-top: 8px;
+	float: left;
+	margin-left: 20px;
+}
+
 .sim_charts .ui-draggable, .sim_charts .ui-draggable-dragging {
 	background-image:url('../images/buttons.png');
 	height:45px !important;

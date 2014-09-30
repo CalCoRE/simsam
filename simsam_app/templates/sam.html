@@ -53,6 +53,14 @@
         initSim();
       };
         
+		function addSimSam(){
+            var simsamimage = new Image();
+	        simsamimage.src = "/media/sprites/moving3-4.png";
+			var spritedrawer =  $("#sprite_drawer").get(0);
+	        spritedrawer.appendChild(simsamimage);
+	        $("#sprite_drawer").sortable("refresh");
+        }
+		
       var simRunning = false;
         
       toggleSim = function() {
@@ -100,12 +108,13 @@
               			<div class="menu_button" id="switch_to_sim_button" style="border-top: none;">Make Simulation</div>
               			<div class="menu_button" id="switch_to_sam_button" style="border-top: none;">Make Animation</div>
               		</div>
-              		    <div id="crop_buttons">
+              		<div id="crop_buttons">
                         <div class="menu_button" id="startcropping" onclick="cropCanvas()">Start Cropping</div>
                         <div class="menu_button" id="savecrop" onclick="getResults()">Save Crop</div>
                         <div class="menu_button" id="cancelcrop" onclick="deleteRect()">Cancel Crop</div>
                 	</div>
             	  <!-- Selected Chooser -->
+                  <!-- TODO Remove this div, we don't use it anymore -->
             	  <div id="selected" >
             		  <h3>Modify Sprite</h3>
             		  <div id="uise_del" class="menu_button">Delete</div>
@@ -135,9 +144,15 @@
 						<div id="step" onclick="tick()"></div>
 						<div id="run" onclick="toggleSim()"></div>
 						<div id="clear" onclick="clearTrackers()"></div>
+						<div id="saveas" onclick="saveasBeginEditing();">S</div>
+						<div id="loadstate" onclick="listBeginEditing();">L</div>
 					</div>
                     <div id="sim_tools" class="sim_buttons">
                         <div id="text_tool" onclick="toolTextClick();"></div>
+                    </div>
+                    <div id="sim_status" class="sim_buttons">
+            			<p id="record-type" style="clear: both;">Not Recording</p>
+                        <div id="record_status"></div>
                     </div>
             		<div class="sim_buttons">
             			<p style="clear: both;">Counters</p>
@@ -247,7 +262,7 @@
       <p><span class="ui-icon ui-icon-alert" style="float: left; margin:0 7px 20px 0;"></span><span id="message-text">This item will be permanently deleted.  Are you sure?</span></p>
     </div>
 
-    <div id="text-modify" class="ui-background" >
+    <div id="text-modify" class="ui-background textbox" >
 	<div class="animation-head"><h4>Set Text</h4>
         <a href="#" onclick="textEditCancel();">
             <span class="close-btn"><span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span></span>
@@ -261,6 +276,37 @@
         <a class="text-set" href="#" onclick="textEditSet();">Set</a>
     </div>
     </div>
+
+    <!-- SaveAs Textbox -->
+    <div id="saveas-name" class="ui-background textbox" >
+	<div class="animation-head"><h4>Save Simulation As...</h4>
+        <a href="#" onclick="saveAsCancel();">
+            <span class="close-btn"><span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span></span>
+        </a>
+    </div>
+    <div>
+        <input id="saveas-alter-field" />
+    </div>
+    <div class="text-buttons">
+        <a class="text-cancel" href="#" onclick="saveAsCancel();">Cancel</a>
+        <a class="text-set" href="#" onclick="saveAsEditSet();">Set</a>
+    </div>
+    </div>
+
+    <!-- Load File List Textbox -->
+    <div id="list-states" class="ui-background textbox" >
+	<div class="animation-head"><h4>Load Simulation</h4>
+        <a href="#" onclick="listCancel();">
+            <span class="close-btn"><span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span></span>
+        </a>
+    </div>
+    <div id="list-text-list" class="text-list">
+    </div>
+    <div class="text-buttons">
+        <a class="text-cancel" href="#" onclick="listCancel();">Cancel</a>
+        <!-- <a class="text-set" href="#" onclick="listEditSet();">Load</a> -->
+    </div>
+    </div>
     
     <!-- END INTERFACE PANELS -->
     
@@ -268,8 +314,17 @@
     <div id="home_button" unselectable="on" onclick="window.location = '/'"><img class="icon" src="static/images/newicons/home.png"></div>
     <div class="title">SiMSAM</div>
     <div id="help_button" onclick="window.location = 'about/'"><img class="icon" src="static/images/newicons/help.png"></div></div>
+<!--
     <a href="#" id="save"></a>
     <a href="#" id="load"></a>
+    -->
+
+    <div id="saved" class="save_status">
+        <h2>State Saved</h2>
+    </div>
+    <div id="canceled" class="save_status">
+        <h2>Programming Canceled</h2>
+    </div>
     <!-- END FLOATING ICONS -->
     
     <!-- JUST SO IT DOESN'T CRY ABOUT MISSING ELEMENTS -->

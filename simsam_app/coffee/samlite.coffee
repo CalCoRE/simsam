@@ -66,6 +66,10 @@ $ ->
         # other browsers SHOULD be handled through the .unselectable class
         # on the body tag
         # see http://stackoverflow.com/questions/2326004/prevent-selection-in-html
+        
+        if window.spritecollection.length == 0
+            addSimSam()
+        
         for element in window.spritecollection
             console.log('element in window.spritecollection = '+element)
             loadSprites(element)

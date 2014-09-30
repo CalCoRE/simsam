@@ -109,6 +109,7 @@ class window.TextGroup extends fabric.Group
             idx = window.textList.indexOf(@text)
             if idx >= 0
                 window.textList.splice(idx, 1)
+            window.save()
 
     # Save and Load functions
     # N.B. We might not need this right now
