@@ -849,6 +849,8 @@ window.loadSpriteTypes = ->
     window.spriteTypeList = [] # re-init. hmm, this could get messy TODO
     $("#sprite_drawer > img").each (i, sprite) -> # all sprites in the drawer
         console.log "loading sprite type" + i
+        sprite.setAttribute('data-sprite-type', i)
+        sprite.setAttribute('data-debug', 'lST')
         window.spriteTypeList.push( SpriteFactory( i , sprite ) ) #make a factory
         setSpriteTypeDraggable(sprite, i)
 
@@ -921,6 +923,8 @@ window.loadSprites = (dataString) ->
     $("#sprite_drawer > img").each (i, sprite) -> # all sprites in the drawer
         imageObjects.push(this)
         setSpriteTypeDraggable(sprite, i)
+        sprite.setAttribute('data-sprite-type', i)
+        sprite.setAttribute('data-debug', 'lS')
     for typeObj in inObject.classObjects
         imgSrc = typeObj.imageObj
         for img in imageObjects

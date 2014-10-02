@@ -37,7 +37,7 @@
 
 
 
-    <link rel='stylesheet' type='text/css' href='{{ STATIC_URL }}css/jenny.css' />
+    <link rel='stylesheet' type='text/css' href='{{ STATIC_URL }}css/widgets.css' />
 
 
     <script type="text/javascript">
@@ -59,6 +59,8 @@
 		 simsamimage.src = "/media/sprites/moving3-4.jpg";
          simsamimage.className = 'sprite';
          simsamimage.setAttribute('data-hash', 'moving3-4');
+         simsamimage.setAttribute('data-sprite-type', 0);
+         simsamimage.setAttribute('data-debug', 'addSimSam');
 		 var spritedrawer =  $("#sprite_drawer").get(0);
 		 spritedrawer.appendChild(simsamimage);
 		 window.addOneSprite(0, simsamimage);

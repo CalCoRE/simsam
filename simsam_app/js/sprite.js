@@ -1049,6 +1049,8 @@
     window.spriteTypeList = [];
     $("#sprite_drawer > img").each(function(i, sprite) {
       console.log("loading sprite type" + i);
+      sprite.setAttribute('data-sprite-type', i);
+      sprite.setAttribute('data-debug', 'lST');
       window.spriteTypeList.push(SpriteFactory(i, sprite));
       return setSpriteTypeDraggable(sprite, i);
     });
@@ -1133,7 +1135,9 @@
     imageObjects = [];
     $("#sprite_drawer > img").each(function(i, sprite) {
       imageObjects.push(this);
-      return setSpriteTypeDraggable(sprite, i);
+      setSpriteTypeDraggable(sprite, i);
+      sprite.setAttribute('data-sprite-type', i);
+      return sprite.setAttribute('data-debug', 'lS');
     });
     _ref1 = inObject.classObjects;
     for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {

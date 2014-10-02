@@ -72,7 +72,7 @@ $ ->
         
         for element in window.spritecollection
             console.log('element in window.spritecollection = '+element)
-            loadSprites(element)
+            window.samLoadSprites(element)
         for element in window.framesequence
             loadFrames(element)
     
@@ -104,7 +104,17 @@ $ ->
         # always start in record mode
         #switchToRecordMode()
     
-    loadSprites = (sprite) ->
+    window.samLoadSprites = (sprite) ->
+        ajaxOptions =
+            url: "load_all_objects"
+            type: "POST"
+            data:
+                sim_id: window.simulationId
+            dataType: "json"
+        $.ajax(ajaxOptions).done(load_objects_complete)
+        load_objects_complete = (obj) ->
+            console.log('loaded objects')
+
         console.log($("#sprite_drawer").get(0))
         output = $("#sprite_drawer").get(0)
         #canvas = document.createElement('canvas')
@@ -118,6 +128,8 @@ $ ->
         img.src = '/media/sprites/' + sprite + '.jpg'
         img.className = "sprite"
         img.setAttribute('data-hash', sprite)
+        img.setAttribute('data-sprite-type', -1)
+        img.setAttribute('data-debug', 'samlS')
         #$(canvas).attr("data-frame-id", sprite)
         #$(canvas).attr("draggable", true);
         #$(canvas).attr("dropzone", $('container'))
@@ -549,6 +561,7 @@ $ ->
                 $(this).show()
         if !window.spriteTypesLoaded
             window.loadSpriteTypes()
+        sizeDrawer()
         canvas.renderAll()
     
     startSamlite = ->
@@ -579,6 +592,7 @@ $ ->
             $(this).hide()
         $(".sprite-chart").each (index, thumbnail) ->
             $(this).hide()
+        sizeDrawer()
         
         #MHWJ
     toggleMenu = ->

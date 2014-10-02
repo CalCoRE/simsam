@@ -74,7 +74,8 @@ function deleteRect() {
 	//unbind mousemove event
 	//canvas.click(screenClick());
 
-        showStartCroppingButton();
+    showStartCroppingButton();
+    sizeDrawer();
 }
 
 
@@ -90,9 +91,25 @@ function rescanCropThumbnails() {
   });
 }
 
+function brightenCanvas(myCanvas) {
+    var value = 40;
+    var ctx = myCanvas.getContext('2d');
+
+    var pixels = ctx.getImageData(0,0,myCanvas.width, myCanvas.height);
+    var d = pixels.data;
+    for (var i=0; i < d.length; i+= 4) {
+        d[i] += value;
+        d[i+1] += value;
+        d[i+2] += value;
+    }
+
+    ctx.putImageData(pixels, 0, 0);
+    return myCanvas;
+}
 
 function saveCropCanvas(canvas, tempId) {
 	var ajaxOptions, done, imageString, imageStringRaw;
+    brightenCanvas(canvas);
 	imageStringRaw = canvas.toDataURL("image/jpeg");
 	imageString = imageStringRaw.replace("data:image/jpeg;base64,", "");
 	ajaxOptions = {
@@ -118,14 +135,21 @@ function saveCropCanvas(canvas, tempId) {
             // Add to the sprite drawer
             sprite_drawer = $("#sprite_drawer").get(0); //get the newly cropped image
             var hash = response.id;
-            var img = document.createElement('img');
+            var filename = '/media/sprites/' + hash + '.jpg';
+            //var img = document.createElement('img');
+            /*
+            var img = new Image();
             img.src = '/media/sprites/' + hash + '.jpg';
             img.className = 'sprite';
             img.setAttribute('data-hash', hash);
+            img.setAttribute('data-debug', 'sCropC');
 			$(img).attr("data-frame-id", response.id);
-            sprite_drawer.appendChild(img);
-            var nextType = window.spriteTypeList.length;
-            window.addOneSprite(nextType, img);
+            */
+            addSpriteToSim(filename, hash);
+            window.samLoadSprites(hash)
+            //sprite_drawer.appendChild(img);
+            //window.addOneSprite(nextType, img);
+            //img.setAttribute('data-sprite-type', nextType);
 			return $("#sprite_drawer img[data-frame-id='" + tempId + "']").attr("data-frame-id", response.id);
 		}
 	};
@@ -175,9 +199,9 @@ function getResults() {
     cropFrameRegistry[frameId] = temp_canvas; //add to cropped elements by id
 
     //sprite_drawer.appendChild(temp_canvas); //display in drawer
-    $("#sprite_drawer").sortable("refresh");
 
     saveCropCanvas(temp_canvas, frameId); //save the cropped image
+    $("#sprite_drawer").sortable("refresh");
 
     showStartCroppingButton();
     window.isCropping = false;
@@ -217,7 +241,7 @@ Selection.prototype.draw = function() {
   						 this.iCSize[3] * 2);*/
 }
 
-function cropCanvas() { 
+function cropCanvas() {
   // code from http://www.script-tutorials.com/html5-image-crop-tool/
   /// mhwj heavily edited to work on touch devices, lots of comments below
   
@@ -316,6 +340,7 @@ function cropCanvas() {
   });
         
   //$('#canvas').bind(drag, function(e) { // binding mouse move event. Using 'smart' drag var to determine mobile or not
+  // }
   Hammer(canvas).on("drag", function(e) {
   
         console.log("drag from cropCanvas");
@@ -409,6 +434,7 @@ function cropCanvas() {
   
   drawScene();
 
+  sizeDrawer();
 };
 
 function hideStartCroppingButton() {

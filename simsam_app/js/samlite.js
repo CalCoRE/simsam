@@ -2,7 +2,7 @@
 (function() {
 
   $(function() {
-    var anyCamera, cameraOff, cameraOn, cameraState, cameraSwitch, capture, clearPlayback, frameBack, frameBeginning, frameEnd, frameForward, frameRegistry, getRandomId, loadFrames, loadSprites, makeUnselectable, menu, overlayClass, pause, placeBlankFrame, placeFrame, playbackClass, playbackTimeouts, recording, rescanThumbnails, saveCanvas, saveFrameSequence, startSamlite, startSimlite, thumbnailScaleFactor, toggleCamera, toggleMenu, toggleMode, trash;
+    var anyCamera, cameraOff, cameraOn, cameraState, cameraSwitch, capture, clearPlayback, frameBack, frameBeginning, frameEnd, frameForward, frameRegistry, getRandomId, loadFrames, makeUnselectable, menu, overlayClass, pause, placeBlankFrame, placeFrame, playbackClass, playbackTimeouts, recording, rescanThumbnails, saveCanvas, saveFrameSequence, startSamlite, startSimlite, thumbnailScaleFactor, toggleCamera, toggleMenu, toggleMode, trash;
     thumbnailScaleFactor = 0.25;
     cameraSwitch = {};
     window.playbackFrames = [];
@@ -56,7 +56,7 @@
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         element = _ref[_i];
         console.log('element in window.spritecollection = ' + element);
-        loadSprites(element);
+        window.samLoadSprites(element);
       }
       _ref1 = window.framesequence;
       for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
@@ -91,14 +91,28 @@
         return alert("Your browser will not allow SiMSAM to use the webcam. Related functions will be disabled.");
       }
     };
-    loadSprites = function(sprite) {
-      var chrt, cnt, img, output;
+    window.samLoadSprites = function(sprite) {
+      var ajaxOptions, chrt, cnt, img, load_objects_complete, output;
+      ajaxOptions = {
+        url: "load_all_objects",
+        type: "POST",
+        data: {
+          sim_id: window.simulationId
+        },
+        dataType: "json"
+      };
+      $.ajax(ajaxOptions).done(load_objects_complete);
+      load_objects_complete = function(obj) {
+        return console.log('loaded objects');
+      };
       console.log($("#sprite_drawer").get(0));
       output = $("#sprite_drawer").get(0);
       img = new Image();
       img.src = '/media/sprites/' + sprite + '.jpg';
       img.className = "sprite";
       img.setAttribute('data-hash', sprite);
+      img.setAttribute('data-sprite-type', -1);
+      img.setAttribute('data-debug', 'samlS');
       output.appendChild(img);
       cnt = document.createElement('div');
       cnt.className = 'sprite-count';
@@ -516,6 +530,7 @@
       if (!window.spriteTypesLoaded) {
         window.loadSpriteTypes();
       }
+      sizeDrawer();
       return canvas.renderAll();
     };
     startSamlite = function() {
@@ -543,9 +558,10 @@
       $(".sprite-count").each(function(index, thumbnail) {
         return $(this).hide();
       });
-      return $(".sprite-chart").each(function(index, thumbnail) {
+      $(".sprite-chart").each(function(index, thumbnail) {
         return $(this).hide();
       });
+      return sizeDrawer();
     };
     toggleMenu = function() {
       if (menu) {

@@ -210,6 +210,72 @@ def save_image_only(request):
     }))
 
 @login_required
+def save_object(request):
+    """Saves objects, which represent a class of sprites."""
+    success = True
+    message = ''
+
+    sprite_filename = request.REQUEST.get('image_filename')
+    sim_id = request.REQUEST.get('sim_id')
+    hash_value = request.REQUEST.get('hash_value')
+    object = SimulationObject.objects.create(sprite_filename=sprite_filename,
+            simulation_id=sim_id, hash_value=hash_value)
+    object.save()
+
+    return HttpResponse(json.dumps({
+        'success': success,
+        'id': object.id,
+        'message': message,
+    }))
+
+
+# This is unfinished because we never ask about just one
+@login_required
+def load_object(request):
+    """Loads an object or class of sprites."""
+    object_id = request.REQUEST.get('sprite_type')
+
+@login_required
+def load_all_objects(request):
+    """Loads all objects / classes of sprites."""
+    sim_id = request.REQUEST.get('sim_id')
+    status = True
+    message = ''
+    debug = ''
+
+    response = HttpResponse();
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate';
+    response['Pragma'] = 'no-cache';
+    response['Expires'] = 0;
+    objlist = []
+
+    try:
+        simObject = SimulationObject.objects.filter(simulation=sim_id)
+        objlist = []
+        for obj in simObject:
+            jobj = {}
+            jobj['id'] = obj.id
+            jobj['hash_value'] = obj.hash_value
+            jobj['filename'] = obj.sprite_filename
+            objlist.append(jobj)
+    except SimulationObject.DoesNotExist:
+        message = 'No named objects have been saved for this simulation.'
+        debug = 'No objects found in simsam_app_simulationstate for simId %d' \
+                % (sim_id)
+    except SimulationObject.MultipleObjectsReturned:
+        message = 'Multiple objects returned for %d, "%s". ' % (simId, name)
+        debug = 'There is an issue with simsam_app_simulationstate.'
+        status = 'Failed'
+        
+    response.content = json.dumps({
+        'status': status,
+        'message': message,
+        'debug': debug,
+        'list': objlist,
+    })
+    return response
+
+@login_required
 def save_frame_sequence(request):
     """Save a new frame sequence on image reordering in the timeline."""
     animation_id = request.REQUEST.get('animation_id', default=None)

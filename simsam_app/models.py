@@ -169,10 +169,10 @@ class SimulationState(models.Model):
 
 
 class SimulationObject(models.Model):
-    """An entity/object/thing in a simulation."""
-    sprite_filename = models.CharField(max_length=40)
-    serialized_rules = models.TextField(blank=True, default='')
-    simluations = models.ManyToManyField(Simulation, related_name='objects')
+    """An entity/object/image in a simulation."""
+    sprite_filename = models.CharField(max_length=80)
+    hash_value = models.CharField(max_length=40)
+    simulation = models.ForeignKey(Simulation, related_name='simulation')
 
     def __unicode__(self):
         return self.sprite_filename

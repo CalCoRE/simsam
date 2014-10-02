@@ -76,7 +76,34 @@ setCanvasSize = function(width) {
     });
     $('#saved').hide(0);
     $('#canceled').hide(0);
+    sizeDrawer();
 }
+
+sizeDrawer = function() {
+    var drawer = $('#sprite_drawer');
+    var positionY = $(drawer).position().top;
+    var heightParent = $(drawer).parent().height();
+
+    $(drawer).height(heightParent - positionY - 30);
+}
+
+addSpriteToSim = function(filename, hash) {
+    $.ajax({
+        url: 'save_object',
+        type: 'POST',
+        data: { sim_id: window.simulationId,
+            image_filename: filename,
+            hash_value: hash,
+        },
+        dataType: 'json',
+        success: addNewSpriteToDrawer
+    });
+
+    function addNewSpriteToDrawer(data, textStatus, jqXHR) {
+        console.log ('We added a sprite with id: ' + textStatus.id);
+    }
+}
+
 
 // check and reset canvas size on resize
 // eventually this should probably scale objects and behaviors too
