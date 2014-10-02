@@ -916,7 +916,14 @@ window.loadSprites = (dataString) ->
     for sprite in tmpList
         sprite.removeFromList()
         sprite.remove()
-    tmpList = []
+    tmpTextList = []
+    for text in window.textList
+        tmpTextList.push(text)
+    for text in tmpTextList
+        console.log('Removing 1 text')
+        if text.group != undefined
+            canvas.remove(text.group)
+    window.textList = []
     canvas.renderAll()
 
     imageObjects = []

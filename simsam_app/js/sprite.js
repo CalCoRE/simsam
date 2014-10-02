@@ -1113,7 +1113,7 @@
   };
 
   window.loadSprites = function(dataString) {
-    var idx, imageObjects, img, imgSrc, inObject, iruleData, newSprite, newText, obj, rule, ruleData, sprite, tmpList, txt, typeFactory, typeObj, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _len5, _len6, _m, _n, _o, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
+    var idx, imageObjects, img, imgSrc, inObject, iruleData, newSprite, newText, obj, rule, ruleData, sprite, text, tmpList, tmpTextList, txt, typeFactory, typeObj, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _m, _n, _o, _p, _q, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
     inObject = JSON.parse(dataString);
     if (inObject.classObjects.length === 0 && inObject.objects.length === 0) {
       return;
@@ -1130,7 +1130,20 @@
       sprite.removeFromList();
       sprite.remove();
     }
-    tmpList = [];
+    tmpTextList = [];
+    _ref1 = window.textList;
+    for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
+      text = _ref1[_k];
+      tmpTextList.push(text);
+    }
+    for (_l = 0, _len3 = tmpTextList.length; _l < _len3; _l++) {
+      text = tmpTextList[_l];
+      console.log('Removing 1 text');
+      if (text.group !== void 0) {
+        canvas.remove(text.group);
+      }
+    }
+    window.textList = [];
     canvas.renderAll();
     imageObjects = [];
     $("#sprite_drawer > img").each(function(i, sprite) {
@@ -1139,12 +1152,12 @@
       sprite.setAttribute('data-sprite-type', i);
       return sprite.setAttribute('data-debug', 'lS');
     });
-    _ref1 = inObject.classObjects;
-    for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
-      typeObj = _ref1[_k];
+    _ref2 = inObject.classObjects;
+    for (_m = 0, _len4 = _ref2.length; _m < _len4; _m++) {
+      typeObj = _ref2[_m];
       imgSrc = typeObj.imageObj;
-      for (_l = 0, _len3 = imageObjects.length; _l < _len3; _l++) {
-        img = imageObjects[_l];
+      for (_n = 0, _len5 = imageObjects.length; _n < _len5; _n++) {
+        img = imageObjects[_n];
         console.log("ImgSrc: " + imgSrc + " img.src: " + img.src);
         if (imgSrc === img.src) {
           typeObj.raw = img;
@@ -1156,40 +1169,40 @@
       typeFactory.prototype._count = 0;
       typeFactory.prototype.cloneTranslate = typeObj.cloneTranslate;
       typeFactory.prototype.cloneFreqency = typeObj.cloneFreqency;
-      _ref2 = typeObj.rules;
-      for (idx in _ref2) {
-        ruleData = _ref2[idx];
+      _ref3 = typeObj.rules;
+      for (idx in _ref3) {
+        ruleData = _ref3[idx];
         rule = Rule.createFromData(ruleData);
         typeFactory.addClassRule(rule, idx);
       }
-      _ref3 = typeObj.irules;
-      for (idx in _ref3) {
-        iruleData = _ref3[idx];
+      _ref4 = typeObj.irules;
+      for (idx in _ref4) {
+        iruleData = _ref4[idx];
         rule = Rule.createFromData(iruleData);
         typeFactory.addClassIRule(rule, iruleData.targetType);
       }
       console.log('sprite added to factory');
       window.spriteTypeList.push(typeFactory);
     }
-    _ref4 = inObject.objects;
-    for (_m = 0, _len4 = _ref4.length; _m < _len4; _m++) {
-      obj = _ref4[_m];
+    _ref5 = inObject.objects;
+    for (_o = 0, _len6 = _ref5.length; _o < _len6; _o++) {
+      obj = _ref5[_o];
       newSprite = new window.spriteTypeList[obj.spriteType];
       newSprite.restoreFromJSON(obj);
       window.spriteList.push(newSprite);
     }
     if (inObject.textElements !== void 0) {
-      _ref5 = inObject.textElements;
-      for (_n = 0, _len5 = _ref5.length; _n < _len5; _n++) {
-        txt = _ref5[_n];
+      _ref6 = inObject.textElements;
+      for (_p = 0, _len7 = _ref6.length; _p < _len7; _p++) {
+        txt = _ref6[_p];
         newText = new TextLabel('Default');
         newText.restoreFromJSON(txt);
       }
     }
     console.log("---- Here are our sprites ----");
-    _ref6 = window.spriteTypeList;
-    for (_o = 0, _len6 = _ref6.length; _o < _len6; _o++) {
-      obj = _ref6[_o];
+    _ref7 = window.spriteTypeList;
+    for (_q = 0, _len8 = _ref7.length; _q < _len8; _q++) {
+      obj = _ref7[_q];
       if (obj.src !== void 0) {
         console.log(obj.src());
       }
