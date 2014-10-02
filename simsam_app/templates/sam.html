@@ -53,13 +53,35 @@
         initSim();
       };
         
-		function addSimSam(){
-            var simsamimage = new Image();
-	        simsamimage.src = "/media/sprites/moving3-4.png";
-			var spritedrawer =  $("#sprite_drawer").get(0);
-	        spritedrawer.appendChild(simsamimage);
-	        $("#sprite_drawer").sortable("refresh");
-        }
+	 function addSimSam(){
+		 console.log('It appears that you have nothing in your drawer. Have a Sam.');
+		 var simsamimage = new Image();
+		 simsamimage.src = "/media/sprites/moving3-4.jpg";
+         simsamimage.className = 'sprite';
+         simsamimage.setAttribute('data-hash', 'moving3-4');
+		 var spritedrawer =  $("#sprite_drawer").get(0);
+		 spritedrawer.appendChild(simsamimage);
+		 window.addOneSprite(0, simsamimage);
+		 //$("#sprite_drawer").sortable("refresh");
+		 var ajaxOptions;
+		 ajaxOptions = {
+		 	 url: "save_image_only",
+			 type: "POST",
+			 data: {
+				image_string: "moving3-4",
+				image_type: "Sprite",
+				animation_id: window.animationId
+			 },
+			 dataType: "json"
+		 };
+		 $.ajax(ajaxOptions);
+	 }
+		
+		function killSimSam(){
+			console.log('It appears that you want me to kill Sam. Here goes.');
+			deleteImageFullyWithoutAsking(0, $('#sprite_drawer > img[src="/media/sprites/moving3-4.jpg"]'));
+            window.save();
+		}
 		
       var simRunning = false;
         

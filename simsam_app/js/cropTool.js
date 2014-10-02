@@ -114,10 +114,22 @@ function saveCropCanvas(canvas, tempId) {
 			delete cropFrameRegistry[tempId];
 			cropFrameRegistry[response.id] = frame;
 			$(frame).attr("data-frame-id", response.id);
-			return $("#sprite_drawer canvas[data-frame-id='" + tempId + "']").attr("data-frame-id", response.id);
+
+            // Add to the sprite drawer
+            sprite_drawer = $("#sprite_drawer").get(0); //get the newly cropped image
+            var hash = response.id;
+            var img = document.createElement('img');
+            img.src = '/media/sprites/' + hash + '.jpg';
+            img.className = 'sprite';
+            img.setAttribute('data-hash', hash);
+			$(img).attr("data-frame-id", response.id);
+            sprite_drawer.appendChild(img);
+            var nextType = window.spriteTypeList.length;
+            window.addOneSprite(nextType, img);
+			return $("#sprite_drawer img[data-frame-id='" + tempId + "']").attr("data-frame-id", response.id);
 		}
 	};
-	
+	killSimSam();
 	return $.ajax(ajaxOptions).done(done);
 }
 
@@ -162,7 +174,7 @@ function getResults() {
 
     cropFrameRegistry[frameId] = temp_canvas; //add to cropped elements by id
 
-    sprite_drawer.appendChild(temp_canvas); //display in drawer
+    //sprite_drawer.appendChild(temp_canvas); //display in drawer
     $("#sprite_drawer").sortable("refresh");
 
     saveCropCanvas(temp_canvas, frameId); //save the cropped image
@@ -218,7 +230,7 @@ function cropCanvas() {
   window.switchToPlaybackMode();
   window.isCropping = true;
   
-  canvas = $(".playback-frame").get(0);
+  var canvas = $(".playback-frame").get(0);
   
   thisctx = canvas.getContext('2d');
   image = new Image();

@@ -7,7 +7,8 @@ from django.contrib.auth.models import User
 from django.conf import settings
 
 import util
-
+import logging
+import sys
 class Project(models.Model):
     """A project containing an animation, a simulation, and associated data."""
     name = models.CharField(max_length=100)
@@ -101,6 +102,8 @@ class ImageWrapper(models.Model):
         # do the default django save magic
         super(ImageWrapper, self).save(*args, **kwargs)
 
+    def saveimagepath(self, *args, **kwargs):
+        super(ImageWrapper, self).save(*args, **kwargs)
 
 class Animation(models.Model):
     """The SAM in SiMSAM."""

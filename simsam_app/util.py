@@ -25,3 +25,12 @@ class ListField(models.TextField):
     def value_to_string(self, obj):
             value = self._get_val_from_obj(obj)
             return self.get_db_prep_value(value)
+
+
+
+from django.contrib.auth.decorators import login_required
+@login_required
+def gallery(request):
+    """Display public projects available to clone."""
+    simsam_user = SimsamUser.lookup(request.user)
+    

@@ -506,6 +506,28 @@ deleteImageFully = function(spriteType, classImage) {
     deleteImageInternal(messageInfo, onSuccess);
 }
 
+deleteImageFullyWithoutAsking = function(spriteType, classImage) {
+	canvas.forEachObject(function (iterObj) {
+		if (iterObj.spriteType == spriteType) {
+			iterObj.removeFromList();
+			iterObj.remove();
+			delete iterObj;
+		}
+	});
+	
+	image_hash = $(classImage).attr('data-hash');
+	$(classImage).remove();
+	djangoDeleteImage(image_hash);
+	for(i = 0; i < spriteTypeList.length; i++){
+		tempobj = new spriteTypeList[i];
+		if(tempobj.spriteType == spriteType){
+			spriteTypeList.splice(i, 1);
+			save();
+			break;
+		}
+	}
+}
+
 //
 // Random Slider Handlers
 //

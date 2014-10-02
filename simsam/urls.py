@@ -34,6 +34,7 @@ urlpatterns = patterns('',
     url(r"^save_sim_state/?$", simsam_app.views.save_sim_state),
     url(r"^load_sim_state/?$", simsam_app.views.load_sim_state),
     url(r"^list_sim_state/?$", simsam_app.views.list_sim_state),
+    url(r"^save_image_only/?$", simsam_app.views.save_image_only),
     url(r"^about/?$", simsam_app.views.about),
 
     # Uncomment the admin/doc line below to enable admin documentation:

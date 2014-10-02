@@ -78,11 +78,11 @@
 }
 
 #iact_toggle {
-	background-position:-53px 0px;
+	background-position:-55px 0px;
 }
 
 #iact_chart {
-	background-position:-106px 0px;
+	background-position:-109px 0px;
 }
 
 #counts {
@@ -90,15 +90,15 @@
 }
 
 #count_chart {
-	background-position:-160px 0px;
+	background-position:-164px 0px;
 }
 
 #iact_toggle:hover {
-	background-position:-53px -54px;
+	background-position:-55px -54px;
 }
 
 #iact_chart:hover {
-	background-position:-106px -54px;
+	background-position:-109px -54px;
 }
 
 #counts:hover {
@@ -106,7 +106,7 @@
 }
 
 #count_chart:hover {
-	background-position:-160px -54px;
+	background-position:-164px -54px;
 }
 
 .animation-head {

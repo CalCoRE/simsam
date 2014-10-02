@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.utils import simplejson as json
 from django.contrib.auth.decorators import login_required
 import logging
+import sys
 
 from simsam_app.models import *
 
@@ -50,6 +51,7 @@ def sandbox(request):
 
 
 def login_user(request):
+   
     state = ""
     username = password = ''
     redirect_to = request.REQUEST.get('next','')
@@ -98,6 +100,11 @@ def login_user(request):
 def logout_user(request):
     logout(request)
     return HttpResponseRedirect('/')
+
+@login_required
+def gallery(request):
+    """Display public projects available to clone."""
+    simsam_user = SimsamUser.lookup(request.user)
 
 @login_required
 def delete_image(request):
@@ -161,6 +168,46 @@ def save_image(request):
         'message': message,
     }))
 
+@login_required
+def save_image_only(request):
+    """I have the image URL. Now let me save it"""
+    image_string = request.REQUEST.get('image_string')
+    image_type = request.REQUEST.get('image_type')
+    animation_id = request.REQUEST.get('animation_id')
+    if image_type == 'AnimationFrame':
+        image_class = AnimationFrame
+    elif image_type == 'Sprite':
+        image_class = Sprite
+    else:
+        return HttpResponse(json.dumps({
+            'success': False,
+            'message': "Invalid image type: %s." % image_type
+        }))
+		
+    image_obj = image_class()
+    image_obj.image_hash = image_string
+    image_obj.saveimagepath()
+	
+    # add the image hash to the animation frame sequence
+    try:
+        animation = Animation.objects.get(id=animation_id)
+    except Animation.DoesNotExist:
+        success = False
+        message = "Invalid animation_id: %s." % animation_id
+    else:
+        success = True
+        message = ''
+        if image_type == 'AnimationFrame':
+            animation.frame_sequence.append(image_obj.image_hash)
+            animation.save()
+        else:
+            animation.sprite_collection.append(image_obj.image_hash)
+            animation.save()
+	
+    return HttpResponse(json.dumps({
+        'success': True,
+        'message': ""
+    }))
 
 @login_required
 def save_frame_sequence(request):

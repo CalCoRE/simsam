@@ -105,8 +105,8 @@ $ ->
         #switchToRecordMode()
     
     loadSprites = (sprite) ->
-        console.log($("#sprite_drawer").get(0));
-        output = $("#sprite_drawer").get(0) 
+        console.log($("#sprite_drawer").get(0))
+        output = $("#sprite_drawer").get(0)
         #canvas = document.createElement('canvas')
         #ctx = canvas.getContext('2d')
         img = new Image()
@@ -142,17 +142,17 @@ $ ->
     
     loadFrames = (frame) ->
         output = $("#video_output").get(0)
-        canvas = document.createElement('canvas')
-        ctx = canvas.getContext('2d')
+        canvas_el = document.createElement('canvas')
+        ctx = canvas_el.getContext('2d')
         img = new Image()
         img.onload = ->
-            canvas.width = img.width
-            canvas.height = img.height
+            canvas_el.width = img.width
+            canvas_el.height = img.height
             ctx.drawImage(img, 0, 0, img.width, img.height)
         #img.src = 'http://' + window.location.host + '/media/sam_frames/' + frame + '.jpg'
         img.src = '/media/sam_frames/' + frame + '.jpg'
     
-        frameOrdinal = playbackFrames.push canvas
+        frameOrdinal = playbackFrames.push canvas_el
         thumbnail = document.createElement('canvas')
         context = thumbnail.getContext('2d')
         thumb = new Image()
@@ -164,8 +164,8 @@ $ ->
         thumb.src =  '/media/sam_frames/' + frame + '.jpg'
         frameId = frameIndex = frameOrdinal - 1
         $(thumbnail).attr "data-frame-id", frame
-        $(canvas).attr "data-frame-id", frame
-        frameRegistry[frame] = canvas
+        $(canvas_el).attr "data-frame-id", frame
+        frameRegistry[frame] = canvas_el
         
         output.appendChild thumbnail
         $("#video_output").sortable "refresh"
@@ -547,7 +547,8 @@ $ ->
         if measureShowCharts
             $(".sprite-chart").each (index, thumbnail) ->
                 $(this).show()
-        window.loadSpriteTypes()
+        if !window.spriteTypesLoaded
+            window.loadSpriteTypes()
         canvas.renderAll()
     
     startSamlite = ->

@@ -802,6 +802,45 @@ window.tick = ->
     canvas.renderAll.bind(canvas)
     canvas.renderAll()
 
+setSpriteTypeDraggable = (sprite, input_type) ->
+    $(sprite).draggable # this sprite is draggable
+        revert: false, # dont bounce back after drop
+        helper: "clone", # make a copy when pulled off the dragsource
+        cursorAt:
+            top: 0
+            left: 0
+        start: (e, ui) ->
+            $(ui.helper).addClass("ui-draggable-helper")
+        stop: (ev, ui) -> # when dropped
+            type = input_type
+            if (pointWithinElement(ev.pageX, ev.pageY,
+            $('#trash_menu_button')) ||
+            pointWithinElement(ev.pageX, ev.pageY, $('#trash')) )
+                console.log('I am within the Trash Sprite Button')
+                deleteImageFully(type, this)
+                return
+            console.log('I am a '+type); # tell me which one you are
+            dropX = ev.pageX - window.globalPos.left
+            dropY = ev.pageY - window.globalPos.top
+            if window.spriteTypeList[type]::_count >= window.maxSprites
+                return
+            console.log('Before new window.spriteTypeList[i]'+type)
+            newSprite = new window.spriteTypeList[type]  # make one
+            console.log('After new window.spriteTypeList[i]'+type)
+            console.log('SpriteType Success? = ' + newSprite.setSpriteTypeId( type ))
+            spriteList.push( newSprite )
+            # pos = $(this).position()
+            newSprite.setTop(ev.pageY)
+            newSprite.setLeft(dropX)
+            canvas.add(newSprite)
+            canvas.renderAll()
+            window.save()
+
+window.addOneSprite = (i, sprite) ->
+        window.spriteTypeList.push( SpriteFactory( i , sprite ) ) #make a factory
+        setSpriteTypeDraggable(sprite, i)
+
+
 window.loadSpriteTypes = ->
     window.maxSprites = 25
     console.log "loading sprite types"
@@ -811,40 +850,10 @@ window.loadSpriteTypes = ->
     $("#sprite_drawer > img").each (i, sprite) -> # all sprites in the drawer
         console.log "loading sprite type" + i
         window.spriteTypeList.push( SpriteFactory( i , sprite ) ) #make a factory
+        setSpriteTypeDraggable(sprite, i)
 
-        $(sprite).draggable # this sprite is draggable
-            revert: false, # dont bounce back after drop
-            helper: "clone", # make a copy when pulled off the dragsource
-            cursorAt:
-                top: 0
-                left: 0
-            start: (e, ui) ->
-                $(ui.helper).addClass("ui-draggable-helper")
-            stop: (ev, ui) -> # when dropped
-                if (pointWithinElement(ev.pageX, ev.pageY,
-                $('#trash_menu_button')) ||
-                pointWithinElement(ev.pageX, ev.pageY, $('#trash')) )
-                    console.log('I am within the Trash Sprite Button')
-                    deleteImageFully(i, this)
-                    return
-                console.log('I am a '+i); # tell me which one you are
-                dropX = ev.pageX - window.globalPos.left
-                dropY = ev.pageY - window.globalPos.top
-                if window.spriteTypeList[i]::_count >= maxSprites
-                    return
-                console.log('Before new window.spriteTypeList[i]'+i)
-                newSprite = new window.spriteTypeList[i]  # make one
-                console.log('After new window.spriteTypeList[i]'+i)
-                console.log('SpriteType Success? = ' + newSprite.setSpriteTypeId( i ))
-                spriteList.push( newSprite )
-                # pos = $(this).position()
-                newSprite.setTop(ev.pageY)
-                newSprite.setLeft(dropX)
-                canvas.add(newSprite)
-                canvas.renderAll()
-                window.save()
-                console.log('End window.loadSpriteTypes')
     console.log("--- Loaded sprite type list: " + window.spriteTypeList.length)
+    window.spriteTypesLoaded = true
 
 window.saveSprites = ->
     masterObj = {}
@@ -890,6 +899,13 @@ window.saveSprites = ->
 
 # Load sprites from the JSON stored in the database
 window.loadSprites = (dataString) ->
+    inObject = JSON.parse(dataString)
+
+    # If we got an empty save, don't erase everything else
+    if inObject.classObjects.length == 0 and
+        inObject.objects.length == 0
+            return
+
     # Clear everything
     tmpList = []
     window.spriteTypeList = []
@@ -901,10 +917,10 @@ window.loadSprites = (dataString) ->
     tmpList = []
     canvas.renderAll()
 
-    inObject = JSON.parse(dataString)
     imageObjects = []
     $("#sprite_drawer > img").each (i, sprite) -> # all sprites in the drawer
         imageObjects.push(this)
+        setSpriteTypeDraggable(sprite, i)
     for typeObj in inObject.classObjects
         imgSrc = typeObj.imageObj
         for img in imageObjects
@@ -943,3 +959,4 @@ window.loadSprites = (dataString) ->
             console.log(obj.src())
 
     canvas.renderAll()
+    window.spriteTypesLoaded = true
