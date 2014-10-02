@@ -8,11 +8,11 @@ import logging
 import sys
 
 from simsam_app.models import *
+from simsam_app.supporting import cloneProject
 
 #debugging
 
 import pprint
-
 
 
 @login_required
@@ -105,6 +105,27 @@ def logout_user(request):
 def gallery(request):
     """Display public projects available to clone."""
     simsam_user = SimsamUser.lookup(request.user)
+    projects = Project.objects.filter(is_public=True)
+    t = loader.get_template("gallery.html")
+    c = RequestContext(request, {'projectList': projects})
+    return HttpResponse(t.render(c))
+
+@login_required
+def clone_project(request):
+    """Create a new project with a given name and open it."""
+    simsam_user = SimsamUser.lookup(request.user)
+    orig_id = request.REQUEST.get('project_id')
+
+    orig_project = Project.objects.get(id=orig_id)
+    project = cloneProject(orig_project, simsam_user.user.id)
+    anim1 = project.name + "-anim0"
+    animation = project.animations.get(name=anim1)
+    return HttpResponseRedirect("/app?project={prg}&animation={an}".format(prg=project.id, an=animation.id))
+
+
+""" Calls below here are Ajax calls and not page renderings
+"""
+
 
 @login_required
 def delete_image(request):
@@ -209,6 +230,8 @@ def save_image_only(request):
         'message': ""
     }))
 
+""" Object Ajax calls """
+
 @login_required
 def save_object(request):
     """Saves objects, which represent a class of sprites."""
@@ -310,6 +333,23 @@ def make_project(request):
         simulation.save()
         return HttpResponseRedirect("/app?project={prg}&animation={an}".format(prg=project.id, an=animation.id))
 
+def project_set_public(request):
+    """Saves objects, which represent a class of sprites."""
+    success = True
+    message = ''
+
+    project_id = request.REQUEST.get('project_id')
+    is_public = request.REQUEST.get('is_public')
+    project = simsam_user.projects.get(id=project_id)
+    project.is_public = is_public
+    project.save()
+
+    return HttpResponse(json.dumps({
+        'success': success,
+        'id': project.id,
+        'message': message,
+    }))
+
 @login_required
 def newanim(request):
     """Create a new animation within an open project."""
@@ -356,13 +396,6 @@ def chooseanim(request):
     return HttpResponseRedirect("/app?project={0}&animation={1}".format(
         project_id, animation_id))
 
-
-# chris wrote this just for testing sprite.coffee, it should be removed
-# eventually
-def sprite(request):
-    t = loader.get_template("sprite.html")
-    c = RequestContext(request, {})
-    return HttpResponse(t.render(c))
 
 #
 # Interact with sim states

@@ -15,6 +15,7 @@ class Project(models.Model):
     owner = models.ForeignKey('SimsamUser', related_name="projects")
     parent_project = models.ForeignKey(
         'Project', related_name='child_projects', blank=True, null=True)
+    is_public = models.BooleanField(default=True)
 
     # implicit properties
     # * animations (many animations to one project)

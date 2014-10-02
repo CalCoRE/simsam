@@ -397,6 +397,14 @@ a.close {
         background-position:-386px 2px;
 }
 
+#saveas {
+	background: white;
+}
+
+#loadstate {
+	background: white;
+}
+
 #text_tool {
 	background-position: -496px 2px;
 }

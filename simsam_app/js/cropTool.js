@@ -150,6 +150,7 @@ function saveCropCanvas(canvas, tempId) {
             //sprite_drawer.appendChild(img);
             //window.addOneSprite(nextType, img);
             //img.setAttribute('data-sprite-type', nextType);
+            location.reload();
 			return $("#sprite_drawer img[data-frame-id='" + tempId + "']").attr("data-frame-id", response.id);
 		}
 	};

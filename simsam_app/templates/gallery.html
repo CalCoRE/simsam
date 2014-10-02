@@ -1,0 +1,69 @@
+<!Doctype html>
+<html lang="en">
+<head>
+	<title>SiMSAM</title>
+        <meta charset="UTF-8" />
+    
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/app.css">
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/homepage.css">
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/widgets.css">
+
+</head>
+
+<body>
+
+    <div class="wrapper"> 
+       <div class="window">
+       
+        <!-- GREETING -->
+            <h1 class="greeting">
+                {% if user.is_authenticated %}
+                    Hello {{ user.username }}!
+                {% else %}
+                    Welcome to SiMSAM! <br><br>
+                {% endif %}
+            </h1>
+            
+            
+        <div class="projects">
+        <!-- OPEN PROJECT -->
+            {% if projectList %}  
+            Clone one of our existing public galleries:
+            <form method="post" name="myForm" action="clone_project">
+                {% for project in projectList %}
+                  <button type="submit" class="button" name="project_id" value="{{ project.id }}" />{{ project.name }}</button><br>
+                {% endfor %}
+            </form>
+            {% endif %}
+            
+            <br>
+
+            <div id="return"> 
+                <form action="/" method="get">
+                    <input class="button" type="submit" value="Home" />
+                </form>
+            </div>
+            
+        <!-- LOGOUT -->
+            {% if user.is_authenticated %}
+                <div id="logout"> 
+                    <form action="logout" method="post">
+                        <input class="button" type="submit" value="log out" />
+                    </form>
+                </div>
+            {% endif %}
+            
+        <!-- ERROR MESSAGE -->
+                <div id="error">
+                    {{user_message}}
+                </div>
+                <br>
+            </div>
+        </div>
+	</div>
+    <div id="home_button" onclick="window.location = '/'"><img class="icon" src="static/images/newicons/home.png"></div>
+    <div class="title">SiMSAM</div>
+    <div id="help_button" onclick="window.location = 'about/'"><img class="icon" src="static/images/newicons/help.png"></div></div>
+
+</body>
+</html>
