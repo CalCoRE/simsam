@@ -215,7 +215,7 @@ simObjectSelected = function(options) {
 }
 
 simObjectCleared = function(options) {
-    if (typeof currentSimObject.cleared === 'function') {
+    if (currentSimObject && typeof currentSimObject.cleared === 'function') {
         currentSimObject.cleared();
     }
     if (cloneObj != null) {
@@ -223,7 +223,7 @@ simObjectCleared = function(options) {
         return;
     }
     //$('#selected').hide(250);
-    if (currentSimObject !== undefined) {
+    if (currentSimObject !== undefined && curSimObject !== null) {
         rec = currentSimObject.hasOwnProperty('stateRecording') && currentSimObject.stateRecording;
         tran = currentSimObject.hasOwnProperty('stateTranspose') && currentSimObject.stateTranspose;
         if (rec || tran) {
@@ -251,26 +251,7 @@ simObjectModified = function(options) {
             console.log("Our target isn't being edited");
             return;
         }
-        intersetObj = null;
-        // Don't think we need to assert SIM mode b/c we trigger 'modified'
-        // If we're in recording mode and we are dropped on another object,
-        //   then begin the creation of an interaction rule.
-        canvas.forEachObject(function(obj) {
-            if (obj === target){
-                console.log('obj === target. Line 155 simlite.js');  
-                return;
-            }
-            if (typeof obj.trueIntersectsWithObject === 'function' &&
-                obj.trueIntersectsWithObject(target)) {
-                console.log('obj intersected.  Line 159 simlite.js');
-                if (typeof(target.interactionEvent) != "undefined") {
-                    console.log('interactionEvent not undefined.  Line 161 simlite.js');
-                    // XXX Now add a UI and add the interactionEvent after
-                    // the user selects which type of action to take
-                    target.interactionEvent(obj);
-                }
-            }
-        });
+        // We used to test for intersection here, but changed the UI now
     }
 }
 

@@ -9,7 +9,7 @@
     __extends(GenericSprite, _super);
 
     function GenericSprite(spriteId) {
-      var sWidth, shapeParams;
+      var myHeight, myWidth, sWidth, shapeParams;
       this.spriteId = spriteId;
       this.uniqueId = '';
       this.spriteTypeId = -1;
@@ -25,9 +25,21 @@
       this.countElement = null;
       sWidth = this.spriteType * 5;
       this.uniqueId = generateUUID();
+      if (this.imageObj.dataset.origHeight !== void 0) {
+        myHeight = this.imageObj.dataset.origHeight;
+      } else {
+        myHeight = this.imageObj.clientHeight;
+      }
+      if (this.imageObj.dataset.origWidth !== void 0) {
+        myWidth = this.imageObj.dataset.origWidth;
+      } else {
+        myWidth = this.imageObj.clientWidth;
+      }
+      myWidth = parseInt(myWidth);
+      myHeight = parseInt(myHeight);
       shapeParams = {
-        height: this.imageObj.clientHeight,
-        width: this.imageObj.clientWidth,
+        height: myHeight,
+        width: myWidth,
         borderColor: "rgb(37,58,79)",
         cornerColor: "rgb(37,58,79)",
         transparentCorners: false,
@@ -1002,7 +1014,13 @@
   setSpriteTypeDraggable = function(sprite, input_type) {
     return $(sprite).draggable({
       revert: false,
-      helper: "clone",
+      helper: function(e) {
+        var el, target;
+        target = e.target;
+        el = document.createElement('img');
+        el.src = target.src;
+        return el;
+      },
       cursorAt: {
         top: 0,
         left: 0

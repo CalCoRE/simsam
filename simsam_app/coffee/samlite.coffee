@@ -136,6 +136,20 @@ $ ->
         #canvas.addEventListener "dblclick", (e) => addObject(img)
         #img.addEventListener "dblclick", (e) => spriteList.push( new spriteTypeList[] )
         output.appendChild img
+        # We don't know the image size until it's loaded. Once it's loaded,
+        # make it 1/4 the size for the drawer (1/2 x 1/2).
+        $(img).on('load', (e) ->
+            target = e.target
+            width = target.width
+            height = target.height
+            target.setAttribute('data-orig-width', width)
+            target.setAttribute('data-orig-height', height)
+            width /= 2
+            height /= 2
+            target.style.width = width
+            target.style.height = height
+        )
+
 
         cnt = document.createElement('div')
         cnt.className = 'sprite-count'

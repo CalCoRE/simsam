@@ -114,6 +114,18 @@
       img.setAttribute('data-sprite-type', -1);
       img.setAttribute('data-debug', 'samlS');
       output.appendChild(img);
+      $(img).on('load', function(e) {
+        var height, target, width;
+        target = e.target;
+        width = target.width;
+        height = target.height;
+        target.setAttribute('data-orig-width', width);
+        target.setAttribute('data-orig-height', height);
+        width /= 2;
+        height /= 2;
+        target.style.width = width;
+        return target.style.height = height;
+      });
       cnt = document.createElement('div');
       cnt.className = 'sprite-count';
       cnt.id = sprite;

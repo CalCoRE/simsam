@@ -21,10 +21,21 @@ class GenericSprite extends fabric.Image
         sWidth = this.spriteType * 5
 
         @uniqueId = generateUUID()
+        if (this.imageObj.dataset.origHeight != undefined)
+            myHeight = this.imageObj.dataset.origHeight
+        else
+            myHeight = this.imageObj.clientHeight
+        if (this.imageObj.dataset.origWidth != undefined)
+            myWidth = this.imageObj.dataset.origWidth
+        else
+            myWidth = this.imageObj.clientWidth
+
+        myWidth = parseInt(myWidth)
+        myHeight = parseInt(myHeight)
 
         shapeParams =
-            height: this.imageObj.clientHeight,
-            width: this.imageObj.clientWidth,
+            height: myHeight,
+            width: myWidth,
             borderColor: "rgb(37,58,79)",
             cornerColor: "rgb(37,58,79)",
             transparentCorners: false,
@@ -805,7 +816,12 @@ window.tick = ->
 setSpriteTypeDraggable = (sprite, input_type) ->
     $(sprite).draggable # this sprite is draggable
         revert: false, # dont bounce back after drop
-        helper: "clone", # make a copy when pulled off the dragsource
+        #helper: "clone", # make a copy when pulled off the dragsource
+        helper: (e) ->
+            target = e.target
+            el = document.createElement('img')
+            el.src = target.src
+            return el
         cursorAt:
             top: 0
             left: 0
