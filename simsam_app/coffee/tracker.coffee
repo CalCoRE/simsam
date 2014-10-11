@@ -16,6 +16,7 @@ class window.Tracker
         @element = null
         @count = 0
         @targetSprite = null
+        @targetType = -1
         @history = [0]
         @latched = false
         @latchedList = {}
@@ -59,7 +60,8 @@ class window.Tracker
     # We interacted with something.  See if we care and act accordingly.
     interactCheck: ->
         for sprite in window.spriteList
-            if sprite.spriteType != @targetSprite.spriteType
+            #if sprite.spriteType != @targetSprite.spriteType
+            if sprite.spriteType != @targetType
                 continue
             uuid = sprite.uniqueId
             if @parent.trueIntersectsWithObject(sprite)

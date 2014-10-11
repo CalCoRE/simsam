@@ -166,11 +166,11 @@
             	</div> <!-- video_bottom -->
 				<div class="sim_bottom">
 					<div class="play_buttons" id="sim_buttons" style="display:none;">
-						<div id="step" onclick="tick()"></div>
-						<div id="run" onclick="toggleSim()"></div>
-						<div id="clear" onclick="clearTrackers()"></div>
-						<div id="saveas" onclick="saveasBeginEditing();">S</div>
-						<div id="loadstate" onclick="listBeginEditing();">L</div>
+						<div id="step" title="Step" onclick="tick()"></div>
+						<div id="run" title="Run" onclick="toggleSim()"></div>
+						<div id="clear" title="Clear" onclick="clearTrackers()"></div>
+						<div id="saveas" title="Save" onclick="saveasBeginEditing();">S</div>
+						<div id="loadstate" title="Load" onclick="listBeginEditing();">L</div>
 					</div>
                     <div id="sim_tools" class="sim_buttons">
                         <div id="text_tool" onclick="toolTextClick();"></div>
@@ -185,7 +185,7 @@
             			</div>
             			<div id="counts">
             			</div>
-            			<div id="count_blocker">Please select interaction target</div>
+                        <!-- <div id="count_blocker">Please select interaction target</div> -->
             		</div>
             		<div class="sim_charts">
             			<p style="clear: both;">Charts</p>
@@ -200,6 +200,8 @@
     <input type="hidden" id="fps" value="10">
 
 <!-- Begin floating windows section -->
+
+<div id="count_blocker"></div>
     
 <!-- Interaction Chooser -->
     <div id="interactions" class="simui ui-backround">

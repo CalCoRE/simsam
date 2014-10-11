@@ -84,6 +84,17 @@ setCanvasSize = function(width) {
     sizeDrawer();
 }
 
+// Give us a point from an event and we will convert it to a global point
+getCanvasPoint = function(evPoint) {
+    var y = evPoint.top;
+    var x = evPoint.left;
+    
+    return { 
+        y: y - window.globalPos.top,
+        x: x - window.globalPos.left,
+    };
+}
+
 sizeDrawer = function() {
     var drawer = $('#sprite_drawer');
     var positionY = $(drawer).position().top;
@@ -228,7 +239,7 @@ simObjectCleared = function(options) {
         return;
     }
     //$('#selected').hide(250);
-    if (currentSimObject !== undefined && curSimObject !== null) {
+    if (currentSimObject !== undefined && currentSimObject !== null) {
         rec = currentSimObject.hasOwnProperty('stateRecording') && currentSimObject.stateRecording;
         tran = currentSimObject.hasOwnProperty('stateTranspose') && currentSimObject.stateTranspose;
         if (rec || tran) {
@@ -368,10 +379,6 @@ setInteractionUILocation = function (sprout) {
     $(cui).css({ 
         left: left + 10,
         top: 70 /* top margin */ + 20,
-        /*
-        top: sprout.getTop() - objHeight/2 - myHeight - 15,
-        left: sprout.getLeft() - myWidth/2,
-        */
     });
 }
 
@@ -884,9 +891,12 @@ simDragStop = function(ev, ui) {
     var match = false;
     var source;
 
+    var point = getCanvasPoint({top: ev.pageY, left: ev.pageX});
     for(i=0; i < window.spriteList.length; i++) {
         sprite = window.spriteList[i];
-        point = {y: ev.pageY, x: ev.pageX};
+        var tl = sprite.oCoords.tl;
+        var br = sprite.oCoords.br;
+        console.log('ul: ' + tl.x + 'x' + tl.y + " br: " + br.x + "x" + br.y);
         if (sprite.containsPoint(point)) {
             match = true;
             break;
@@ -900,14 +910,60 @@ simDragStop = function(ev, ui) {
     } else {
         currentTracker = new ChartTracker;
     }
+    if (sprite.countElement) {
+        sprite.countElement.remove();
+    }
     currentTracker.parent = sprite;
     currentTracker.createElement(source, sprite);
     // Prepare to select the interaction target object
     canvas.discardActiveObject();
     simObjectCleared();
+    /*
     $('#count_blocker').show();
     interactionWaiting = true;
+    */
     currentInterObj = sprite;
+    simChartChoose(sprite);
+}
+
+simChartChoose = function(obj) {
+    console.log("Choose object for interaction tracking");
+    // First, we should choose the object we're going to interact with.
+    $('#interaction-ui').empty();
+    $('#interaction-ui').html('<h1>Select Interaction to Track<h1>');
+
+    var typeList = [];
+    window.oneOfEach = [];
+    canvas.forEachObject(function (iterObj) {
+        var t = iterObj.spriteType;
+
+        if (typeof iterObj.interactionCallback === 'function' && 
+            t != obj.spriteType && typeList.indexOf(t) == -1) {
+            typeList.push(t);
+            oneOfEach.push(iterObj);
+        }
+    });
+
+    // Insert only images on the canvas and not our image
+    for (var i = 0; i < oneOfEach.length; i++) {
+        var spImage = oneOfEach[i];
+        var imgSrc = spImage.getSrc();
+        var iEl = document.createElement('img');
+        iEl.src = imgSrc;
+        iEl.setAttribute('data-target-idx', i);
+
+        $(iEl).click(function (e) {
+            console.log('sprout src = '+this.src);
+            var tIdx = $(this).data('target-idx');
+            $('#interaction-ui').hide();
+            currentTracker.targetType = tIdx;
+            $('#count_blocker').hide();
+        });
+        $('#interaction-ui').append(iEl);
+        delete spImage;
+    }
+    setInteractionUILocation(cloneObj);
+    $('#interaction-ui').show();
 }
 
 clearTrackers = function() {
