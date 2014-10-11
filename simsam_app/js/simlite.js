@@ -5,6 +5,11 @@ window.initSim = (function(){
     currentSimObject = null;
     cloneObj = null;
     g_clickTime = 0;
+    saDraggable = false;
+    interactionsDraggable = false;
+    randomDraggable = false;
+    cloneDraggable = false;
+    modifyingDraggable = false;
     window.g_currentSaveName = 'default';
 
     /* Create a new fabric.Canvas object that wraps around the original <canvas>
@@ -253,41 +258,6 @@ simObjectModified = function(options) {
         }
         // We used to test for intersection here, but changed the UI now
     }
-}
-
-showSelectAction = function(selectedObject) {
-    var menu_width = 220;
-    var menu_height = 138;
-    // Position select-action 
-    var cX = selectedObject.getLeft() + globalPos.left;
-    var cY = selectedObject.getTop()+ globalPos.top;
-
-    var sa = $('#select-action');
-
-    var pX = cX - menu_width / 2;
-    var pY = cY - menu_height / 2;
-    $(sa).css({
-        top: pY,
-        left: pX,
-    });
-
-    $('#select-action').show();
-    $('#select-behavior').off('click').on('click', function(ev){
-        $('#select-action').hide();
-        startRecording(selectedObject, 'Individual');
-    });
-    $('#select-delete').off('click').on('click', function(ev){
-        $('#select-action').hide();
-        deleteImageSingle(selectedObject);
-    });
-    $('#select-interaction').off('click').on('click', function(ev){
-        $('#select-action').hide();
-        // show the object picker next
-        // Install click handlers for the objects
-        console.log('calling from click');
-        integrationBehaviorChoose(selectedObject);
-        showRecording('Interaction');
-    });
 }
 
 // Behavior recording functions
@@ -610,6 +580,10 @@ randomSliderRelease = function(obj) {
 // Display the widget for setting random breadth
 randomSliderShow = function(obj) {
     randomSliderPosition(obj);
+    if (!randomDraggable) {
+        randomDraggable = true;
+        $('#random-range').draggable();
+    }
     $('#random-range').show();
     console.log("randomRange: " + obj.randomRange);
     $('#randomslider').slider('value', obj.randomRange);
@@ -683,6 +657,10 @@ cloneWidgetShow = function(obj) {
     $('#clone-data').data('value', 100);
     $('#clone-data').html('100%');
     $('#clone-name').html('Clone');
+    if (!cloneDraggable) {
+        cloneDraggable = true;
+        $('#clone-ui').draggable();
+    }
     $('#clone-ui').show();
 }
 
@@ -788,6 +766,10 @@ sproutCloningWidgetShow = function(obj) {
     // Sprout is a little different. Show the clone widget now that we've
     // finished selecting the object to sprout.
     setCloneUILocation(obj);
+    if (!cloneDraggable) {
+        cloneDraggable = true;
+        $('#clone-ui').draggable();
+    }
     $('#clone-ui').show();
     var x = obj.getLeft();
     var y = obj.getTop();
@@ -880,8 +862,16 @@ modifyingShow = function(obj) {
         top: posTop,
         left: posLeft,
     });
+    if (!modifyingDraggable) {
+        modifyingDraggable = true;
+        $('#modifying').draggable();
+    }
     $('#modifying').show(250);
     showRecording('Individual');
+}
+
+modifyingCancel = function() {
+    modifyingHide();
 }
 
 // Sim Measurables
@@ -958,6 +948,10 @@ uiInteractionChoose = function(sprite, callback) {
 
     // Hide Individual behaviors (if shown) and show our menu
     modifyingHide(sprite);
+    if (!interactionsDraggable) {
+        $('#interactions').draggable();
+        interactionsDraggable = true;
+    }
     $('#interactions').show();
 }
 
@@ -1047,6 +1041,49 @@ listEditSet = function() {
 }
 listCancel = function() {
     $('#list-states').hide();
+}
+
+showSelectAction = function(selectedObject) {
+    var menu_width = 220;
+    var menu_height = 138;
+    // Position select-action 
+    var cX = selectedObject.getLeft() + globalPos.left;
+    var cY = selectedObject.getTop()+ globalPos.top;
+
+    var sa = $('#select-action');
+
+    var pX = cX - menu_width / 2;
+    var pY = cY - menu_height / 2;
+    if (!saDraggable) {
+        $(sa).draggable();
+        saDraggable = true;
+    }
+    $(sa).css({
+        top: pY,
+        left: pX,
+    });
+
+    $('#select-action').show();
+    $('#select-behavior').off('click').on('click', function(ev){
+        $('#select-action').hide();
+        startRecording(selectedObject, 'Individual');
+    });
+    $('#select-delete').off('click').on('click', function(ev){
+        $('#select-action').hide();
+        deleteImageSingle(selectedObject);
+    });
+    $('#select-interaction').off('click').on('click', function(ev){
+        $('#select-action').hide();
+        // show the object picker next
+        // Install click handlers for the objects
+        console.log('calling from click');
+        integrationBehaviorChoose(selectedObject);
+        showRecording('Interaction');
+    });
+}
+
+selectActionCancel = function() {
+    $('#select-action').hide();
 }
 
 //
