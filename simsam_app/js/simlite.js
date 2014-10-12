@@ -5,6 +5,7 @@ window.initSim = (function(){
     currentSimObject = null;
     cloneObj = null;
     g_clickTime = 0;
+    g_toDeleteList = [];            // Multi-delete list
     saDraggable = false;
     interactionsDraggable = false;
     randomDraggable = false;
@@ -20,6 +21,7 @@ window.initSim = (function(){
     canvas.on({'object:modified': simObjectModified});
     canvas.on({'object:selected': simObjectSelected});
     canvas.on({'selection:cleared': simObjectCleared});
+    canvas.on({'selection:created': simMultiSelect});
     canvas.on({'mouse:down': simObjectClicked});
     canvas.on("after:render", function(){canvas.calcOffset();}); // for mouse offset issues
     window.globalPos = $('#construction_frame').offset();
@@ -86,12 +88,45 @@ setCanvasSize = function(width) {
 
 // Give us a point from an event and we will convert it to a global point
 getCanvasPoint = function(evPoint) {
-    var y = evPoint.top;
-    var x = evPoint.left;
+    var y;
+    var x; 
+
+    // Accept top and left or x and y
+    if (evPoint.top !== undefined) {
+        y = evPoint.top;
+        x = evPoint.left;
+    } else {
+        y = evPoint.y;
+        x = evPoint.x;
+    }
     
     return { 
         y: y - window.globalPos.top,
         x: x - window.globalPos.left,
+        top: y - window.globalPos.top,
+        left: x - window.globalPos.left,
+    };
+}
+
+// Given a point on the canvas, convert it to a global (window) position
+getWorldPoint = function(evPoint) {
+    var y;
+    var x; 
+
+    // Accept top and left or x and y
+    if (evPoint.top !== undefined) {
+        y = evPoint.top;
+        x = evPoint.left;
+    } else {
+        y = evPoint.y;
+        x = evPoint.x;
+    }
+    
+    return { 
+        y: y + window.globalPos.top,
+        x: x + window.globalPos.left,
+        top: y + window.globalPos.top,
+        left: x + window.globalPos.left,
     };
 }
 
@@ -231,6 +266,7 @@ simObjectSelected = function(options) {
 }
 
 simObjectCleared = function(options) {
+    $('#multi-delete').hide(); // in case this was clearing a multi select
     if (currentSimObject && typeof currentSimObject.cleared === 'function') {
         currentSimObject.cleared();
     }
@@ -249,6 +285,20 @@ simObjectCleared = function(options) {
         hideRecording();
     }
     currentSimObject = null;
+}
+simMultiSelect = function(options) {
+    if (options.target.type !== 'group') return;
+    var target = options.target;
+
+    g_toDeleteList = [];
+
+    target.forEachObject(function(obj) {
+        g_toDeleteList.push(obj);
+    });
+    multiDeleteSetLocation(target);
+    $('#multi-delete').show();
+
+    console.log('options');
 }
 
 // Called every time a sim object has finished moving so we can see if it
@@ -836,6 +886,51 @@ sproutWidgetHide = function(obj) {
         cloneObj = null;
         canvas.setActiveObject(daddy);
     }
+}
+
+// Multi Selection Delete Functions
+
+multiDeleteExecute = function() {
+    var i;
+    var dl = g_toDeleteList;
+
+    for(i=0; i < dl.length; i++) {
+        var obj = dl[i];
+        if (typeof obj.remove === 'function') {
+            obj.removeFromList();
+            obj.remove();
+        }
+    }
+    canvas.deactivateAll();
+    canvas.renderAll();
+    save();
+
+    $('#multi-delete').hide();
+}
+
+multiDeleteCancel = function() {
+    g_toDeleteList = [];
+    $('#multi-delete').hide();
+}
+
+multiDeleteSetLocation = function(group) {
+    var coord = group.oCoords;
+    var t = coord.tl.y;
+    var l = coord.tl.x;
+    var width = coord.br.x - coord.tl.x;
+    var height = coord.br.y - coord.tl.y;
+    var ourHeight = 200; // about
+
+    var point = {
+        left: l + width + 10,
+        top: t + height / 2 - ourHeight / 2,
+    };
+    var wP = getWorldPoint(point);
+
+    delete wP.x;
+    delete wP.y; // only want top/left for css
+
+    $('#multi-delete').css(wP);
 }
 
 // Hide the sidebar menu for when an object is in "modifying" state

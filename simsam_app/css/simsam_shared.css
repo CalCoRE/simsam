@@ -640,15 +640,17 @@ a.close {
 	color: #444;
 	text-decoration: none;
 }
-
+#multi-delete,
 #select-action {
 	width: 220px;
 	position: absolute;
 }
 
+#multi-delete ul li,
 #select-action ul li {
 	font-size: 22px;
 }
+
 
 /******************************************/
 /***** Floating Menu for sprout ***********/
