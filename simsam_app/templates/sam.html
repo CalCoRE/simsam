@@ -169,11 +169,12 @@
 						<div id="step" title="Step" onclick="tick()"></div>
 						<div id="run" title="Run" onclick="toggleSim()"></div>
 						<div id="clear" title="Clear" onclick="clearTrackers()"></div>
-						<div id="saveas" title="Save" onclick="saveasBeginEditing();">S</div>
-						<div id="loadstate" title="Load" onclick="listBeginEditing();">L</div>
+                        <!-- <div id="saveas" title="Save" onclick="saveasBeginEditing();">S</div> -->
+                        <!-- <div id="loadstate" title="Load" onclick="listBeginEditing();">L</div> -->
 					</div>
                     <div id="sim_tools" class="sim_buttons">
                         <div id="text_tool" onclick="toolTextClick();"></div>
+                        <div id="gear_tool" onclick="toolGearClick();"></div>
                     </div>
                     <div id="sim_status" class="sim_buttons">
             			<p id="record-type" style="clear: both;">Not Recording</p>
@@ -260,6 +261,21 @@
         </div>
         <ul>
             <li><a onclick="multiDeleteExecute();">Delete Selected</a></li>
+        </ul>
+    </div>
+    <!-- Advanced Menu -->
+    <div id="advanced-menu" class="ui-background simui">
+        <div class="animation-head" unselectable="on">
+            <h4 unselectable="on">Settings</h4>
+            <a href="#" onclick="$('#advanced-menu').hide();">
+                <span class="close-btn"><span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span></span>
+            </a>
+        </div>
+        <ul>
+            <li><a onclick="saveasBeginEditing();">Save</a></li>
+            <li><a onclick="listBeginEditing();">Load</a></li>
+            <li><a onclick="forgetEverything();">Clear All</a></li>
+            <li><a id="private-button" onclick="togglePrivate();">Public</a></li>
         </ul>
     </div>
 

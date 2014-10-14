@@ -6,6 +6,7 @@ window.initSim = (function(){
     cloneObj = null;
     g_clickTime = 0;
     g_toDeleteList = [];            // Multi-delete list
+    g_recordingClone = false;       // Programming Clone/Sprout or no
     saDraggable = false;
     interactionsDraggable = false;
     randomDraggable = false;
@@ -331,7 +332,7 @@ function endRecording(selectedObject) {
 
 function startRecording(selectedObject, recType) {
     console.log('startRecording');
-
+    g_recordingClone = false;
     // if one object is selected this fires
     selectedObject.learningToggle();
     if (selectedObject.stateRecording) {
@@ -1144,6 +1145,7 @@ textEditCancel = function(obj, ev) {
 //
 saveasBeginEditing = function(obj) {
     currentTextObject = obj;
+    $('#advanced-menu').hide();
 
     var offset = window.globalPos;
     var textbox = $('#saveas-name');
@@ -1172,6 +1174,7 @@ saveAsCancel = function() {
 //
 listBeginEditing = function(obj) {
     currentTextObject = obj;
+    $('#advanced-menu').hide();
 
     var offset = window.globalPos;
     var textbox = $('#list-states');
@@ -1271,6 +1274,25 @@ toolTextClick = function(obj, ev) {
 
     text.addToCanvas();
     window.save();
+}
+
+toolGearClick = function(obj, ev) {
+    var menu = $('#advanced-menu');
+    var button = $('#gear_tool');
+    var mHeight = $(menu).height();
+    var mWidth = $(menu).width();
+    var buttOff = $(button).offset();
+    var buttWidth = $(button).width();
+    $(menu).css( {
+        top: buttOff.top - mHeight - 30,
+        left: buttOff.left + buttWidth/2 - mWidth / 2,
+    });
+    $(menu).show();
+}
+
+forgetEverything = function () {
+    $('#advanced-menu').hide();
+    window.clearEverything();
 }
 
 window.save = function() {

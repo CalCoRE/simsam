@@ -408,6 +408,9 @@ a.close {
 #text_tool {
 	background-position: -496px 2px;
 }
+#gear_tool {
+	background-position: -660px 2px;
+}
 
 #record_status {
 	background-position: -440px 2px;
@@ -640,12 +643,14 @@ a.close {
 	color: #444;
 	text-decoration: none;
 }
+#advanced-menu,
 #multi-delete,
 #select-action {
 	width: 220px;
 	position: absolute;
 }
 
+#advanced-menu ul li,
 #multi-delete ul li,
 #select-action ul li {
 	font-size: 22px;

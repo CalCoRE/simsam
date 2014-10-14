@@ -1,3 +1,10 @@
+# File: sprite.coffee
+# Desc: Sprite classes and the functions that handle ticks, removal, etc.
+#
+
+c_sproutRule = 0  # Set this to 2 if it should co-exist with transform
+c_cloneRule  = 0  # Set this to 1 if it should co-exist with transform
+
 # A prototypical sprite
 class GenericSprite extends fabric.Image
     # These properties will be in the prototype of the Sprite
@@ -200,35 +207,41 @@ class GenericSprite extends fabric.Image
         console.log('Adding Simple Clone')
         r = new Rule()
         r.setActionType('clone')
-        this.setRule(1, r)
+        this.setRule(c_cloneRule, r)
 
     removeClone: ->
         console.log('Removing Clone')
-        delete this._rules[1]
+        delete this._rules[c_cloneRule]
 
     isClone: ->
-        if @_rules[1] != undefined
+        # Use this if we allow multiple rules
+        #if @_rules[1] != undefined
+        #    return true
+        if @_rules[0] != undefined and typeof @_rules[0].type == 'clone'
             return true
         return false
 
     addSprout: ->
         r = new Rule()
         r.setActionType('sprout')
-        this.setRule(2, r)
+        this.setRule(c_sproutRule, r)
 
     setSproutTarget: (targetValue) ->
-        r = this._rules[2]
+        r = this._rules[c_sproutRule]
         r.action.setTarget(targetValue)
 
     getSproutTarget: ->
-        r = this._rules[2]
+        r = this._rules[c_sproutRule]
         return r.action.getTarget()
 
     removeSprout: ->
-        delete this._rules[2]
+        if this._rules[c_sproutRule] != undefined and 
+                this._rules[c_sproutRule].type == 'sprout'
+            delete this._rules[c_sproutRule]
 
     isSprout: ->
-        if @_rules[2] != undefined
+        if @_rules[c_sproutRule] != undefined and 
+                typeof @_rules[c_sproutRule].type == 'sprout'
             return true
         return false
 
@@ -254,12 +267,13 @@ class GenericSprite extends fabric.Image
         else
             endState = getObjectState(this)
             this.showNormal()
-            r = new Rule(this.spriteType)
-            r.setActionType('transform')
-            r.addTransform(@initState, endState)
-            if this.isRandom()
-                r.addRandom(@randomRange)
-            this.addRule(r)
+            if not g_recordingClone
+                r = new Rule(this.spriteType)
+                r.setActionType('transform')
+                r.addTransform(@initState, endState)
+                if this.isRandom()
+                    r.addRandom(@randomRange)
+                this.addRule(r)
             @stateRecording = false
             window.save()
 
@@ -458,6 +472,11 @@ SpriteFactory = (spriteType, imageObj) ->
             Sprite::cloneFrequency = freq
 
         # toJSON see window.saveSprites
+
+        reset: ->
+            Sprite::clearHistory()
+            Sprite::_irules = []
+            Sprite::_rules = []
 
     return Sprite
 
@@ -915,18 +934,9 @@ window.saveSprites = ->
     console.log(typeObjects)
     return string
 
-# Load sprites from the JSON stored in the database
-window.loadSprites = (dataString) ->
-    inObject = JSON.parse(dataString)
-
-    # If we got an empty save, don't erase everything else
-    if inObject.classObjects.length == 0 and
-        inObject.objects.length == 0
-            return
-
+window.clearEverything = ->
     # Clear everything
     tmpList = []
-    window.spriteTypeList = []
     for sprite in window.spriteList
         tmpList.push(sprite)
     for sprite in tmpList
@@ -936,11 +946,25 @@ window.loadSprites = (dataString) ->
     for text in window.textList
         tmpTextList.push(text)
     for text in tmpTextList
-        console.log('Removing 1 text')
         if text.group != undefined
             canvas.remove(text.group)
     window.textList = []
+    for spriteType in window.spriteTypeList
+        spriteType.prototype.reset()
     canvas.renderAll()
+
+# Load sprites from the JSON stored in the database
+window.loadSprites = (dataString) ->
+    inObject = JSON.parse(dataString)
+
+    # If we got an empty save, don't erase everything else
+    if inObject.classObjects.length == 0 and
+        inObject.objects.length == 0
+            return
+
+    # Clear even type type list
+    window.spriteTypeList = []
+    clearEverything()
 
     imageObjects = []
     $("#sprite_drawer > img").each (i, sprite) -> # all sprites in the drawer
