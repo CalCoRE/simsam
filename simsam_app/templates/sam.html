@@ -43,6 +43,8 @@
 
     <script type="text/javascript">
       window.onload = function () {
+        window.is_public = {{ is_public }};
+        setPrivateButtonText();
         window.animationId = {{ animation_id }};
 		window.simulationId = {{ simulation_id }};
   			window.framesequence = [{% for frame in frame_sequence %}"{{ frame|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}];
@@ -275,7 +277,7 @@
             <li><a onclick="saveasBeginEditing();">Save</a></li>
             <li><a onclick="listBeginEditing();">Load</a></li>
             <li><a onclick="forgetEverything();">Clear All</a></li>
-            <li><a id="private-button" onclick="togglePrivate();">Public</a></li>
+            <li><a id="private-button" onclick="togglePrivate();" title="Click to change">Public</a></li>
         </ul>
     </div>
 

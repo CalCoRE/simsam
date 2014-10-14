@@ -62,6 +62,10 @@ window.initSim = (function(){
     window.load(); // when I first load the project, load any saved sim stuff
 });
 
+//
+// Helpful functions
+//
+
 // dynamic canvas size based on browser window
 setCanvasSize = function(width) {
     browserWidth = parseInt(width);
@@ -137,6 +141,14 @@ sizeDrawer = function() {
     var heightParent = $(drawer).parent().height();
 
     $(drawer).height(heightParent - positionY - 30);
+}
+
+setPrivateButtonText = function() {
+    var text = 'Public';
+    if (! window.is_public) {
+        text = 'Private';
+    }
+    $('#private-button').html(text);
 }
 
 addSpriteToSim = function(filename, hash) {
@@ -445,6 +457,33 @@ djangoDeleteImage = function(image_hash) {
         },
         dataType: 'json'
     });
+}
+
+// Always just cached
+isProjectPublic = function(project_id) {
+    return window.is_public;
+}
+
+togglePrivate = function() {
+    djangoSetProjectPublic(!window.is_public);
+}
+
+djangoSetProjectPublic = function(makePublic) {
+    $.ajax({
+        url: 'project_set_public',
+        type: 'POST',
+        data: {
+            project_id: window.projectId,
+            is_public: makePublic ? 1 : 0,
+        },
+        success: function(data) {
+            window.is_public = data.is_public;
+            setPrivateButtonText();
+        },
+        dataType: 'json'
+    });
+
+    $('#advanced-menu').hide();
 }
 
 

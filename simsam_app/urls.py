@@ -1,3 +1,12 @@
+# 
+#
+#
+#  This is not the file you are looking for
+#
+#
+#
+# This file should probably be deleted, but not sure if it's used for something
+# I don't know about right now - geis
 from django.conf.urls import patterns, include, url
 from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
@@ -30,6 +39,7 @@ urlpatterns = patterns('',
     url(r"^save_sim_state/?$", simsam_app.views.save_sim_state),
     url(r"^load_sim_state/?$", simsam_app.views.load_sim_state),
     url(r"^list_sim_state/?$", simsam_app.views.list_sim_state),
+    url(r"^project_set_public/?$", simsam_app.views.project_set_public),
     url(r"^about/?$", simsam_app.views.about),
 
     # Uncomment the admin/doc line below to enable admin documentation:

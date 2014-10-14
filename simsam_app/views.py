@@ -28,6 +28,7 @@ def app(request):
     c = RequestContext(request, {
         "project_name": project.name,
         "project_id": project_id,
+        "is_public": 1 if project.is_public else 0,
         "animation_name": animation.name,
         "animation_id": animation_id,
         "frame_sequence": animation.frame_sequence,
@@ -338,15 +339,20 @@ def project_set_public(request):
     success = True
     message = ''
 
+    simsam_user = SimsamUser.lookup(request.user)
     project_id = request.REQUEST.get('project_id')
-    is_public = request.REQUEST.get('is_public')
+    is_public = int(request.REQUEST.get('is_public'))
     project = simsam_user.projects.get(id=project_id)
-    project.is_public = is_public
+    if is_public == 1:
+        project.is_public = True
+    else:
+        project.is_public = False
     project.save()
 
     return HttpResponse(json.dumps({
         'success': success,
         'id': project.id,
+        'is_public': int(project.is_public),
         'message': message,
     }))
 
