@@ -1440,6 +1440,7 @@ $(document).ready(function() {
     });
 
     $('#uimod_clone').click(function() {
+        g_recordingClone = true;
         console.log('Onclick');
         obj = canvas.getActiveObject();
         console.log('Object click =' + obj);
@@ -1461,6 +1462,7 @@ $(document).ready(function() {
     });
 
     $('#uimod_sprout').click(function() {
+        g_recordingClone = true;
         obj = canvas.getActiveObject();
         if (!obj.isEditing) return;
         if (obj.isSprout()) {
