@@ -217,9 +217,9 @@
 
             <h3>Action</h3>
             <ul>
-                <li><a id="uich_trans" class="uich" href="#">Translate</a></li>
-                <li><a id="uich_clone" class="uich" href="#">Clone</a></li>
-                <li><a id="uich_delete" class="uich" href="#">Delete</a></li>
+                <li class="uich_li" data-action="transpose"><a id="uich_trans" class="uich" href="#">Translate</a></li>
+                <li class="uich_li" data-action="clone"><a id="uich_clone" class="uich" href="#">Clone</a></li>
+                <li class="uich_li" data-action="delete"><a id="uich_delete" class="uich" href="#">Delete</a></li>
             </ul>
         </div>
     </div> <!-- #interactions -->
@@ -233,9 +233,9 @@
             </a>
         </div>
         <ul>
-            <li><a id="uimod_rand" >Randomize</a></li>
-            <li><a id="uimod_clone" >Clone</a></li>
-            <li><a id="uimod_sprout">Sprout</a></li>
+            <li id="uimod_rand"><a >Randomize</a></li>
+            <li id="uimod_clone"><a >Clone</a></li>
+            <li id="uimod_sprout"><a>Sprout</a></li>
         </ul>
     </div>
 
@@ -247,9 +247,9 @@
             </a>
         </div>
         <ul>
-            <li><a id="select-delete" >Delete Object</a></li>
-            <li><a id="select-behavior" >Program Behavior</a></li>
-            <li><a id="select-interaction">Interaction Behavior</a></li>
+            <li id="select-delete"><a >Delete Object</a></li>
+            <li id="select-behavior"><a >Program Behavior</a></li>
+            <li id="select-interaction"><a>Interaction Behavior</a></li>
         </ul>
 
     </div>
@@ -274,10 +274,10 @@
             </a>
         </div>
         <ul>
-            <li><a onclick="saveasBeginEditing();">Save</a></li>
-            <li><a onclick="listBeginEditing();">Load</a></li>
-            <li><a onclick="forgetEverything();">Clear All</a></li>
-            <li><a id="private-button" onclick="togglePrivate();" title="Click to change">Public</a></li>
+            <li onclick="saveasBeginEditing();"><a>Save</a></li>
+            <li onclick="listBeginEditing();"><a>Load</a></li>
+            <li onclick="forgetEverything();"><a>Clear All</a></li>
+            <li onclick="togglePrivate();"><a id="private-button" title="Click to change">Public</a></li>
         </ul>
     </div>
 

@@ -352,14 +352,14 @@ function startRecording(selectedObject, recType) {
         modifyingShow(selectedObject);
         showRecording(recType);
         if (selectedObject.isRandom()) {
-            $('#uimod_rand').parent().addClass('highlight');
+            $('#uimod_rand').addClass('highlight');
             randomSliderShow(selectedObject);
         }
         if (selectedObject.isClone()) {
-            $('#uimod_clone').parent().addClass('highlight');
+            $('#uimod_clone').addClass('highlight');
         }
         if (selectedObject.isSprout()){
-            $('#uimod_sprout').parent().addClass('highlight');
+            $('#uimod_sprout').addClass('highlight');
         }
     }
 }
@@ -980,9 +980,9 @@ modifyingHide = function(p_obj) {
         obj = canvas.getActiveObject();
     }
     $('#modifying').hide(250);
-    $('#uimod_rand').parent().removeClass('highlight');
-    $('#uimod_clone').parent().removeClass('highlight');
-    $('#uimod_sprout').parent().removeClass('highlight');
+    $('#uimod_rand').removeClass('highlight');
+    $('#uimod_clone').removeClass('highlight');
+    $('#uimod_sprout').removeClass('highlight');
     randomSliderHide(obj);
     // Clear recording if we're in the middle of it.
     if (obj && obj.stateRecording) {
@@ -1432,9 +1432,10 @@ $(document).ready(function() {
         'uich_delete': 'delete',
         'uich_close': 'close',
     };
-    $('.uich').click(function () {
+    $('.uich_li').click(function () {
         $('.simui').hide();
-        action = interMap[$(this).attr('id')];
+        //action = interMap[$(this).attr('id')];
+        action = $(this).data('action');
         if (action === undefined) {
             console.log('Error: You have included a UI element with no action');
             return false;
