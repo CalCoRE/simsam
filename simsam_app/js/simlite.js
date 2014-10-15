@@ -401,7 +401,7 @@ integrationBehaviorChoose = function(obj) {
         var t = iterObj.spriteType;
 
         if (typeof iterObj.interactionCallback === 'function' && 
-            t != obj.spriteType && typeList.indexOf(t) == -1) {
+                typeList.indexOf(t) == -1) {
             typeList.push(t);
             oneOfEach.push(iterObj);
         }

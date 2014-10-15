@@ -209,7 +209,7 @@
 <!-- Interaction Chooser -->
     <div id="interactions" class="simui ui-backround">
         <div class="animation-head"><h4>Interaction Menu</h4>
-            <a id ="uich_close" class="uich" href="#">
+            <a id ="uich_close" data-action="close" class="uich_li" href="#">
                 <span class="close-btn" style="margin-top:-20px; margin-right:-5px;"><span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span></span>
             </a>
         </div>
@@ -234,8 +234,10 @@
         </div>
         <ul>
             <li id="uimod_rand"><a >Randomize</a></li>
-            <li id="uimod_clone"><a >Clone</a></li>
             <li id="uimod_sprout"><a>Sprout</a></li>
+            <!-- Removing cloning if we don't need this anymore, but remember
+            that we still have it for interactions -->
+            <!-- <li id="uimod_clone"><a >Clone</a></li> -->
         </ul>
     </div>
 

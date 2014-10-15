@@ -643,6 +643,11 @@ a.close {
 	color: #444;
 	text-decoration: none;
 }
+
+.simui ul li {
+	font-size: 22px;
+}
+
 #advanced-menu,
 #multi-delete,
 #select-action {
