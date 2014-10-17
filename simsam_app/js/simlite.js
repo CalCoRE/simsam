@@ -393,7 +393,7 @@ integrationBehaviorChoose = function(obj) {
     obj.learningToggle();
     // First, we should choose the object we're going to interact with.
     $('#interaction-ui').empty();
-    $('#interaction-ui').html('<h1>Select Target of Interaction<h1>');
+    $('#interaction-ui').html('<h1>When I bump... (pick one)<h1>');
 
     var typeList = [];
     window.oneOfEach = [];
@@ -829,7 +829,7 @@ sproutWidgetShow = function(obj) {
     console.log("sproutWidgitShow");
     // First, we should choose the object we're going to interact with.
     $('#sprout-ui').empty();
-    $('#sprout-ui').html('<h1>Select object to sprout</h1>');
+    $('#sprout-ui').html('<h1>Make a new... (pick one)</h1>');
 
     // Insert images
     for (var i = 0; i < spriteTypeList.length; i++) {

@@ -208,16 +208,15 @@
     
 <!-- Interaction Chooser -->
     <div id="interactions" class="simui ui-backround">
-        <div class="animation-head"><h4>Interaction Menu</h4>
+        <div class="animation-head"><h4>After the bump:</h4>
             <a id ="uich_close" data-action="close" class="uich_li" href="#">
                 <span class="close-btn" style="margin-top:-20px; margin-right:-5px;"><span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span></span>
             </a>
         </div>
         <div class="container">
 
-            <h3>Action</h3>
             <ul>
-                <li class="uich_li" data-action="transpose"><a id="uich_trans" class="uich" href="#">Translate</a></li>
+                <li class="uich_li" data-action="transpose"><a id="uich_trans" class="uich" href="#">Move</a></li>
                 <li class="uich_li" data-action="clone"><a id="uich_clone" class="uich" href="#">Clone</a></li>
                 <li class="uich_li" data-action="delete"><a id="uich_delete" class="uich" href="#">Delete</a></li>
             </ul>
@@ -227,14 +226,14 @@
     <!-- Modifying Chooser -->
     <div id="modifying" class="ui-background simui">
         <div class="animation-head" unselectable="on">
-            <h4 unselectable="on">Individual Actions</h4>
+            <h4 unselectable="on">Drag me to teach me</h4>
             <a href="#" onclick="modifyingCancel();">
                 <span class="close-btn"><span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span></span>
             </a>
         </div>
         <ul>
-            <li id="uimod_rand"><a >Randomize</a></li>
-            <li id="uimod_sprout"><a>Sprout</a></li>
+            <li id="uimod_rand"><a >Make me wiggle</a></li>
+            <li id="uimod_sprout"><a>Make new object</a></li>
             <!-- Removing cloning if we don't need this anymore, but remember
             that we still have it for interactions -->
             <!-- <li id="uimod_clone"><a >Clone</a></li> -->
@@ -243,15 +242,15 @@
 
     <div id="select-action" class="ui-background simui">
         <div class="animation-head" unselectable="on">
-            <h4 unselectable="on">Programming Options</h4>
+            <h4 unselectable="on">Teach me a Rule</h4>
             <a href="#" onclick="selectActionCancel();">
                 <span class="close-btn"><span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span></span>
             </a>
         </div>
         <ul>
-            <li id="select-delete"><a >Delete Object</a></li>
-            <li id="select-behavior"><a >Program Behavior</a></li>
-            <li id="select-interaction"><a>Interaction Behavior</a></li>
+            <li id="select-behavior"><a >To Move</a></li>
+            <li id="select-interaction"><a>To Interact</a></li>
+            <li id="select-delete"><a >Delete Me</a></li>
         </ul>
 
     </div>
@@ -301,7 +300,7 @@
     
 <!-- Clone -->
     <div id="clone-ui" class="ui-hover ui-background">
-	<div class="animation-head"><h4>Frequency Setting</h4>
+	<div class="animation-head"><h4>How often?</h4>
         <a href="#" onclick="cloneWidgetHide();">
             <span class="close-btn"><span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span></span>
         </a>
@@ -396,7 +395,7 @@
     <!-- THEY WILL NEED TO BE INTEGRATED/CONVERTED SOON-->
     
     <!--<input type="text" id="playback_index">-->
-    <input type="hidden" id="fps" value="10">
+    <input type="hidden" id="fps" value="12">
     
     <div id="data"></div>
         
