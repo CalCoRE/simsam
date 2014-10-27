@@ -959,8 +959,10 @@
         left: sprite.getLeft() + dx,
         top: sprite.getTop() + dy,
         angle: sprite.getAngle() - this.transform.dr,
-        width: sprite.width + this.transform.dxScale,
-        height: sprite.height + this.transform.dyScale
+        // mhwj - if scale goes less than zero, dudes get ANGRY!
+        // so check first, set minimum height or width to 20.
+        width: Math.max( sprite.width + this.transform.dxScale, 20 ),
+        height: Math.max( sprite.height + this.transform.dyScale, 20 )
       });
       sprite.setAngle(theta * 180 / Math.PI);
       return sprite.setCoords();
