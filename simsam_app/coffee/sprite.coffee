@@ -674,8 +674,8 @@ class CloneAction extends Action
             return
         newSprite = new window.spriteTypeList[sprite.spriteType]  # make one
         spriteList.push( newSprite )
-        #newSprite.setTop(sprite.getTop() + Math.random() * 20 - 10)
-        #newSprite.setLeft(sprite.getLeft() + Math.random() * 20 - 10)
+        newSprite.setTop(sprite.getTop() + Math.random() * 76 - 38)
+        newSprite.setLeft(sprite.getLeft() + Math.random() * 76 - 38)
         theta = sprite.getAngle() * Math.PI / 180
         sTop = sprite.cloneTranslate.top
         sLeft = sprite.cloneTranslate.left

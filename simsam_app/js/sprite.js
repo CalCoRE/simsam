@@ -182,13 +182,13 @@
         console.log('@prepObj = ' + this.prepObj);
         this.prepObj = this;
         this.prepObj[key] = rule.prep(this, environment);
-        if (this.prepObj[key] === this.prePrepObj[key]) {
+        /*if (this.prepObj[key] === this.prePrepObj[key]) {
           _results.push(this.prepObj[key] = null);
         } else if (this.prepObj[key] === false) {
           _results.push(this.prePrepObj[key] = null);
         } else {
           _results.push(void 0);
-        }
+        }*/ //mhwj - kids want no latching. we'll need to disentangle this from counting.
       }
       return _results;
     };
@@ -830,8 +830,8 @@
       sLeft = sprite.cloneTranslate.left;
       dx = sLeft * Math.cos(theta) - sTop * Math.sin(theta);
       dy = sLeft * Math.sin(theta) + sTop * Math.cos(theta);
-      newSprite.setTop(sprite.getTop() + dy);
-      newSprite.setLeft(sprite.getLeft() + dx);
+      newSprite.setTop(sprite.getTop() + Math.random() * 76 - 38);
+      newSprite.setLeft(sprite.getLeft() + Math.random() * 76 - 38);
       newSprite.setAngle(sprite.getAngle() + sprite.cloneTranslate.rotate);
       canvas.add(newSprite);
       return canvas.renderAll();
