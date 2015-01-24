@@ -1,6 +1,29 @@
 window.initSim = (function(){
 
+    // Interaction State
+    // This is a complex one. We turn on interactionWaiting when we start the
+    // operation and should close on a double-click. Because we maintain
+    // preexisting behaviors on a cancel, we need to track if we're adding
+    // the first behavior in this setup (menu-showing). If that's true, then
+    // we need to clear them all upon the add of the first behavior. This
+    // allows us to remove them, or to cancel before adding the first behavior
+    // and maintain the current set of interaction behaviors.
+
+    // State transitions:
+    // integrationBehaviorChoose gets called to display a list of interaction
+    // objects. Each of those gets a click event loaded to fire 
+    // interactionEvent on the sprite if it is the target interaction
+    // that gets selected via the GUI.
+    // interactionEvent calls uiInteractionChoose to display a list of event
+    // types (clone, delete, transpose) and populates the callback with
+    // obj.interactionCallback(choice) which gets called when one of the
+    // menu items is clicked.
+
+    // close or double-click while in this state will release all state and
+    // put us back in normal mode before we started all the editing.
+
     interactionWaiting = false;     // in state of having just dropped measure
+    interactionFirst = true;        // true == no interactions added yet
     currentTracker = null;          // operating measure object
     currentSimObject = null;
     cloneObj = null;
@@ -251,8 +274,6 @@ simObjectClicked = function(options) {
 
 // Handler for any object in Fabric.js that is selected (single clicked).
 simObjectSelected = function(options) {
-    console.log('Selected: ' + ((currentSimObject != null) ? 'true' : 'false'));
-    console.log('Interaction: ' + ((interactionWaiting) ? 'true' : 'false'));
     if (typeof options.target.selected === 'function') {
         g_clickTime = (new Date()).getTime();
         options.target.selected();
@@ -327,9 +348,20 @@ simObjectModified = function(options) {
         tran = target.hasOwnProperty('stateTranspose') && target.stateTranspose;
         if (!rec & !tran) {
             window.save();
-            console.log("Our target isn't being edited");
             return;
         }
+        // In an interaction, we need to clear all interaction rules upon the
+        // first rule creation. Because translate is an implicit creation
+        // (that is, we don't have to click "Translate"), we need to clear the
+        // irules on the first movement as well (which acts as if we clicked
+        // "translate").
+        if (interactionWaiting && interactionFirst) {
+            if ('clearIRules' in target) {
+                target.clearIRules();
+                interactionFirst = false;
+            }
+        }
+
         // We used to test for intersection here, but changed the UI now
     }
 }
@@ -425,6 +457,7 @@ integrationBehaviorChoose = function(obj) {
         delete spImage;
     }
     interactionWaiting = true;
+    interactionFirst = true; // We're going to add the first behavior
     setInteractionUILocation(cloneObj);
     $('#clone-name').html('Sprout');
     $('#interaction-ui').show();
@@ -1090,9 +1123,10 @@ simChartChoose = function(obj) {
         $(iEl).click(function (e) {
             console.log('sprout src = '+this.src);
             var tIdx = $(this).data('target-idx');
-            $('#interaction-ui').hide();
+            //$('#interaction-ui').hide();
             currentTracker.targetType = tIdx;
             $('#count_blocker').hide();
+            $('#interaction-ui').hide();
         });
         $('#interaction-ui').append(iEl);
         delete spImage;
@@ -1269,7 +1303,6 @@ showSelectAction = function(selectedObject) {
         $('#select-action').hide();
         // show the object picker next
         // Install click handlers for the objects
-        console.log('calling from click');
         integrationBehaviorChoose(selectedObject);
         showRecording('Interaction');
     });
@@ -1335,7 +1368,6 @@ forgetEverything = function () {
 }
 
 window.save = function() {
-    console.log("Saving!");
     rawData = saveSprites();
     $.ajax({
         url: 'save_sim_state',
@@ -1433,18 +1465,28 @@ $(document).ready(function() {
         'uich_close': 'close',
     };
     $('.uich_li').click(function () {
-        $('.simui').hide();
+        console.log('uich_li close');
+        // XXX
+        //$('.simui').hide();
         //action = interMap[$(this).attr('id')];
         action = $(this).data('action');
         if (action === undefined) {
+            $('.simui').hide();
             console.log('Error: You have included a UI element with no action');
             return false;
         }
         // Transpose still needs a double-click to exit, the rest exit now
         if (action == 'transpose') {
-        } else {
+        } else if (action == 'close') {
+            $('.simui').hide();
             interactionWaiting = false;
             hideRecording();
+        } else {
+            // XXX - Trying to ignore the close, keep combining operations
+            /*
+            interactionWaiting = false;
+            hideRecording();
+            */
         }
         uiInteractionCB(action);
         return false;
