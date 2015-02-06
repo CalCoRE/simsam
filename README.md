@@ -10,6 +10,45 @@ SiMSAM is made possible through the generous support of the National Science Fou
 Development by [Geisel Software](http://www.geisel-software.com/), Christopher Macrander, [Michelle Wilkerson-Jerde](http://sites.tufts.edu/michelle), Amanda Bell. 
 Major contributions by [Brian Gravel](http://ase.tufts.edu/education/faculty/gravel.asp), Margot Krouwer, Yara Shaban, Mirjana Hotomski, and members of the [Center for Engineering Education and Outreach](http://ceeo.tufts.edu/).
 
+Installation
+------------
+SiMSAM runs on the [Django Web Framework](https://www.djangoproject.com/). You'll first need to install that.
+These instructions are specific to Mac OS X. We'll put some PC instructions here soon!
+
+First, you'll need to install [pip](https://bootstrap.pypa.io/get-pip.py). After downloading, use Terminal to navigate to the directory where get-pip.py is located and run it. For example, when I download get-pip.py it is saved to my Downloads directory. I can navigate to find it this way:
+
+  ShelboBaggins:~ michellewilkersonjerde$ ls
+  
+I typed "ls" to see the contents of the directory I am currently in. This produces a list:
+
+  Applications  Movies
+  Box Files Backup Music
+  Box Sync			Pictures
+  Desktop				Public
+  Documents			Sites
+  Downloads	    Dropbox
+  Google Drive
+  Library
+
+Since get-pip.py was saved to the Downloads folder, I want to naviagate there. I do that using the "cd" or change directory command:
+
+  ShelboBaggins:~ michellewilkersonjerde$ cd Downloads
+  ShelboBaggins:Downloads michellewilkersonjerde$ 
+
+Now, I can install get-pip:
+
+  ShelboBaggins:Downloads michellewilkersonjerde$ python get-pip.py
+
+If you have any permissions errors, try doign the same thing using sudo:
+
+  ShelboBaggins:Downloads michellewilkersonjerde$ sudo python get-pip.py
+
+You will need to enter your user password.
+
+Once pip is installed, you can use it in Terminal to get the appropriate version of Django. This application is written to work with Django 1.6.5:
+
+  pip install Django==1.6.5
+
 Glossary
 --------
 
