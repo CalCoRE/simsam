@@ -10,8 +10,8 @@ SiMSAM is made possible through the generous support of the National Science Fou
 Development by [Geisel Software](http://www.geisel-software.com/), Christopher Macrander, [Michelle Wilkerson-Jerde](http://sites.tufts.edu/michelle), Amanda Bell. 
 Major contributions by [Brian Gravel](http://ase.tufts.edu/education/faculty/gravel.asp), Margot Krouwer, Yara Shaban, Mirjana Hotomski, and members of the [Center for Engineering Education and Outreach](http://ceeo.tufts.edu/).
 
-Installation
-------------
+Pre-Installation Preparation
+----------------------------
 SiMSAM runs on the [Django Web Framework](https://www.djangoproject.com/). You'll first need to install that.
 These instructions are specific to Mac OS X. We'll put some PC instructions here soon!
 
@@ -39,15 +39,44 @@ Now, I can install get-pip:
 
     ShelboBaggins:Downloads michellewilkersonjerde$ python get-pip.py
 
-If you have any permissions errors, try doign the same thing using sudo:
+If you have any permissions errors, try doing the same thing using sudo:
 
     ShelboBaggins:Downloads michellewilkersonjerde$ sudo python get-pip.py
 
 You will need to enter your user password.
 
-Once pip is installed, you can use it in Terminal to get the appropriate version of Django. This application is written to work with Django 1.6.5:
+Once pip is installed, you can use it in Terminal to get the appropriate version of Django. This application is written to work with Django 1.6.5, so let's install that one:
 
     ShelboBaggins:Downloads michellewilkersonjerde$ pip install Django==1.6.5
+
+Installation
+------------
+Download a version of SiMSAM to your computer, and put it somewhere you'll remember. If it's a different branch from the master branch, you may want to re-title the directory to "simsam".
+
+Open Terminal. If you can't find Terminal, just use Spotlight (the magnifying glass in the upper right corner of any Mac).
+
+Navigate to the simsam folder in Terminal. Depending on where the folder is, this may look different. If simsam lives on the Desktop, the way to get there is:
+
+        ShelboBaggins:~ michellewilkersonjerde$ cd Desktop/simsam
+
+The "cd" means "change directory", and Desktop/simsam is the path (in this case, in the "Desktop" folder, then in the "simsam" folder). So if simsam lives somewhere else, you just need to find out the right path. In Terminal you can type "cd" and then press tab twice to see what folders are available. If you need to move "out" from a folder to its container, then type "cd ..".
+
+Once you are in the simsam directory, type "ls" in Terminal and press enter to make sure you are in the right place. The folder should contain a file called "manage.py". Then type:
+
+        python manage.py syncdb
+
+This will create a database where user info is stored and simsam information saved as you make animations and simulations. The final move is to start it up:
+
+        nohup python manage.py runserver
+
+This starts simsam - it should tell you something like "appending output to nohup". Once that happens, you can point a browser (Firefox or Chrome) to 127.0.0.1:8000 and you are ready to go.
+
+Creating new user accounts in SiMSAM
+------------------------------------
+
+All installations of SiMSAM I've installed recently have a superuser named simsam, with password s1ms4m. You can log into simsam using this account, or use it to create other user accounts. There should be one account per student group we are working with.
+
+To create a new account, make sure SiMSAM is running and then point your browser to 127.0.0.1:8000/admin . This will take you to an administrative interface. Log in with the simsam superuser. Then, you can use that interface to create new users. Once they're created, go back to 127.0.0.1:8000 and you can log in using the new usernames and passwords.
 
 Glossary
 --------
