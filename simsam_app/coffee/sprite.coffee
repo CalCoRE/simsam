@@ -537,7 +537,7 @@ SpriteFactory = (spriteType, imageObj) ->
 #
 
 window.spriteList = []
-window.spriteTypeList = []
+window.spriteTypeList = {}      # This is organized by (unique) id (or hash)
 window.spriteDeleteList = []
 window.textList = []
 
@@ -591,8 +591,7 @@ setSpriteTypeDraggable = (sprite, input_type) ->
             if st::_count >= window.maxSprites
                 return
             console.log('Before new window.spriteTypeList[i]'+type)
-            newSprite = new window.spriteTypeList[type]  # make one
-            newSprite = new getSpriteType(type)
+            newSprite = new st
             console.log('After new window.spriteTypeList[i]'+type)
             console.log('SpriteType Success? = ' + newSprite.setSpriteTypeId( type ))
             spriteList.push( newSprite )
@@ -603,9 +602,11 @@ setSpriteTypeDraggable = (sprite, input_type) ->
             canvas.renderAll()
             window.save()
 
-window.addOneSprite = (i, sprite) ->
-        window.spriteTypeList.push( SpriteFactory( i , sprite ) ) #make a factory
-        setSpriteTypeDraggable(sprite, i)
+# Needs to be called with hash, spriteImg
+window.addOneSprite = (hash, sprite) ->
+        mySpriteType = SpriteFactory( hash , sprite )
+        window.spriteTypeList[hash] = mySpriteType
+        setSpriteTypeDraggable(sprite, hash)
 
 
 window.loadSpriteTypes = ->
@@ -613,21 +614,23 @@ window.loadSpriteTypes = ->
     console.log "loading sprite types"
     # Adding window. fixes a bug I can't remember. However, adding it
     # causes sprite behaviors to apply to objects not classes.
-    window.spriteTypeList = [] # re-init. hmm, this could get messy TODO
+    window.spriteTypeList = {} # re-init. hmm, this could get messy TODO
     $("#sprite_drawer > img").each (i, sprite) -> # all sprites in the drawer
-        console.log "loading sprite type" + i
-        sprite.setAttribute('data-sprite-type', i)
+        hash = sprite.getAttribute('data-hash')
+        console.log "loading sprite type" + hash
+        sprite.setAttribute('data-sprite-type', hash)
         sprite.setAttribute('data-debug', 'lST')
-        window.spriteTypeList.push( SpriteFactory( i , sprite ) ) #make a factory
-        setSpriteTypeDraggable(sprite, i)
+        console.log('Adding sprite with hash: ' + hash)
+        window.addOneSprite(hash, sprite)
+        setSpriteTypeDraggable(sprite, hash)
 
-    console.log("--- Loaded sprite type list: " + window.spriteTypeList.length)
+    console.log("--- Loaded sprite type list: " + Object.keys(window.spriteTypeList).length)
     window.spriteTypesLoaded = true
 
 window.saveSprites = ->
     masterObj = {}
     typeObjects = []
-    for type in spriteTypeList
+    for key, type of spriteTypeList
         oneType = {}
         oneType.type = type::spriteType
         oneType.imageObj = type::imageObj.src
@@ -690,23 +693,31 @@ window.loadSprites = (dataString) ->
             return
 
     # Clear even type type list
-    window.spriteTypeList = []
+    window.spriteTypeList = {}
     clearEverything()
 
     imageObjects = []
     $("#sprite_drawer > img").each (i, sprite) -> # all sprites in the drawer
+        hash = sprite.getAttribute('data-hash')
+        console.log "loading sprite type" + hash
         imageObjects.push(this)
-        setSpriteTypeDraggable(sprite, i)
-        sprite.setAttribute('data-sprite-type', i)
+        setSpriteTypeDraggable(sprite, hash)
+        sprite.setAttribute('data-sprite-type', hash)
         sprite.setAttribute('data-debug', 'lS')
     for typeObj in inObject.classObjects
+        foundMatch = false
         imgSrc = typeObj.imageObj
         for img in imageObjects
             console.log("ImgSrc: " + imgSrc + " img.src: " + img.src)
             if imgSrc == img.src
                 typeObj.raw = img
+                foundMatch = true
                 break
         console.log('typeObj.type = '+typeObj.type+' typeObj.raw = '+typeObj.raw)
+        if not foundMatch
+            console.log('Object appeared in our save, but the type does not.' +
+                ' We are ignoring this object.')
+            continue
         typeFactory = SpriteFactory(typeObj.type, typeObj.raw)
         typeFactory::_count = 0
         typeFactory::cloneTranslate = typeObj.cloneTranslate
@@ -720,9 +731,22 @@ window.loadSprites = (dataString) ->
                     continue
                 rule = Rule.createFromData(ruleJSON)
                 typeFactory.addClassIRule(rule, spriteTypeKey)
-        window.spriteTypeList.push(typeFactory)
+        window.spriteTypeList[typeObj.type] = typeFactory
+
+    # We've just added all sprite types that we know about in the saved JSON,
+    # but there may be sprites added before the last save that we need to
+    # integrate
+    $("#sprite_drawer > img").each (i, sprite) -> # all sprites in the drawer
+        hash = sprite.getAttribute('data-hash')
+        matched = hash of window.spriteTypeList
+        if not matched
+            window.addOneSprite(hash, sprite)
+    # We don't save this back because we'll either do this again next time, or
+    # save the objects as they become programmed.
     for obj in inObject.objects
-        newSprite = new window.spriteTypeList[obj.spriteType]  # make one
+        #XXX
+        #newSprite = new window.spriteTypeList[obj.spriteType]  # make one
+        newSprite = makeSpriteOfType(obj.spriteType)
         newSprite.restoreFromJSON(obj)
         window.spriteList.push(newSprite)
 
@@ -749,3 +773,7 @@ window.getSpriteType = (type) ->
             console.log("getSpriteType[#{idx}]: #{type}")
             return spriteType
     return undefined
+
+window.makeSpriteOfType = (type) ->
+    st = getSpriteType(type)
+    return new st

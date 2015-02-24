@@ -17,7 +17,7 @@ $ ->
     recording = false #starts out in play mode, switches to record if camera
     cameraState = 1
     anyCamera = true
-    
+
     # sprite collection wasn't initialized for a new animation and were
     # creating an error when they were first used
     # Amanda: is this the right way to do this?

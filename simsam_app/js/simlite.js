@@ -609,6 +609,7 @@ deleteImageFully = function(spriteType, classImage) {
 				break;
 			}
 		}
+        window.save();
 		
     }
     deleteImageInternal(messageInfo, onSuccess);
@@ -911,7 +912,8 @@ sproutCloningWidgetShow = function(obj) {
     var startY = y + xo * Math.sin(theta) + yo * Math.cos(theta);
 
     var targetType = obj.getSproutTarget();
-    var targetObj = new window.spriteTypeList[targetType];
+    //var targetObj = new window.spriteTypeList[targetType];
+    var targetObj = new window.getSpriteType(targetType);
 
     var imgElement = document.createElement('img');
     imgElement.src = targetObj.getSrc();

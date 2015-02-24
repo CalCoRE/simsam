@@ -594,7 +594,7 @@
 
   window.spriteList = [];
 
-  window.spriteTypeList = [];
+  window.spriteTypeList = {};
 
   window.spriteDeleteList = [];
 
@@ -662,8 +662,7 @@
           return;
         }
         console.log('Before new window.spriteTypeList[i]' + type);
-        newSprite = new window.spriteTypeList[type];
-        newSprite = new getSpriteType(type);
+        newSprite = new st;
         console.log('After new window.spriteTypeList[i]' + type);
         console.log('SpriteType Success? = ' + newSprite.setSpriteTypeId(type));
         spriteList.push(newSprite);
@@ -676,32 +675,37 @@
     });
   };
 
-  window.addOneSprite = function(i, sprite) {
-    window.spriteTypeList.push(SpriteFactory(i, sprite));
-    return setSpriteTypeDraggable(sprite, i);
+  window.addOneSprite = function(hash, sprite) {
+    var mySpriteType;
+    mySpriteType = SpriteFactory(hash, sprite);
+    window.spriteTypeList[hash] = mySpriteType;
+    return setSpriteTypeDraggable(sprite, hash);
   };
 
   window.loadSpriteTypes = function() {
     window.maxSprites = 25;
     console.log("loading sprite types");
-    window.spriteTypeList = [];
+    window.spriteTypeList = {};
     $("#sprite_drawer > img").each(function(i, sprite) {
-      console.log("loading sprite type" + i);
-      sprite.setAttribute('data-sprite-type', i);
+      var hash;
+      hash = sprite.getAttribute('data-hash');
+      console.log("loading sprite type" + hash);
+      sprite.setAttribute('data-sprite-type', hash);
       sprite.setAttribute('data-debug', 'lST');
-      window.spriteTypeList.push(SpriteFactory(i, sprite));
-      return setSpriteTypeDraggable(sprite, i);
+      console.log('Adding sprite with hash: ' + hash);
+      window.addOneSprite(hash, sprite);
+      return setSpriteTypeDraggable(sprite, hash);
     });
-    console.log("--- Loaded sprite type list: " + window.spriteTypeList.length);
+    console.log("--- Loaded sprite type list: " + Object.keys(window.spriteTypeList).length);
     return window.spriteTypesLoaded = true;
   };
 
   window.saveSprites = function() {
-    var irulesSub, masterObj, obj, objects, oneType, rule, ruleJSON, string, textElements, type, typeObjects, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref;
+    var irulesSub, key, masterObj, obj, objects, oneType, rule, ruleJSON, string, textElements, type, typeObjects, _i, _j, _k, _len, _len1, _len2, _ref;
     masterObj = {};
     typeObjects = [];
-    for (_i = 0, _len = spriteTypeList.length; _i < _len; _i++) {
-      type = spriteTypeList[_i];
+    for (key in spriteTypeList) {
+      type = spriteTypeList[key];
       oneType = {};
       oneType.type = type.prototype.spriteType;
       oneType.imageObj = type.prototype.imageObj.src;
@@ -710,8 +714,8 @@
       oneType.cloneTranslate = type.prototype.cloneTranslate;
       oneType.cloneFrequency = type.prototype.cloneFrequency;
       _ref = type.prototype._rules;
-      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
-        rule = _ref[_j];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        rule = _ref[_i];
         if (rule === void 0) {
           continue;
         }
@@ -725,14 +729,14 @@
     }
     masterObj.classObjects = typeObjects;
     objects = [];
-    for (_k = 0, _len2 = spriteList.length; _k < _len2; _k++) {
-      obj = spriteList[_k];
+    for (_j = 0, _len1 = spriteList.length; _j < _len1; _j++) {
+      obj = spriteList[_j];
       objects.push(obj.saveToJSON());
     }
     masterObj.objects = objects;
     textElements = [];
-    for (_l = 0, _len3 = textList.length; _l < _len3; _l++) {
-      obj = textList[_l];
+    for (_k = 0, _len2 = textList.length; _k < _len2; _k++) {
+      obj = textList[_k];
       textElements.push(obj.saveToJSON());
     }
     masterObj.textElements = textElements;
@@ -776,33 +780,42 @@
   };
 
   window.loadSprites = function(dataString) {
-    var idx, imageObjects, img, imgSrc, inObject, iruleData, newSprite, newText, obj, rule, ruleData, ruleJSON, ruleTypeKey, spriteTypeKey, txt, typeFactory, typeObj, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
+    var foundMatch, idx, imageObjects, img, imgSrc, inObject, iruleData, newSprite, newText, obj, rule, ruleData, ruleJSON, ruleTypeKey, spriteTypeKey, txt, typeFactory, typeObj, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
     inObject = JSON.parse(dataString);
     if (inObject.classObjects.length === 0 && inObject.objects.length === 0) {
       return;
     }
-    window.spriteTypeList = [];
+    window.spriteTypeList = {};
     clearEverything();
     imageObjects = [];
     $("#sprite_drawer > img").each(function(i, sprite) {
+      var hash;
+      hash = sprite.getAttribute('data-hash');
+      console.log("loading sprite type" + hash);
       imageObjects.push(this);
-      setSpriteTypeDraggable(sprite, i);
-      sprite.setAttribute('data-sprite-type', i);
+      setSpriteTypeDraggable(sprite, hash);
+      sprite.setAttribute('data-sprite-type', hash);
       return sprite.setAttribute('data-debug', 'lS');
     });
     _ref = inObject.classObjects;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       typeObj = _ref[_i];
+      foundMatch = false;
       imgSrc = typeObj.imageObj;
       for (_j = 0, _len1 = imageObjects.length; _j < _len1; _j++) {
         img = imageObjects[_j];
         console.log("ImgSrc: " + imgSrc + " img.src: " + img.src);
         if (imgSrc === img.src) {
           typeObj.raw = img;
+          foundMatch = true;
           break;
         }
       }
       console.log('typeObj.type = ' + typeObj.type + ' typeObj.raw = ' + typeObj.raw);
+      if (!foundMatch) {
+        console.log('Object appeared in our save, but the type does not.' + ' We are ignoring this object.');
+        continue;
+      }
       typeFactory = SpriteFactory(typeObj.type, typeObj.raw);
       typeFactory.prototype._count = 0;
       typeFactory.prototype.cloneTranslate = typeObj.cloneTranslate;
@@ -825,12 +838,20 @@
           typeFactory.addClassIRule(rule, spriteTypeKey);
         }
       }
-      window.spriteTypeList.push(typeFactory);
+      window.spriteTypeList[typeObj.type] = typeFactory;
     }
+    $("#sprite_drawer > img").each(function(i, sprite) {
+      var hash, matched;
+      hash = sprite.getAttribute('data-hash');
+      matched = hash in window.spriteTypeList;
+      if (!matched) {
+        return window.addOneSprite(hash, sprite);
+      }
+    });
     _ref3 = inObject.objects;
     for (_k = 0, _len2 = _ref3.length; _k < _len2; _k++) {
       obj = _ref3[_k];
-      newSprite = new window.spriteTypeList[obj.spriteType];
+      newSprite = makeSpriteOfType(obj.spriteType);
       newSprite.restoreFromJSON(obj);
       window.spriteList.push(newSprite);
     }
@@ -864,6 +885,12 @@
       }
     }
     return void 0;
+  };
+
+  window.makeSpriteOfType = function(type) {
+    var st;
+    st = getSpriteType(type);
+    return new st;
   };
 
 }).call(this);
