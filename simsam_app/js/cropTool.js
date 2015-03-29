@@ -265,6 +265,10 @@ function cropCanvas() {
   
   $(".playback-frame").unbind('click');
   
+  console.log("firing cropCanvas");
+  
+  drawScene();
+  
   Hammer(canvas).on("dragstart", function(e) { // binding mousedown event
   
         console.log("dragstart from cropCanvas");
@@ -337,6 +341,8 @@ function cropCanvas() {
 
                     theSelection.bDragAll = true;
 	}
+	
+	
 		
   });
         
