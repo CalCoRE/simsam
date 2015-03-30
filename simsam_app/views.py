@@ -52,7 +52,6 @@ def sandbox(request):
 
 
 def login_user(request):
-   
     state = ""
     username = password = ''
     redirect_to = request.REQUEST.get('next','')
@@ -193,6 +192,7 @@ def save_image(request):
 @login_required
 def save_image_only(request):
     """I have the image URL. Now let me save it"""
+    print("from save_image_only, anim or sim DNE")
     image_string = request.REQUEST.get('image_string')
     image_type = request.REQUEST.get('image_type')
     animation_id = request.REQUEST.get('animation_id')
@@ -238,19 +238,37 @@ def save_object(request):
     """Saves objects, which represent a class of sprites."""
     success = True
     message = ''
-
+    print("in save_object")
+    
     sprite_filename = request.REQUEST.get('image_filename')
     sim_id = request.REQUEST.get('sim_id')
+    anim_id = request.REQUEST.get('anim_id')
     hash_value = request.REQUEST.get('hash_value')
-    object = SimulationObject.objects.create(sprite_filename=sprite_filename,
-            simulation_id=sim_id, hash_value=hash_value)
-    object.save()
-
-    return HttpResponse(json.dumps({
-        'success': success,
-        'id': object.id,
-        'message': message,
-    }))
+    
+    # ok, so eventually this needs to be cleaned up. simulation objects are a table,
+    # but also animations have a list of sprites. Need to populate both...
+    try:
+        simulation = Simulation.objects.get(id=sim_id)
+        animation = Animation.objects.get(id=anim_id)
+    except Simulation.DoesNotExist or Animation.DoesNotExist:
+        success = False
+        message = "Invalid sim_id %s or anim_id %s" % (sim_id, anim_id)
+        print("from save_object, anim or sim DNE")
+    else:
+        animation.sprite_collection.append(hash_value)
+        animation.save()
+        print("in the else part with animation id " + anim_id)
+        print("in the else part with hash_value " + hash_value)
+        object = SimulationObject.objects.create(sprite_filename=sprite_filename,
+                simulation=simulation, hash_value=hash_value) # simulation or simulation_id?
+        object.save()
+        success = True
+    
+        return HttpResponse(json.dumps({
+            'success': success,
+            'id': object.id,
+            'message': message,
+        }))
 
 
 # This is unfinished because we never ask about just one

@@ -175,6 +175,12 @@ setPrivateButtonText = function() {
 }
 
 addSpriteToSim = function(filename, hash) {
+    console.log('firing addSpriteToSim: ' + filename + ' ' + hash);
+    //console.log('pushing ' + hash + ' to spritecollection');
+    //spritecollection.push(hash);
+    
+    // add it as a simulation object*/
+    /*
     $.ajax({
         url: 'save_object',
         type: 'POST',
@@ -184,10 +190,10 @@ addSpriteToSim = function(filename, hash) {
         },
         dataType: 'json',
         success: addNewSpriteToDrawer
-    });
+    });*/
 
     function addNewSpriteToDrawer(data, textStatus, jqXHR) {
-        console.log ('We added a sprite with id: ' + textStatus.id);
+        console.log ('Calling addNewSpriteToDrawer: ' + hash);
     }
 }
 
@@ -616,8 +622,11 @@ deleteImageFully = function(spriteType, classImage) {
 }
 
 deleteImageFullyWithoutAsking = function(spriteType, classImage) {
+    console.log("in deleteImageFullyWithoutAsking with spriteType " + spriteType + " and classImage " + classImage );
 	canvas.forEachObject(function (iterObj) {
+	   console.log("iterObj " + iterObj + " iterObj.spriteType " + iterObj.spriteType );
 		if (iterObj.spriteType == spriteType) {
+		    console.log("removing" + iterObj);
 			iterObj.removeFromList();
 			iterObj.remove();
 			delete iterObj;
