@@ -137,20 +137,22 @@ function saveCropCanvas(canvas, tempId) {
             var hash = response.id;
             var filename = '/media/sprites/' + hash + '.jpg';
             //var img = document.createElement('img');
-            /*
+            
+            // mhwj
             var img = new Image();
             img.src = '/media/sprites/' + hash + '.jpg';
             img.className = 'sprite';
             img.setAttribute('data-hash', hash);
             img.setAttribute('data-debug', 'sCropC');
 			$(img).attr("data-frame-id", response.id);
-            */
-            addSpriteToSim(filename, hash);
-            window.samLoadSprites(hash)
+            
+            //addSpriteToSim(filename, hash); // not sure needed
+            window.samLoadSprites(hash) // this adds it to the spritedrawer
             //sprite_drawer.appendChild(img);
-            //window.addOneSprite(nextType, img);
+            window.addOneSprite(hash, img); //mhwj
             //img.setAttribute('data-sprite-type', nextType);
             //location.reload();
+            reloadSpriteDrawer();
 			//return $("#sprite_drawer img[data-frame-id='" + tempId + "']").attr("data-frame-id", response.id);
 		}
 	};
@@ -160,6 +162,18 @@ function saveCropCanvas(canvas, tempId) {
 	return results
 }
 
+function reloadSpriteDrawer() {
+    // clear out the spritedrawer
+    $("#sprite_drawer").empty();
+    // add the sprite trash back in
+    $("#sprite_drawer").append("<div id=\"trash_menu_button\" class=\"floating_button\">trash sprite class</div>");
+    // repopulate drawer with images
+    for( element in spriteTypeList ) {
+        samLoadSprites( element );
+    }
+    // turn them into sim sprites
+    loadSpriteTypes();
+}
 
 function getResults() {
     // get results of crop
