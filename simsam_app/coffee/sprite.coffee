@@ -536,8 +536,8 @@ SpriteFactory = (spriteType, imageObj) ->
 # Global Functionality - ticking and so forth
 #
 
-window.spriteList = []
-window.spriteTypeList = {}      # This is organized by (unique) id (or hash)
+window.spriteList = []          # These are sprite instances in the active sim
+window.spriteTypeList = {}      # These are sprite classes. Organized by (unique) id (or hash)
 window.spriteDeleteList = []
 window.textList = []
 
