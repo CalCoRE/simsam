@@ -30,6 +30,7 @@ class window.CloneAction extends Action
         # Interact at sprite.CloneFrequency % of the time
         if (Math.random() * 100) > (sprite.cloneFrequency)
             return
+        # mhwj TODO check later - should this be spriteList rather than spriteTypeList?
         if window.spriteTypeList[sprite.spriteType]::_count >= window.maxSprites
             return
         newSprite = new window.spriteTypeList[sprite.spriteType]  # make one
