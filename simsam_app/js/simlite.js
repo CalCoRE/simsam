@@ -176,9 +176,9 @@ setPrivateButtonText = function() {
 
 addSpriteToSim = function(filename, hash) {
     console.log('firing addSpriteToSim: ' + filename + ' ' + hash);
-    //console.log('pushing ' + hash + ' to spritecollection');
-    //spritecollection.push(hash);
-    
+    console.log('pushing ' + hash + ' to spritecollection');
+    spritecollection.push(hash);
+
     // add it as a simulation object*/
     /*
     $.ajax({
@@ -607,6 +607,8 @@ deleteImageFully = function(spriteType, classImage) {
         image_hash = $(classImage).attr('data-hash');
         $(classImage).remove();
         djangoDeleteImage(image_hash);
+        
+        /* something here is not working
 		for(i = 0; i < spriteTypeList.length; i++){
 			tempobj = new spriteTypeList[i];
 			if(tempobj.spriteType == spriteType){
@@ -614,36 +616,44 @@ deleteImageFully = function(spriteType, classImage) {
 				save();
 				break;
 			}
-		}
+		}*/
+		
+		delete spriteTypeList[spriteType];
+		
         window.save();
 		
     }
     deleteImageInternal(messageInfo, onSuccess);
 }
 
-deleteImageFullyWithoutAsking = function(spriteType, classImage) {
-    console.log("in deleteImageFullyWithoutAsking with spriteType " + spriteType + " and classImage " + classImage );
+// this should only actually delete the Sam character.
+deleteSimsam = function() {
+/*
 	canvas.forEachObject(function (iterObj) {
-	   console.log("iterObj " + iterObj + " iterObj.spriteType " + iterObj.spriteType );
 		if (iterObj.spriteType == spriteType) {
-		    console.log("removing" + iterObj);
 			iterObj.removeFromList();
 			iterObj.remove();
 			delete iterObj;
 		}
 	});
 	
-	image_hash = $(classImage).attr('data-hash');
-	$(classImage).remove();
+	image_hash = "moving3-4";
+	$('#sprite_drawer > img[src="/media/sprites/moving3-4.jpg"]').remove();
 	djangoDeleteImage(image_hash);
 	for(i = 0; i < spriteTypeList.length; i++){
 		tempobj = new spriteTypeList[i];
-		if(tempobj.spriteType == spriteType){
+		if(tempobj.spriteType == "moving3-4"){
 			spriteTypeList.splice(i, 1);
 			save();
+			//the break below might stop other saving stuff from happening?
 			break;
 		}
 	}
+	for(i = 0; i < spritecollection.length; i++) {
+	   if(spritecollection[i] = "moving3-4"){
+	       spritecollection.splice(i,1);
+	   }
+	}*/
 }
 
 //

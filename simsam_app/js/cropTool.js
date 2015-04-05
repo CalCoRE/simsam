@@ -122,7 +122,7 @@ function saveCropCanvas(canvas, tempId) {
 		},
 		dataType: "json"
 	};
-	
+		
 	done = function(response) {
 		var frame;
 		console.log("save canvas ajax response", response);
@@ -133,10 +133,9 @@ function saveCropCanvas(canvas, tempId) {
 			$(frame).attr("data-frame-id", response.id);
 
             // Add to the sprite drawer
-            sprite_drawer = $("#sprite_drawer").get(0); //get the newly cropped image
+            //sprite_drawer = $("#sprite_drawer").get(0); //get the newly cropped image
             var hash = response.id;
             var filename = '/media/sprites/' + hash + '.jpg';
-            //var img = document.createElement('img');
             
             // mhwj
             var img = new Image();
@@ -146,14 +145,10 @@ function saveCropCanvas(canvas, tempId) {
             img.setAttribute('data-debug', 'sCropC');
 			$(img).attr("data-frame-id", response.id);
             
-            //addSpriteToSim(filename, hash); // not sure needed
+            addSpriteToSim(filename, hash); // this adds it to the database
             window.samLoadSprites(hash) // this adds it to the spritedrawer
-            //sprite_drawer.appendChild(img);
-            window.addOneSprite(hash, img); //mhwj
-            //img.setAttribute('data-sprite-type', nextType);
-            //location.reload();
+            window.addOneSprite(hash, img); // this adds it to spriteTypeList
             reloadSpriteDrawer();
-			//return $("#sprite_drawer img[data-frame-id='" + tempId + "']").attr("data-frame-id", response.id);
 		}
 	};
 	results = $.ajax(ajaxOptions).done(done);

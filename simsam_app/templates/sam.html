@@ -87,7 +87,9 @@
 		
 		function killSimSam(){
 			console.log('It appears that you want me to kill Sam. Here goes.');
-			deleteImageFullyWithoutAsking(0, $('#sprite_drawer > img[src="/media/sprites/moving3-4.jpg"]'));
+			// for some reason this is deleting everything. 
+			//deleteImageFullyWithoutAsking("moving3-4", $('#sprite_drawer > img[src="/media/sprites/moving3-4.jpg"]'));
+            //deleteSimsam();
             window.save();
 		}
 		
