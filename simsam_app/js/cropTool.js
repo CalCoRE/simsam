@@ -152,8 +152,8 @@ function saveCropCanvas(canvas, tempId) {
 		}
 	};
 	results = $.ajax(ajaxOptions).done(done);
-	console.log("move killSimSam to after ajax");
-	killSimSam();
+	//console.log("move killSimSam to after ajax");
+	//killSimSam();
 	return results
 }
 

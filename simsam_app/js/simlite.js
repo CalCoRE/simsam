@@ -626,36 +626,6 @@ deleteImageFully = function(spriteType, classImage) {
     deleteImageInternal(messageInfo, onSuccess);
 }
 
-// this should only actually delete the Sam character.
-deleteSimsam = function() {
-/*
-	canvas.forEachObject(function (iterObj) {
-		if (iterObj.spriteType == spriteType) {
-			iterObj.removeFromList();
-			iterObj.remove();
-			delete iterObj;
-		}
-	});
-	
-	image_hash = "moving3-4";
-	$('#sprite_drawer > img[src="/media/sprites/moving3-4.jpg"]').remove();
-	djangoDeleteImage(image_hash);
-	for(i = 0; i < spriteTypeList.length; i++){
-		tempobj = new spriteTypeList[i];
-		if(tempobj.spriteType == "moving3-4"){
-			spriteTypeList.splice(i, 1);
-			save();
-			//the break below might stop other saving stuff from happening?
-			break;
-		}
-	}
-	for(i = 0; i < spritecollection.length; i++) {
-	   if(spritecollection[i] = "moving3-4"){
-	       spritecollection.splice(i,1);
-	   }
-	}*/
-}
-
 //
 // Random Slider Handlers
 //
